@@ -1,12 +1,10 @@
-import { Blockchain, ChainId } from '@foxswap/sdk'
+import { Blockchain, ChainId } from '@amaterasu-fi/sdk'
 
 export default function getBlockchain(chainId: ChainId | undefined): Blockchain {
   switch (chainId) {
-    case ChainId.HARMONY_MAINNET:
-      return Blockchain.HARMONY
-    case ChainId.HARMONY_TESTNET:
-      return Blockchain.HARMONY
+    case ChainId.MTV_MAINNET:
+      return Blockchain.MTV
     default:
-      return Blockchain.HARMONY
+      return Blockchain.MTV
   }
 }

@@ -1,4 +1,4 @@
-import { ChainId, Currency, ETHER, HARMONY, BINANCE_COIN, WETH } from '@foxswap/sdk'
+import { ChainId, Currency, ETHER, MTV, WETH } from '@amaterasu-fi/sdk'
 import { NETWORK_CHAIN_ID } from '../connectors'
 
 export default function baseCurrencies(chainId: ChainId | undefined): Currency[] {
@@ -6,18 +6,12 @@ export default function baseCurrencies(chainId: ChainId | undefined): Currency[]
 
   if (chainId) {
     switch (chainId) {
-      case 56:
-      case 97:
-        currencies.push(BINANCE_COIN)
-        currencies.push(WETH[chainId])
-        break
-      case 1666600000:
-      case 1666700000:
-        currencies.push(HARMONY)
+      case 62621:
+        currencies.push(MTV)
         currencies.push(WETH[chainId])
         break
       default:
-        currencies.push(ETHER)
+        currencies.push(MTV)
         currencies.push(WETH[chainId])
         break
     }

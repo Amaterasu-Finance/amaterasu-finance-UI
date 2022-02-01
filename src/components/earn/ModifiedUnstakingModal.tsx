@@ -7,7 +7,7 @@ import { TYPE, CloseIcon, ExternalLink } from '../../theme'
 import { ButtonError } from '../Button'
 import CurrencyInputPanel from '../CurrencyInputPanel'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
-import { TokenAmount, Pair, Blockchain } from '@foxswap/sdk'
+import { TokenAmount, Pair, Blockchain } from '@amaterasu-fi/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { StakingInfo, useDerivedUnstakeInfo } from '../../state/stake/hooks'
 //import { wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
@@ -96,7 +96,7 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
   const { lastActionBlock, withdrawalFee } = useCalculateWithdrawalFee(stakingInfo.pid, account)
 
   let feeInfoUrl = ''
-  if (blockchain == Blockchain.HARMONY) {
+  if (blockchain == Blockchain.MTV) {
     feeInfoUrl = 'https://docs.venomdao.org/viper/fees'
   }
 
@@ -210,7 +210,7 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
         <LoadingView onDismiss={wrappedOnDismiss}>
           <AutoColumn gap="12px" justify={'center'}>
             <TYPE.largeHeader>Withdrawing Liquidity</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>{parsedAmount?.toSignificant(4)} FOX-LP</TYPE.body>
+            <TYPE.body fontSize={20}>{parsedAmount?.toSignificant(4)} IZA-LP</TYPE.body>
           </AutoColumn>
         </LoadingView>
       )}
@@ -218,7 +218,7 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
         <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
           <AutoColumn gap="12px" justify={'center'}>
             <TYPE.largeHeader>Transaction Submitted</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>Withdraw {parsedAmount?.toSignificant(4)} FOX-LP</TYPE.body>
+            <TYPE.body fontSize={20}>Withdraw {parsedAmount?.toSignificant(4)} IZA-LP</TYPE.body>
           </AutoColumn>
         </SubmittedView>
       )}

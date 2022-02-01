@@ -1,4 +1,4 @@
-import { Trade, TradeType } from '@foxswap/sdk'
+import { Trade, TradeType } from '@amaterasu-fi/sdk'
 import React, { useContext, useMemo } from 'react'
 import { ArrowDown, AlertTriangle } from 'react-feather'
 import { Text } from 'rebass'

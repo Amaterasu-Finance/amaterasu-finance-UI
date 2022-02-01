@@ -1,4 +1,4 @@
-import { ChainId, Token, WETH, TOKENS } from '@foxswap/sdk'
+import { ChainId, Token, WETH, TOKENS } from '@amaterasu-fi/sdk'
 import { GOVERNANCE_TOKEN, ZERO_ONE_ADDRESS } from '../constants'
 
 export default function getTokenWithDefault(chainId: ChainId, symbol: string): Token {
@@ -18,10 +18,7 @@ export default function getTokenWithDefault(chainId: ChainId, symbol: string): T
   }
   // console.log('getTokenWithDefault', TOKENS[chainId])
 
-  if (
-    (!token || token.address === ZERO_ONE_ADDRESS) &&
-    [ChainId.HARMONY_MAINNET, ChainId.HARMONY_TESTNET].includes(chainId)
-  ) {
+  if ((!token || token.address === ZERO_ONE_ADDRESS) && [ChainId.MTV_MAINNET, ChainId.MTV_MAINNET].includes(chainId)) {
     const govToken = GOVERNANCE_TOKEN[chainId]
     if (symbol.toUpperCase() === govToken.symbol?.toUpperCase()) {
       token = govToken

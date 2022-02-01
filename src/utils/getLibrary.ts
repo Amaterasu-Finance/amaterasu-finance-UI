@@ -1,11 +1,11 @@
 import { Web3Provider } from '@ethersproject/providers'
-import { Blockchain } from '@foxswap/sdk'
+import { Blockchain } from '@amaterasu-fi/sdk'
 import { BLOCKCHAIN } from '../connectors'
 
 export default function getLibrary(provider: any): Web3Provider {
   const library = new Web3Provider(provider, 'any')
   switch (BLOCKCHAIN) {
-    case Blockchain.BINANCE_SMART_CHAIN:
+    case Blockchain.MTV:
       library.pollingInterval = 1500
       break
     case Blockchain.HARMONY:

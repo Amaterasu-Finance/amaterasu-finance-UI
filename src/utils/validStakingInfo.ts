@@ -1,4 +1,4 @@
-import { Token } from '@foxswap/sdk'
+import { Token } from '@amaterasu-fi/sdk'
 import { CallState } from '../state/multicall/hooks'
 
 export default function validStakingInfo(

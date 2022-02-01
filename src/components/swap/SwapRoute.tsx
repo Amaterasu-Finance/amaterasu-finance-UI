@@ -1,4 +1,4 @@
-import { Trade } from '@foxswap/sdk'
+import { Trade } from '@amaterasu-fi/sdk'
 import React, { Fragment, memo, useContext } from 'react'
 import { ChevronRight } from 'react-feather'
 import { Flex } from 'rebass'

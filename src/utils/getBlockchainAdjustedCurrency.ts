@@ -1,4 +1,4 @@
-import { Blockchain, Currency, ETHER, BINANCE_COIN, HARMONY } from '@foxswap/sdk'
+import { Blockchain, Currency, ETHER, BINANCE_COIN, MTV } from '@amaterasu-fi/sdk'
 
 export default function getBlockchainAdjustedCurrency(
   blockchain: Blockchain,
@@ -9,8 +9,8 @@ export default function getBlockchainAdjustedCurrency(
   switch (blockchain) {
     case Blockchain.BINANCE_SMART_CHAIN:
       return BINANCE_COIN
-    case Blockchain.HARMONY:
-      return HARMONY
+    case Blockchain.MTV:
+      return MTV
     default:
       return ETHER
   }

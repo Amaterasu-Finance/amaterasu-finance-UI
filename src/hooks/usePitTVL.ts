@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { TokenAmount, Fraction } from '@foxswap/sdk'
+import { TokenAmount, Fraction } from '@amaterasu-fi/sdk'
 import { useTokenBalance } from '../state/wallet/hooks'
 import useBUSDPrice from './useBUSDPrice'
 import usePitToken from './usePitToken'

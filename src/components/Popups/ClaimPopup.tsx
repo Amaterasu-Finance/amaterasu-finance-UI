@@ -1,4 +1,4 @@
-import { TokenAmount } from '@foxswap/sdk'
+import { TokenAmount } from '@amaterasu-fi/sdk'
 import React, { useEffect } from 'react'
 import { X } from 'react-feather'
 import styled, { keyframes } from 'styled-components'
@@ -97,7 +97,7 @@ export default function ClaimPopup() {
               </span>
             </TYPE.white>
             <TYPE.subHeader style={{ paddingTop: '0.5rem', textAlign: 'center' }} color="white">
-              {`Thanks for being part of the FoxSwap community <3`}
+              {`Thanks for being part of the Amaterasu community <3`}
             </TYPE.subHeader>
           </AutoColumn>
           <AutoColumn style={{ zIndex: 10 }} justify="center">

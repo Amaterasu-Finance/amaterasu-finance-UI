@@ -1,4 +1,4 @@
-import { Token } from '@foxswap/sdk'
+import { Token } from '@amaterasu-fi/sdk'
 import React, { useCallback } from 'react'
 import Modal from '../Modal'
 import { ImportToken } from 'components/SearchModal/ImportToken'

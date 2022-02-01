@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@foxswap/sdk'
+import { ChainId, Token } from '@amaterasu-fi/sdk'
 
 export interface StakingRewardsInfo {
   pid: number
@@ -9,6 +9,5 @@ export interface StakingRewardsInfo {
 export const STAKING_REWARDS_INFO: {
   [chainId in ChainId]?: StakingRewardsInfo[]
 } = {
-  [ChainId.HARMONY_MAINNET]: [],
-  [ChainId.HARMONY_TESTNET]: []
+  [ChainId.MTV_MAINNET]: []
 }

@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from '@foxswap/sdk'
+import { Token, TokenAmount } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { useAllTokenBalances } from '../../state/wallet/hooks'
 

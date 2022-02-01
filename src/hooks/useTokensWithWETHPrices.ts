@@ -1,4 +1,4 @@
-import { ChainId, WETH, Token, Blockchain } from '@foxswap/sdk'
+import { ChainId, WETH, Token, Blockchain } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import useGovernanceToken from './useGovernanceToken'
 import useTokenWethPrice from './useTokenWETHPrice'
@@ -15,19 +15,19 @@ export default function useTokensWithWethPrices(): Record<string, any> {
   const govToken = useGovernanceToken()
   const govTokenWETHPrice = useTokenWethPrice(govToken)
 
-  const BUSDTicker = chainId !== ChainId.HARMONY_TESTNET ? 'BUSD' : '1BUSD'
+  const BUSDTicker = chainId !== ChainId.MTV_MAINNET ? 'BUSD' : 'BUSD'
   const BUSD: Token | undefined = getToken(chainId, BUSDTicker)
   const BUSDWETHPrice = useTokenWethPrice(BUSD)
 
-  const USDCTicker = blockchain === Blockchain.HARMONY ? '1USDC' : 'USDC'
+  const USDCTicker = blockchain === Blockchain.MTV ? 'tUSDC' : 'tUSDC'
   const USDC: Token | undefined = getToken(chainId, USDCTicker)
   const USDCWETHPrice = useTokenWethPrice(USDC)
 
   // Harmony specific tokens
-  const bscBUSD: Token | undefined = blockchain === Blockchain.HARMONY ? getToken(chainId, 'bscBUSD') : undefined
+  const bscBUSD: Token | undefined = blockchain === Blockchain.MTV ? getToken(chainId, 'bscBUSD') : undefined
   const bscBUSDWETHPrice = useTokenWethPrice(bscBUSD)
 
-  const bridgedETH: Token | undefined = Blockchain.HARMONY ? getToken(chainId, '1ETH') : undefined
+  const bridgedETH: Token | undefined = Blockchain.MTV ? getToken(chainId, 'tETH') : undefined
   const bridgedETHWETHPrice = useTokenWethPrice(bridgedETH)
 
   return useMemo(() => {

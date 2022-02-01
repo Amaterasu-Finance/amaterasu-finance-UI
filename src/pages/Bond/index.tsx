@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { AutoColumn } from '../../components/Column'
 import React, { useState } from 'react'
 import BondingModal from '../../components/Bond/BondingModal'
-import { Token, TokenAmount, ChainId } from '@foxswap/sdk'
+import { Token, TokenAmount, ChainId } from '@amaterasu-fi/sdk'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { CardSection, DataCard } from '../../components/earn/styled'
@@ -44,7 +44,7 @@ export default function Bond() {
   // const [typedValue, setTypedValue] = useState('')
 
   const inputCurrency = new Token(
-    ChainId.HARMONY_TESTNET,
+    ChainId.MTV_MAINNET,
     '0x0159ed2e06ddcd46a25e74eb8e159ce666b28687',
     18,
     'FOX',

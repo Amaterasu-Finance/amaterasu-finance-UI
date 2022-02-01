@@ -1,4 +1,4 @@
-import { JSBI, Token, TokenAmount } from '@foxswap/sdk'
+import { JSBI, Token, TokenAmount } from '@amaterasu-fi/sdk'
 import { BigNumber } from 'ethers'
 import { STAKING_GENESIS } from '../state/stake/hooks'
 

@@ -23,7 +23,7 @@ import { ExternalLink, LinkStyledButton, TYPE } from '../../theme'
 import useBlockchain from '../../hooks/useBlockchain'
 import getExplorerName from '../../utils/getExplorerName'
 import { YellowCard } from '../Card'
-import { ChainId } from '@foxswap/sdk'
+import { ChainId } from '@amaterasu-fi/sdk'
 
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
@@ -36,8 +36,7 @@ const HeaderRow = styled.div`
 `
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.HARMONY_TESTNET]: 'Harmony Testnet',
-  [ChainId.HARMONY_MAINNET]: 'Harmony'
+  [ChainId.MTV_MAINNET]: 'MultiVAC Mainnet'
 }
 
 const UpperSection = styled.div`

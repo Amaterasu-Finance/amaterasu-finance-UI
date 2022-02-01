@@ -1,4 +1,4 @@
-import { WETH, Token } from '@foxswap/sdk'
+import { WETH, Token } from '@amaterasu-fi/sdk'
 import { useActiveWeb3React } from './index'
 
 export default function useWeth(): Token | undefined {

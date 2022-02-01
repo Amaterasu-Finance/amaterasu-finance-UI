@@ -1,6 +1,6 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
-import DEFAULT_TOKEN_LIST from '@foxswap/default-token-list'
-import { ChainId, Token } from '@foxswap/sdk'
+import DEFAULT_TOKEN_LIST from '@amaterasu-fi/default-token-list'
+import { ChainId, Token } from '@amaterasu-fi/sdk'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -37,8 +37,7 @@ export type TokenAddressMap = Readonly<
  * An empty result, useful as a default.
  */
 const EMPTY_LIST: TokenAddressMap = {
-  [ChainId.HARMONY_MAINNET]: {},
-  [ChainId.HARMONY_TESTNET]: {}
+  [ChainId.MTV_MAINNET]: {}
 }
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
@@ -90,8 +89,7 @@ export function useAllLists(): {
 
 function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
   return {
-    1666600000: { ...map1[1666600000], ...map2[1666600000] },
-    1666700000: { ...map1[1666700000], ...map2[1666700000] }
+    62621: { ...map1[62621], ...map2[62621] }
   }
 }
 

@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@foxswap/sdk'
+import { ChainId, Token } from '@amaterasu-fi/sdk'
 import getTokenWithDefault from './getTokenWithDefault'
 import { ZERO_ONE_ADDRESS } from '../constants/index'
 

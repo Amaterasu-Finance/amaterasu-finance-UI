@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, TokenAmount, Pair, Fraction } from '@foxswap/sdk'
+import { CurrencyAmount, JSBI, Token, TokenAmount, Pair, Fraction } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { useSingleCallResult, useSingleContractMultipleData } from '../multicall/hooks'

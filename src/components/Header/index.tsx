@@ -1,4 +1,4 @@
-import { TokenAmount } from '@foxswap/sdk'
+import { TokenAmount } from '@amaterasu-fi/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { Moon, Sun } from 'react-feather'
@@ -7,17 +7,17 @@ import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { MouseoverTooltip } from '../Tooltip'
 import styled from 'styled-components'
-import DarkLogo from 'assets/svg/foxswap/foxswap-thickwhite.svg'
-import LightLogo from 'assets/svg/foxswap/foxswap-thickblack.svg'
-import DarkIcon from 'assets/svg/foxswap/foxswap-circle_06.svg'
-import LightIcon from 'assets/svg/foxswap/foxswap-circle_02.svg'
+import DarkLogo from 'assets/images/logo.png'
+import LightLogo from 'assets/images/logo.png'
+import DarkIcon from 'assets/images/logo.png'
+import LightIcon from 'assets/images/logo.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useTokenBalance, useETHBalances } from '../../state/wallet/hooks'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
 import usePitToken from '../../hooks/usePitToken'
 import { CardNoise } from '../earn/styled'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import Menu from '../Menu'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
@@ -221,36 +221,6 @@ const TokenSelectionWrapper = styled.div`
   padding: 0.75rem;
 `
 
-const StyledRedirectLink = styled(ExternalLink)`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
-  width: fit-content;
-  padding: .65rem;
-  margin-left: 20px;
-  border-radius: 15px;
-  font-weight: normal;
-  &:hover {
-    color: ${({ theme }) => theme.primary1}
-    text-decoration: none;
-  }
-
-  &:focus {
-    color: ${({ theme }) => darken(0.1, theme.primary1)}
-    text-decoration: none;
-  }
-
-  &:active {
-    color: ${({ theme }) => darken(0.1, theme.primary1)}
-    transform: translateY(0.1rem);
-    text-decoration: none;
-  }
-`
-
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
@@ -334,21 +304,19 @@ export default function Header() {
           <StyledNavLink id={`pit-nav-link`} to={`${pitSettings?.path}`}>
             {pitSettings?.name}
           </StyledNavLink>
-          <StyledNavLink id={`bond-nav-link`} to={'/bond'}>
-            {t('Bond')}
+          <StyledNavLink id={`farm-nav-link`} to={'/farm'}>
+            {t('Farm')}
           </StyledNavLink>
-          <StyledRedirectLink href={`https://app.farmersonly.fi/vaults`}>{t('Vaults')}</StyledRedirectLink>
-          <StyledRedirectLink href={`https://app.farmersonly.fi/zap`}>{t('Zapper')}</StyledRedirectLink>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
           <TokenSelectionWrapper>
             <HeaderElementWrap>
-              <MouseoverTooltip text={`Add FOX ($${govTokenPrice?.toFixed(2)}) to MetaMask`}>
+              <MouseoverTooltip text={`Add IZA ($${govTokenPrice?.toFixed(2)}) to MetaMask`}>
                 <LogoIcon src={DarkIcon} onClick={addGov.addToken} alt="logo" />
               </MouseoverTooltip>
-              <MouseoverTooltip text={`Add xFOX to MetaMask. (1 FOX = ${pitRatio?.toSignificant(4)} xFOX)`}>
+              <MouseoverTooltip text={`Add xIZA to MetaMask. (1 IZA = ${pitRatio?.toSignificant(4)} xIZA)`}>
                 <LogoIcon src={LightIcon} onClick={addPit.addToken} alt="logo" />
               </MouseoverTooltip>
             </HeaderElementWrap>

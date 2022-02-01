@@ -1,4 +1,4 @@
-import { ChainId, Token, WETH, TOKENS } from '@foxswap/sdk'
+import { ChainId, Token, WETH, TOKENS } from '@amaterasu-fi/sdk'
 
 export default function getTokenWithDefault(chainId: ChainId | undefined, symbol: string): Token | undefined {
   if (chainId === undefined) return undefined
@@ -7,7 +7,7 @@ export default function getTokenWithDefault(chainId: ChainId | undefined, symbol
   switch (symbol) {
     case 'WETH':
     case 'WBNB':
-    case 'WONE':
+    case 'WMTV':
       return WETH[chainId]
     default:
       return TOKENS[chainId].firstBySymbol(symbol)

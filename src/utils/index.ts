@@ -5,7 +5,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@foxswap/periphery/build/IUniswapV2Router02.json'
 import { ROUTER_ADDRESSES } from '../constants'
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, DEFAULT_CURRENCIES } from '@foxswap/sdk'
+import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, DEFAULT_CURRENCIES } from '@amaterasu-fi/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 import { useActiveWeb3React } from '../hooks/index'
 
@@ -19,8 +19,7 @@ export function isAddress(value: any): string | false {
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
-  1666600000: 'explorer.harmony.one/#',
-  1666700000: 'explorer.testnet.harmony.one/#'
+  62621: 'https://e.mtv.ac/'
 }
 
 export function getEtherscanLink(
@@ -29,7 +28,7 @@ export function getEtherscanLink(
   type: 'transaction' | 'token' | 'address' | 'block'
 ): string {
   let prefix = `https://${ETHERSCAN_PREFIXES[chainId]}`
-  prefix = [56, 97, 1666600000, 1666700000].includes(chainId) ? prefix : `${prefix}etherscan.io`
+  prefix = [56, 97, 62621, 1666600000, 1666700000].includes(chainId) ? prefix : `${prefix}etherscan.io`
 
   switch (type) {
     case 'transaction': {

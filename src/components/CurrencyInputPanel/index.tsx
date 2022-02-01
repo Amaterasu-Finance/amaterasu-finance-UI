@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Pair } from '@foxswap/sdk'
+import { Currency, CurrencyAmount, Pair } from '@amaterasu-fi/sdk'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'

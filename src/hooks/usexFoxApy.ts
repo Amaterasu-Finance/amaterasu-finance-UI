@@ -1,4 +1,4 @@
-import { Fraction, JSBI } from '@foxswap/sdk'
+import { Fraction, JSBI } from '@amaterasu-fi/sdk'
 import { useActiveWeb3React } from '.'
 import { useGovTokenContract, useMasterBreederContract } from './useContract'
 import getBlocksPerYear from '../utils/getBlocksPerYear'

@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Fraction, Percent } from '@foxswap/sdk'
+import { Currency, CurrencyAmount, Fraction, Percent } from '@amaterasu-fi/sdk'
 import React from 'react'
 import { Text } from 'rebass'
 import { ButtonPrimary } from '../../components/Button'

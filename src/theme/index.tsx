@@ -11,7 +11,7 @@ import { Text, TextProps } from 'rebass'
 import { Colors } from './styled'
 
 import useBlockchain from '../hooks/useBlockchain'
-import { Blockchain } from '@foxswap/sdk'
+import { Blockchain } from '@amaterasu-fi/sdk'
 
 export * from './components'
 
@@ -283,7 +283,7 @@ export function colors(blockchain: Blockchain, darkMode: boolean): Colors {
   switch (blockchain) {
     case Blockchain.BINANCE_SMART_CHAIN:
       return bscColors(darkMode)
-    case Blockchain.HARMONY:
+    case Blockchain.MTV:
       return harmonyColors(darkMode)
     default:
       return harmonyColors(darkMode)

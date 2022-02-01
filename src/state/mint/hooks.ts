@@ -1,4 +1,13 @@
-import { Currency, CurrencyAmount, JSBI, Pair, Percent, Price, TokenAmount, DEFAULT_CURRENCIES } from '@foxswap/sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  JSBI,
+  Pair,
+  Percent,
+  Price,
+  TokenAmount,
+  DEFAULT_CURRENCIES
+} from '@amaterasu-fi/sdk'
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { PairState, usePair } from '../../data/Reserves'

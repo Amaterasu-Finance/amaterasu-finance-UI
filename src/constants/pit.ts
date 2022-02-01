@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@foxswap/sdk'
+import { ChainId, Token } from '@amaterasu-fi/sdk'
 import getPairTokensWithDefaults from '../utils/getPairTokensWithDefaults'
 
 export const PIT_POOLS: {
@@ -7,25 +7,13 @@ export const PIT_POOLS: {
     tokens: [Token, Token]
   }[]
 } = {
-  [ChainId.HARMONY_MAINNET]: [
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/WONE') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/1USDC') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/STONE') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, '1ETH/WONE') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, '1USDC/WONE') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'UST/WONE') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/MIS') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/JEWEL') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/RVRS') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/RAVAX') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/TRANQ') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/COINKX') },
-    { tokens: getPairTokensWithDefaults(ChainId.HARMONY_MAINNET, 'FOX/XYA') }
-  ],
-  [ChainId.HARMONY_TESTNET]: [
-    {
-      pid: 0,
-      tokens: getPairTokensWithDefaults(ChainId.HARMONY_TESTNET, 'WONE/BUSD')
-    }
+  [ChainId.MTV_MAINNET]: [
+    { tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'IZA/WMTV') },
+    { tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'IZA/tUSDC') },
+    { tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'WMTV/tUSDC') },
+    { tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tETH') },
+    { tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, '1USDC/tMIM') },
+    { tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tFTM') },
+    { tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tONE') }
   ]
 }

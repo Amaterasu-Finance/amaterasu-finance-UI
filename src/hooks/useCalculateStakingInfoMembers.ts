@@ -1,4 +1,4 @@
-import { ChainId } from '@foxswap/sdk'
+import { ChainId } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { STAKING_REWARDS_INFO } from '../constants/staking'
 

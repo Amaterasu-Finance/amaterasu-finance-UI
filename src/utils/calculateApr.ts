@@ -1,4 +1,4 @@
-import { Price, Fraction, TokenAmount, JSBI } from '@foxswap/sdk'
+import { Price, Fraction, TokenAmount, JSBI } from '@amaterasu-fi/sdk'
 import { utils } from 'ethers'
 
 export default function calculateApr(

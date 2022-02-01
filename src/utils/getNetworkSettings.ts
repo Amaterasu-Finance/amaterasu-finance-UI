@@ -1,4 +1,4 @@
-import { ChainId, BLOCKCHAIN_SETTINGS } from '@foxswap/sdk'
+import { ChainId, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 
 export default function getNetworkSettings(chainId: ChainId, rpcUrls?: string[]): Record<string, any> {
   const settings = BLOCKCHAIN_SETTINGS[chainId]

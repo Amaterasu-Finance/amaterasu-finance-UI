@@ -1,4 +1,4 @@
-import { JSBI, Pair, Percent, TokenAmount } from '@foxswap/sdk'
+import { JSBI, Pair, Percent, TokenAmount } from '@amaterasu-fi/sdk'
 import { darken } from 'polished'
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'

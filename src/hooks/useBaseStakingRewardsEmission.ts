@@ -1,4 +1,4 @@
-import { JSBI, TokenAmount } from '@foxswap/sdk'
+import { JSBI, TokenAmount } from '@amaterasu-fi/sdk'
 import { useSingleCallResult } from '../state/multicall/hooks'
 import { useMasterBreederContract } from './useContract'
 import useGovernanceToken from './useGovernanceToken'

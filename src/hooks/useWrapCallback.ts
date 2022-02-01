@@ -1,4 +1,4 @@
-import { Currency, currencyEquals, WETH, DEFAULT_CURRENCIES } from '@foxswap/sdk'
+import { Currency, currencyEquals, WETH, DEFAULT_CURRENCIES } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { tryParseAmount } from '../state/swap/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'

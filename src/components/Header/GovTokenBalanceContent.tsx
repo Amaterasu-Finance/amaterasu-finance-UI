@@ -1,4 +1,4 @@
-import { TokenAmount, Blockchain } from '@foxswap/sdk'
+import { TokenAmount, Blockchain } from '@amaterasu-fi/sdk'
 import React from 'react'
 //import React, { useMemo } from 'react'
 import { X } from 'react-feather'
@@ -101,7 +101,7 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
               </AutoColumn>
               <AutoColumn gap="md">
                 <RowBetween>
-                  <TYPE.white color="white">FOX Balance:</TYPE.white>
+                  <TYPE.white color="white">IZA Balance:</TYPE.white>
                   <TYPE.white color="white">
                     <MouseoverTooltip
                       text={
@@ -118,7 +118,7 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
                 </RowBetween>
 
                 <RowBetween>
-                  <TYPE.white color="white">xFOX Balance:</TYPE.white>
+                  <TYPE.white color="white">xIZA Balance:</TYPE.white>
                   <TYPE.white color="white">
                     <MouseoverTooltip
                       text={
@@ -147,7 +147,7 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
             </RowBetween>
           </AutoColumn>
         </CardSection>
-        {blockchain === Blockchain.HARMONY && govTokenPrice && circulatingMarketCap && totalMarketCap && (
+        {blockchain === Blockchain.MTV && govTokenPrice && circulatingMarketCap && totalMarketCap && (
           <>
             <Break />
             <CardSection gap="sm">

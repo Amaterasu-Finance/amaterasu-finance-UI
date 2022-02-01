@@ -1,4 +1,4 @@
-import { Currency, Token } from '@foxswap/sdk'
+import { Currency, Token } from '@amaterasu-fi/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
 import useLast from '../../hooks/useLast'
 import Modal from '../Modal'

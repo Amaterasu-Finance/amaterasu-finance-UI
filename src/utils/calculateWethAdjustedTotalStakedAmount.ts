@@ -1,4 +1,4 @@
-import { Token, TokenAmount, Fraction, ChainId } from '@foxswap/sdk'
+import { Token, TokenAmount, Fraction, ChainId } from '@amaterasu-fi/sdk'
 import { wrappedCurrency } from './wrappedCurrency'
 import calculateTotalStakedAmount from './calculateTotalStakedAmount'
 import getPair from './getPair'

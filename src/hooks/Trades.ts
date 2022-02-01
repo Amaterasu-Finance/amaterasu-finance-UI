@@ -1,5 +1,5 @@
 import { isTradeBetter } from 'utils/trades'
-import { Currency, CurrencyAmount, Pair, Token, Trade } from '@foxswap/sdk'
+import { Currency, CurrencyAmount, Pair, Token, Trade } from '@amaterasu-fi/sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 

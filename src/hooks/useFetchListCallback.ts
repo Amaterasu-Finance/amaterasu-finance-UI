@@ -1,5 +1,5 @@
 import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@foxswap/sdk'
+import { ChainId } from '@amaterasu-fi/sdk'
 import { TokenList } from '@uniswap/token-lists'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
@@ -16,8 +16,8 @@ export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean
 
   const ensResolver = useCallback(
     (ensName: string) => {
-      if (!library || chainId !== ChainId.HARMONY_TESTNET) {
-        if (NETWORK_CHAIN_ID === ChainId.HARMONY_TESTNET) {
+      if (!library || chainId !== ChainId.MTV_MAINNET) {
+        if (NETWORK_CHAIN_ID === ChainId.MTV_MAINNET) {
           const networkLibrary = getNetworkLibrary()
           if (networkLibrary) {
             return resolveENSContentHash(ensName, networkLibrary)

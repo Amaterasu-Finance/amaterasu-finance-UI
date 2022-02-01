@@ -1,9 +1,9 @@
-import { Currency, Token, ETHER, HARMONY, BINANCE_COIN, DEFAULT_CURRENCIES, Blockchain } from '@foxswap/sdk'
+import { Currency, Token, ETHER, MTV, BINANCE_COIN, DEFAULT_CURRENCIES, Blockchain } from '@amaterasu-fi/sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import EthereumLogo from '../../assets/images/ethereum-logo.png'
-import HarmonyLogo from '../../assets/images/harmony-logo.png'
+import MtvLogo from '../../assets/images/mtv-logo.png'
 import BinanceLogo from '../../assets/images/binance-logo.png'
 import useHttpLocations from '../../hooks/useHttpLocations'
 import { WrappedTokenInfo } from '../../state/lists/hooks'
@@ -69,8 +69,8 @@ export default function CurrencyLogo({
     return <StyledEthereumLogo src={EthereumLogo} size={size} style={style} />
   } else {
     const wrappedCurrency = currency instanceof Token ? baseCurrencies(currency.chainId)[1] : undefined
-    if (currency === HARMONY || currency === (wrappedCurrency && blockchain === Blockchain.HARMONY)) {
-      return <StyledEthereumLogo src={HarmonyLogo} size={size} style={style} />
+    if (currency === MTV || (currency === wrappedCurrency && blockchain === Blockchain.MTV)) {
+      return <StyledEthereumLogo src={MtvLogo} size={size} style={style} />
     } else if (
       currency === BINANCE_COIN ||
       (currency === wrappedCurrency && blockchain === Blockchain.BINANCE_SMART_CHAIN)

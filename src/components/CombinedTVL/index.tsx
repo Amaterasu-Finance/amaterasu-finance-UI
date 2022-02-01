@@ -8,8 +8,7 @@ import useFilterStakingInfos from '../../hooks/useFilterStakingInfos'
 
 export default function CombinedTVL({}) {
   const { chainId } = useActiveWeb3React()
-  // @ts-ignore
-  const pitSettings: Record<string, string> = chainId ? PIT_SETTINGS[chainId] : undefined
+  const pitSettings: Record<string, string> | undefined = chainId ? PIT_SETTINGS[chainId] : undefined
   const isActive = true
   const filteredStakingInfos = useFilterStakingInfos(useStakingInfo(isActive), isActive)
   const TVLs = useTotalCombinedTVL(filteredStakingInfos)

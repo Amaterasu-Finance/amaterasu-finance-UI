@@ -1,4 +1,4 @@
-import { TokenAmount, JSBI } from '@foxswap/sdk'
+import { TokenAmount, JSBI } from '@amaterasu-fi/sdk'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'

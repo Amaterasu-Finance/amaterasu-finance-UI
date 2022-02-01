@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, DEFAULT_CURRENCIES } from '@foxswap/sdk'
+import { CurrencyAmount, JSBI, DEFAULT_CURRENCIES } from '@amaterasu-fi/sdk'
 import { MIN_ETH } from '../constants'
 
 /**

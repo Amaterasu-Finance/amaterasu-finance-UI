@@ -1,10 +1,9 @@
-import { ChainId } from '@foxswap/sdk'
+import { ChainId } from '@amaterasu-fi/sdk'
 
 export default function getBlockchainName(chainId: ChainId | undefined): string {
   switch (chainId) {
-    case ChainId.HARMONY_MAINNET:
-    case ChainId.HARMONY_TESTNET:
-      return 'Harmony'
+    case ChainId.MTV_MAINNET:
+      return 'MultiVAC'
     default:
       return 'Harmony'
   }

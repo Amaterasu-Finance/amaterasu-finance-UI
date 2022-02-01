@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token, TokenAmount } from '@foxswap/sdk'
+import { Token, TokenAmount } from '@amaterasu-fi/sdk'
 import { useTokenContract, useGovTokenContract } from '../hooks/useContract'
 import { useSingleCallResult } from '../state/multicall/hooks'
 import useGovernanceToken from '../hooks/useGovernanceToken'

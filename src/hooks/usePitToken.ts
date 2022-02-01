@@ -1,4 +1,4 @@
-import { Token } from '@foxswap/sdk'
+import { Token } from '@amaterasu-fi/sdk'
 import { PIT } from '../constants'
 import { useActiveWeb3React } from './index'
 

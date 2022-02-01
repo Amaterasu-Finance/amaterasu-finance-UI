@@ -7,7 +7,7 @@ import MASTER_BREEDER_ABI from 'constants/abis/masterchef.json'
 import PIT_ABI from 'constants/abis/gov-token.json'
 import { abi as PIT_BREEDER_ABI } from '@venomswap/contracts/build/PitBreeder.json'
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
-import { ChainId, WETH } from '@foxswap/sdk'
+import { ChainId, WETH } from '@amaterasu-fi/sdk'
 import { abi as IUniswapV2PairABI } from '@foxswap/core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import {
@@ -77,7 +77,7 @@ export function useWETHContract(withSignerIfPossible?: boolean): Contract | null
 export function useArgentWalletDetectorContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(
-    chainId === ChainId.HARMONY_TESTNET ? ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS : undefined,
+    chainId === ChainId.MTV_MAINNET ? ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS : undefined,
     ARGENT_WALLET_DETECTOR_ABI,
     false
   )
@@ -88,7 +88,7 @@ export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contrac
   let address: string | undefined
   if (chainId) {
     switch (chainId) {
-      case ChainId.HARMONY_TESTNET:
+      case ChainId.MTV_MAINNET:
         address = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
         break
     }
@@ -152,10 +152,10 @@ export function useMasterBreederContract(withSignerIfPossible?: boolean): Contra
 
 export function useBondingContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
-  return useContract(chainId === ChainId.HARMONY_TESTNET ? BONDING_ADDRESS : undefined, LP_BOND_ABI, false)
+  return useContract(chainId === ChainId.MTV_MAINNET ? BONDING_ADDRESS : undefined, LP_BOND_ABI, false)
 }
 
 export function useSocksController(): Contract | null {
   const { chainId } = useActiveWeb3React()
-  return useContract(chainId === ChainId.HARMONY_TESTNET ? SOCKS_TESTNET_ADDRESS : undefined, UNISOCKS_ABI, false)
+  return useContract(chainId === ChainId.MTV_MAINNET ? SOCKS_TESTNET_ADDRESS : undefined, UNISOCKS_ABI, false)
 }

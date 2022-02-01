@@ -12,7 +12,7 @@ import React, { useState, useCallback } from 'react'
 // import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { Box, OutlinedInput, InputAdornment, FormControl } from '@material-ui/core'
 // import { Skeleton } from "@material-ui/lab";
-import { TokenAmount, Token } from '@foxswap/sdk'
+import { TokenAmount, Token } from '@amaterasu-fi/sdk'
 // import { useActiveWeb3React } from '../../hooks'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 // import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'

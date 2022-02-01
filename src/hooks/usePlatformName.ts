@@ -1,14 +1,14 @@
-import { Blockchain } from '@foxswap/sdk'
+import { Blockchain } from '@amaterasu-fi/sdk'
 import useBlockchain from './useBlockchain'
 
 export default function usePlatformName(): string {
   const blockchain = useBlockchain()
   switch (blockchain) {
-    case Blockchain.HARMONY:
-      return 'FoxSwap'
+    case Blockchain.MTV:
+      return 'Amaterasu'
     case Blockchain.ETHEREUM:
-      return 'FoxSwap'
+      return 'Amaterasu'
     default:
-      return 'FoxSwap'
+      return 'Amaterasu'
   }
 }

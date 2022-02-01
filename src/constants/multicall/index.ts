@@ -1,9 +1,8 @@
-import { ChainId } from '@foxswap/sdk'
+import { ChainId } from '@amaterasu-fi/sdk'
 import MULTICALL_ABI from './abi.json'
 
 const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {
-  [ChainId.HARMONY_MAINNET]: '0xFE4980f62D708c2A84D3929859Ea226340759320',
-  [ChainId.HARMONY_TESTNET]: '0xbcd3451992B923531615293Cb2b2c38ba8DE9529'
+  [ChainId.MTV_MAINNET]: '0x27FD914c884234449ff5CBfA9E6D2faD3c8e8D0b'
 }
 
 export { MULTICALL_ABI, MULTICALL_NETWORKS }

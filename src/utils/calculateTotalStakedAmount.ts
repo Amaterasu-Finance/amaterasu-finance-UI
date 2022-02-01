@@ -1,4 +1,4 @@
-import { Token, TokenAmount, Pair, JSBI } from '@foxswap/sdk'
+import { Token, TokenAmount, Pair, JSBI } from '@amaterasu-fi/sdk'
 
 export default function calculateTotalStakedAmount(
   baseToken: Token,

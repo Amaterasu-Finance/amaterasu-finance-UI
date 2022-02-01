@@ -1,4 +1,4 @@
-import { ChainId } from '@foxswap/sdk'
+import { ChainId } from '@amaterasu-fi/sdk'
 import { createStore, Store } from 'redux'
 import { addPopup, ApplicationModal, removePopup, setOpenModal, updateBlockNumber } from './actions'
 import reducer, { ApplicationState } from './reducer'
@@ -10,7 +10,7 @@ describe('application reducer', () => {
     store = createStore(reducer, {
       popupList: [],
       blockNumber: {
-        [ChainId.HARMONY_TESTNET]: 3
+        [ChainId.MTV_MAINNET]: 4
       },
       openModal: null
     })
@@ -54,18 +54,18 @@ describe('application reducer', () => {
 
   describe('updateBlockNumber', () => {
     it('updates block number', () => {
-      store.dispatch(updateBlockNumber({ chainId: ChainId.HARMONY_TESTNET, blockNumber: 4 }))
-      expect(store.getState().blockNumber[ChainId.HARMONY_TESTNET]).toEqual(4)
+      store.dispatch(updateBlockNumber({ chainId: ChainId.MTV_MAINNET, blockNumber: 4 }))
+      expect(store.getState().blockNumber[ChainId.MTV_MAINNET]).toEqual(4)
     })
     it('no op if late', () => {
-      store.dispatch(updateBlockNumber({ chainId: ChainId.HARMONY_TESTNET, blockNumber: 2 }))
-      expect(store.getState().blockNumber[ChainId.HARMONY_TESTNET]).toEqual(3)
+      store.dispatch(updateBlockNumber({ chainId: ChainId.MTV_MAINNET, blockNumber: 2 }))
+      expect(store.getState().blockNumber[ChainId.MTV_MAINNET]).toEqual(3)
     })
     it('works with non-set chains', () => {
-      store.dispatch(updateBlockNumber({ chainId: ChainId.HARMONY_TESTNET, blockNumber: 2 }))
+      store.dispatch(updateBlockNumber({ chainId: ChainId.MTV_MAINNET, blockNumber: 2 }))
       expect(store.getState().blockNumber).toEqual({
-        [ChainId.HARMONY_TESTNET]: 3,
-        [ChainId.HARMONY_TESTNET]: 2
+        [ChainId.MTV_MAINNET]: 3,
+        [ChainId.MTV_MAINNET]: 2
       })
     })
   })

@@ -1,4 +1,4 @@
-import { ChainId, JSBI, BLOCKCHAIN_SETTINGS } from '@foxswap/sdk'
+import { ChainId, JSBI, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 
 export default function getBlocksPerYear(chainId: ChainId | undefined): JSBI {
   const blockchainSettings = chainId ? BLOCKCHAIN_SETTINGS[chainId] : undefined

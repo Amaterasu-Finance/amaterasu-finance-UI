@@ -1,4 +1,4 @@
-import { Blockchain } from '@foxswap/sdk'
+import { Blockchain } from '@amaterasu-fi/sdk'
 import getBlockchain from '../utils/getBlockchain'
 import { useActiveWeb3React } from './index'
 

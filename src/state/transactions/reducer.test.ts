@@ -1,4 +1,4 @@
-import { ChainId } from '@foxswap/sdk'
+import { ChainId } from '@amaterasu-fi/sdk'
 import { createStore, Store } from 'redux'
 import { addTransaction, checkedTransaction, clearAllTransactions, finalizeTransaction } from './actions'
 import reducer, { initialState, TransactionState } from './reducer'
@@ -15,7 +15,7 @@ describe('transaction reducer', () => {
       const beforeTime = new Date().getTime()
       store.dispatch(
         addTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           summary: 'hello world',
           hash: '0x0',
           approval: { tokenAddress: 'abc', spender: 'def' },
@@ -23,9 +23,9 @@ describe('transaction reducer', () => {
         })
       )
       const txs = store.getState()
-      expect(txs[ChainId.HARMONY_MAINNET]).toBeTruthy()
-      expect(txs[ChainId.HARMONY_MAINNET]?.['0x0']).toBeTruthy()
-      const tx = txs[ChainId.HARMONY_MAINNET]?.['0x0']
+      expect(txs[ChainId.MTV_MAINNET]).toBeTruthy()
+      expect(txs[ChainId.MTV_MAINNET]?.['0x0']).toBeTruthy()
+      const tx = txs[ChainId.MTV_MAINNET]?.['0x0']
       expect(tx).toBeTruthy()
       expect(tx?.hash).toEqual('0x0')
       expect(tx?.summary).toEqual('hello world')
@@ -39,7 +39,7 @@ describe('transaction reducer', () => {
     it('no op if not valid transaction', () => {
       store.dispatch(
         finalizeTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           hash: '0x0',
           receipt: {
             status: 1,
@@ -59,7 +59,7 @@ describe('transaction reducer', () => {
       store.dispatch(
         addTransaction({
           hash: '0x0',
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           approval: { spender: '0x0', tokenAddress: '0x0' },
           summary: 'hello world',
           from: '0x0'
@@ -68,7 +68,7 @@ describe('transaction reducer', () => {
       const beforeTime = new Date().getTime()
       store.dispatch(
         finalizeTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           hash: '0x0',
           receipt: {
             status: 1,
@@ -82,7 +82,7 @@ describe('transaction reducer', () => {
           }
         })
       )
-      const tx = store.getState()[ChainId.HARMONY_MAINNET]?.['0x0']
+      const tx = store.getState()[ChainId.MTV_MAINNET]?.['0x0']
       expect(tx?.summary).toEqual('hello world')
       expect(tx?.confirmedTime).toBeGreaterThanOrEqual(beforeTime)
       expect(tx?.receipt).toEqual({
@@ -102,7 +102,7 @@ describe('transaction reducer', () => {
     it('no op if not valid transaction', () => {
       store.dispatch(
         checkedTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           hash: '0x0',
           blockNumber: 1
         })
@@ -113,7 +113,7 @@ describe('transaction reducer', () => {
       store.dispatch(
         addTransaction({
           hash: '0x0',
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           approval: { spender: '0x0', tokenAddress: '0x0' },
           summary: 'hello world',
           from: '0x0'
@@ -121,19 +121,19 @@ describe('transaction reducer', () => {
       )
       store.dispatch(
         checkedTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           hash: '0x0',
           blockNumber: 1
         })
       )
-      const tx = store.getState()[ChainId.HARMONY_MAINNET]?.['0x0']
+      const tx = store.getState()[ChainId.MTV_MAINNET]?.['0x0']
       expect(tx?.lastCheckedBlockNumber).toEqual(1)
     })
     it('never decreases', () => {
       store.dispatch(
         addTransaction({
           hash: '0x0',
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           approval: { spender: '0x0', tokenAddress: '0x0' },
           summary: 'hello world',
           from: '0x0'
@@ -141,19 +141,19 @@ describe('transaction reducer', () => {
       )
       store.dispatch(
         checkedTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           hash: '0x0',
           blockNumber: 3
         })
       )
       store.dispatch(
         checkedTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           hash: '0x0',
           blockNumber: 1
         })
       )
-      const tx = store.getState()[ChainId.HARMONY_MAINNET]?.['0x0']
+      const tx = store.getState()[ChainId.MTV_MAINNET]?.['0x0']
       expect(tx?.lastCheckedBlockNumber).toEqual(3)
     })
   })
@@ -162,7 +162,7 @@ describe('transaction reducer', () => {
     it('removes all transactions for the chain', () => {
       store.dispatch(
         addTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           summary: 'hello world',
           hash: '0x0',
           approval: { tokenAddress: 'abc', spender: 'def' },
@@ -171,7 +171,7 @@ describe('transaction reducer', () => {
       )
       store.dispatch(
         addTransaction({
-          chainId: ChainId.HARMONY_MAINNET,
+          chainId: ChainId.MTV_MAINNET,
           summary: 'hello world',
           hash: '0x1',
           approval: { tokenAddress: 'abc', spender: 'def' },
@@ -179,14 +179,14 @@ describe('transaction reducer', () => {
         })
       )
       expect(Object.keys(store.getState())).toHaveLength(2)
-      expect(Object.keys(store.getState())).toEqual([String(ChainId.HARMONY_MAINNET), String(ChainId.HARMONY_MAINNET)])
-      expect(Object.keys(store.getState()[ChainId.HARMONY_MAINNET] ?? {})).toEqual(['0x0'])
-      expect(Object.keys(store.getState()[ChainId.HARMONY_MAINNET] ?? {})).toEqual(['0x1'])
-      store.dispatch(clearAllTransactions({ chainId: ChainId.HARMONY_MAINNET }))
+      expect(Object.keys(store.getState())).toEqual([String(ChainId.MTV_MAINNET), String(ChainId.MTV_MAINNET)])
+      expect(Object.keys(store.getState()[ChainId.MTV_MAINNET] ?? {})).toEqual(['0x0'])
+      expect(Object.keys(store.getState()[ChainId.MTV_MAINNET] ?? {})).toEqual(['0x1'])
+      store.dispatch(clearAllTransactions({ chainId: ChainId.MTV_MAINNET }))
       expect(Object.keys(store.getState())).toHaveLength(2)
-      expect(Object.keys(store.getState())).toEqual([String(ChainId.HARMONY_MAINNET), String(ChainId.HARMONY_MAINNET)])
-      expect(Object.keys(store.getState()[ChainId.HARMONY_MAINNET] ?? {})).toEqual([])
-      expect(Object.keys(store.getState()[ChainId.HARMONY_MAINNET] ?? {})).toEqual(['0x1'])
+      expect(Object.keys(store.getState())).toEqual([String(ChainId.MTV_MAINNET), String(ChainId.MTV_MAINNET)])
+      expect(Object.keys(store.getState()[ChainId.MTV_MAINNET] ?? {})).toEqual([])
+      expect(Object.keys(store.getState()[ChainId.MTV_MAINNET] ?? {})).toEqual(['0x1'])
     })
   })
 })

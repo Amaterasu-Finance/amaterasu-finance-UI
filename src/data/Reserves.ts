@@ -1,4 +1,4 @@
-import { TokenAmount, Pair, Currency } from '@foxswap/sdk'
+import { TokenAmount, Pair, Currency } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@foxswap/core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'

@@ -1,4 +1,4 @@
-import { Blockchain, Trade, TradeType } from '@foxswap/sdk'
+import { Blockchain, Trade, TradeType } from '@amaterasu-fi/sdk'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'

@@ -1,6 +1,6 @@
 import { getTokenFallbackLogoURL } from './../components/CurrencyLogo/index'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
-import { Currency, Token } from '@foxswap/sdk'
+import { Currency, Token } from '@amaterasu-fi/sdk'
 import { useCallback, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 

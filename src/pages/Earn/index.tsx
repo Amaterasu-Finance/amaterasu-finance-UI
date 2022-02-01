@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { JSBI, BLOCKCHAIN_SETTINGS } from '@foxswap/sdk'
+import { JSBI, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { STAKING_REWARDS_INFO } from '../../constants/staking'

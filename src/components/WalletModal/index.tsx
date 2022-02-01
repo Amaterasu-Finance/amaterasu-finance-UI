@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
-import { ChainId, Blockchain, BLOCKCHAIN_SETTINGS } from '@foxswap/sdk'
+import { ChainId, Blockchain, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 import MetamaskIcon from '../../assets/images/metamask.png'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { injected, portis, NETWORK_CHAIN_ID } from '../../connectors'
@@ -360,9 +360,9 @@ export default function WalletModal({
                   <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
                 </>
               )}
-              {blockchain === Blockchain.HARMONY && (
+              {blockchain === Blockchain.MTV && (
                 <>
-                  <span>New to Harmony? &nbsp;</span>{' '}
+                  <span>New to MultiVAC? &nbsp;</span>{' '}
                   <ExternalLink href="https://docs.harmony.one/home/network/wallets/browser-extensions-wallets/metamask-wallet">
                     Learn more about wallets
                   </ExternalLink>

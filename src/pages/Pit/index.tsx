@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { TokenAmount } from '@foxswap/sdk'
+import { TokenAmount } from '@amaterasu-fi/sdk'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { RouteComponentProps } from 'react-router-dom'
@@ -196,7 +196,7 @@ export default function Pit({
                 <AutoColumn>
                   <MouseoverTooltip
                     text={
-                      'xFOX has a 0.2% unstaking fee if withdrawn within 2h. All fees are distributed to xFOX holders.'
+                      'xIZA has a 0.2% unstaking fee if withdrawn within 2h. All fees are distributed to xIZA holders.'
                     }
                   >
                     <Text fontWeight={200} fontSize={11}>

@@ -1,4 +1,4 @@
-import { ChainId, Currency, CurrencyAmount, Token, TokenAmount, WETH, DEFAULT_CURRENCIES } from '@foxswap/sdk'
+import { ChainId, Currency, CurrencyAmount, Token, TokenAmount, WETH, DEFAULT_CURRENCIES } from '@amaterasu-fi/sdk'
 
 import baseCurrencies from '../utils/baseCurrencies'
 
