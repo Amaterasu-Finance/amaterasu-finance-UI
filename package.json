@@ -1,9 +1,9 @@
 {
   "name": "@amaterasu-fi/interface",
   "description": "Amaterasu Interface",
-  "private": true,
+  "private": false,
   "devDependencies": {
-    "@amaterasu-fi/sdk": "^1.0.2",
+    "@amaterasu-fi/sdk": "^1.0.5",
     "@ethersproject/experimental": "^5.1.2",
     "@foxswap/core": "^1.0.1",
     "@foxswap/periphery": "^1.0.0",
@@ -124,7 +124,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@amaterasu-fi/default-token-list": "^1.0.2",
+    "@amaterasu-fi/default-token-list": "^1.0.7",
     "@material-ui/core": "^4.12.3",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "toformat": "^2.0.0"
