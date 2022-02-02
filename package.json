@@ -1,7 +1,6 @@
 {
   "name": "@amaterasu-fi/interface",
   "description": "Amaterasu Interface",
-  "private": false,
   "devDependencies": {
     "@amaterasu-fi/sdk": "^1.0.5",
     "@ethersproject/experimental": "^5.1.2",
