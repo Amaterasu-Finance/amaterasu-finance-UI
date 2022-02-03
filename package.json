@@ -2,7 +2,7 @@
   "name": "@amaterasu-fi/interface",
   "description": "Amaterasu Interface",
   "devDependencies": {
-    "@amaterasu-fi/sdk": "^1.0.5",
+    "@amaterasu-fi/sdk": "^1.0.7",
     "@ethersproject/experimental": "^5.1.2",
     "@foxswap/core": "^1.0.1",
     "@foxswap/periphery": "^1.0.0",

@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@amaterasu-fi/default-token-list/-/default-token-list-1.0.7.tgz#2ba6d1e726f3f66412e9a334fc605eb6808ed9d1"
   integrity sha512-0lZE/FTJSQ9DlBKa3rqyMZ4VIKZemOtPisBkKqjeTrewII/k2xsHxs8eYn6T5lGf9y8Rc2Yg5ybKmAbG2sjHQA==
 
-"@amaterasu-fi/sdk@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@amaterasu-fi/sdk/-/sdk-1.0.5.tgz#9b2259325c230298dcd92450866832725a7d27fa"
-  integrity sha512-8xH/2mwJYLCcsb38hMLAvTrHWTiwacoMf/Cf9nrne1P8rwtqK51HglhbYP/oS9nEjSNCB3E245d9OMaxfP9uyA==
+"@amaterasu-fi/sdk@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@amaterasu-fi/sdk/-/sdk-1.0.7.tgz#90a7777c18e62bd344f70385595eb4444db9a948"
+  integrity sha512-0mdlhA6ZD8jWiDlufOLiuqGqWeC3bYB0exBiHAWdLEjCfESLHXiG6JwCziEuYUpsSznBWiHXkyLxc6nae/K1+w==
   dependencies:
     "@amaterasu-fi/default-token-list" "^1.0.7"
     "@foxswap/core" "^1.0.1"
