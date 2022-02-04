@@ -11,7 +11,8 @@ import getToken from '../utils/getToken'
  */
 export default function useBUSDPrice(currency?: Currency): Price | undefined {
   const { chainId } = useActiveWeb3React()
-  console.log('useBUSDPrice')
+  console.log('useBUSDPrice currency', currency)
+  console.log('useBUSDPrice chainId', chainId)
   const wrapped = wrappedCurrency(currency, chainId)
   console.log('useBUSDPrice wrapped', wrapped)
   const usdTicker = chainId !== ChainId.MTV_MAINNET ? 'tUSDC' : 'tUSDC'
