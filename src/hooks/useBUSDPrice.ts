@@ -11,14 +11,9 @@ import getToken from '../utils/getToken'
  */
 export default function useBUSDPrice(currency?: Currency): Price | undefined {
   const { chainId } = useActiveWeb3React()
-  console.log('useBUSDPrice currency', currency)
-  console.log('useBUSDPrice chainId', chainId)
   const wrapped = wrappedCurrency(currency, chainId)
-  console.log('useBUSDPrice wrapped', wrapped)
   const usdTicker = chainId !== ChainId.MTV_MAINNET ? 'tUSDC' : 'tUSDC'
-  console.log('useBUSDPrice usdTicker', usdTicker)
   const usd: Token | undefined = getToken(chainId, usdTicker)
-  console.log('useBUSDPrice usd', usd)
 
   const tokenPairs: [Currency | undefined, Currency | undefined][] = useMemo(
     () => [
@@ -31,8 +26,6 @@ export default function useBUSDPrice(currency?: Currency): Price | undefined {
     ],
     [chainId, currency, wrapped, usd]
   )
-
-  console.log('useBUSDPrice tokenPairs', tokenPairs)
 
   const [[ethPairState, ethPair], [busdPairState, busdPair], [busdEthPairState, busdEthPair]] = usePairs(tokenPairs)
 
@@ -59,8 +52,6 @@ export default function useBUSDPrice(currency?: Currency): Price | undefined {
     const ethPairETHBUSDValue: JSBI =
       ethPairETHAmount && busdEthPair ? busdEthPair.priceOf(WETH[chainId]).quote(ethPairETHAmount).raw : JSBI.BigInt(0)
 
-    console.log('useBUSDPrice ethPairETHAmount', ethPairETHAmount)
-    console.log('useBUSDPrice ethPairETHBUSDValue', ethPairETHBUSDValue)
     // all other tokens
     // first try the usd pair
     if (
