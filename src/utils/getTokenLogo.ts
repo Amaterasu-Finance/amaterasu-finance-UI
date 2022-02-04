@@ -1,5 +1,5 @@
-import FoxLogo from 'assets/images/logo.png'
+import Logo from 'assets/images/token-list/iza-blue.png'
 
 export default function getTokenLogo(): string {
-  return FoxLogo
+  return Logo
 }

@@ -9,8 +9,8 @@ import { MouseoverTooltip } from '../Tooltip'
 import styled from 'styled-components'
 import DarkLogo from 'assets/images/logo.png'
 import LightLogo from 'assets/images/logo.png'
-import DarkIcon from 'assets/images/logo.png'
-import LightIcon from 'assets/images/logo.png'
+import DarkIcon from 'assets/images/token-list/iza-blue.png'
+import LightIcon from 'assets/images/token-list/iza-purple.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useTokenBalance, useETHBalances } from '../../state/wallet/hooks'
@@ -126,8 +126,8 @@ const LogoImage = styled('img')`
 `
 
 const LogoIcon = styled('img')`
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   margin: 8px;
   cursor: pointer;
   box-shadow: 0 0 2px ${({ theme }) => theme.bg1};
