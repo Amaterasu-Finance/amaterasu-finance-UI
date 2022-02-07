@@ -106,8 +106,7 @@ export default function Earn() {
               </RowBetween>
               <RowBetween>
                 <TYPE.white fontSize={14}>
-                  Deposit your Liquidity Provider tokens to receive {govToken?.symbol}, the {govToken?.name} Protocol
-                  governance token.
+                  Deposit your Liquidity Provider tokens to receive {govToken?.symbol}
                 </TYPE.white>
               </RowBetween>{' '}
               {stakingInfosWithRewards?.length > 0 && (

@@ -15,6 +15,7 @@ export default function Logo({ srcs, alt, ...rest }: LogoProps) {
   const [, refresh] = useState<number>(0)
 
   const src: string | undefined = srcs.find(src => !BAD_SRCS[src])
+  console.log(srcs, src)
 
   if (src) {
     return (

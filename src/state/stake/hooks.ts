@@ -36,15 +36,11 @@ export interface StakingInfo {
   // base rewards per block
   baseRewardsPerBlock: TokenAmount
   // pool specific rewards per block
-  poolRewardsPerBlock: TokenAmount
+  poolRewardsPerBlock: Fraction
   // blocks generated per year
   blocksPerYear: JSBI
   // pool share vs all pools
   poolShare: Fraction
-  // the percentage of rewards locked
-  lockedRewardsPercentageUnits: number
-  // the percentage of rewards locked
-  unlockedRewardsPercentageUnits: number
   // the total supply of lp tokens in existence
   totalLpTokenSupply: TokenAmount
   // the amount of currently total staked tokens in the pool
@@ -55,10 +51,6 @@ export interface StakingInfo {
   stakedRatio: Fraction
   // the amount of reward token earned by the active account, or undefined if no account
   earnedAmount: TokenAmount
-  // the amount of reward token earned by the active account, or undefined if no account - which will be locked
-  lockedEarnedAmount: TokenAmount
-  // the amount of reward token earned by the active account, or undefined if no account - which will be unlocked
-  unlockedEarnedAmount: TokenAmount
   // value of total staked amount, measured in weth
   valueOfTotalStakedAmountInWeth: TokenAmount | Fraction | undefined
   // value of total staked amount, measured in a USD stable coin (busd, usdt, usdc or a mix thereof)
@@ -92,7 +84,7 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
     [masterInfo, account]
   )
 
-  const pendingRewards = useSingleContractMultipleData(masterBreederContract, 'pendingReward', pidAccountMapping)
+  const pendingRewards = useSingleContractMultipleData(masterBreederContract, 'pendingToken', pidAccountMapping)
   const userInfos = useSingleContractMultipleData(masterBreederContract, 'userInfo', pidAccountMapping)
 
   const poolInfos = useSingleContractMultipleData(
@@ -117,22 +109,9 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
     masterBreederContract?.address
   ])
 
-  // getNewRewardPerBlock uses pid = 0 to return the base rewards
-  // poolIds have to be +1'd to map to their actual pid
-  // also include pid 0 to get the base emission rate
-  let adjustedPids = pids.map(pid => pid + 1)
-  adjustedPids = [...[0], ...adjustedPids]
-
-  const poolRewardsPerBlock = useSingleContractMultipleData(
-    masterBreederContract,
-    'getNewRewardPerBlock',
-    adjustedPids.map(adjustedPids => [adjustedPids])
-  )
-
-  //const poolLength = useSingleCallResult(masterBreederContract, 'poolLength')
-  const startBlock = useSingleCallResult(masterBreederContract, 'START_BLOCK')
-  const lockRewardsRatio = useSingleCallResult(masterBreederContract, 'PERCENT_LOCK_BONUS_REWARD')
-  //const rewardPerBlock = useSingleCallResult(masterBreederContract, 'REWARD_PER_BLOCK')
+  const totalAllocPoint = useSingleCallResult(masterBreederContract, 'totalAllocPoint')
+  const startBlock = useSingleCallResult(masterBreederContract, 'startBlock')
+  const rewardPerBlock = useSingleCallResult(masterBreederContract, 'tokenPerBlock')
 
   return useMemo(() => {
     if (!chainId || !weth || !govToken) return []
@@ -148,45 +127,32 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
       const lpTokenReserve = lpTokenReserves[index]
       const lpTokenBalance = lpTokenBalances[index]
 
-      // poolRewardsPerBlock indexes have to be +1'd to get the actual specific pool data
-      const baseRewardsPerBlock = poolRewardsPerBlock[0]
-      const specificPoolRewardsPerBlock = poolRewardsPerBlock[index + 1]
-
       if (
         validStakingInfo(
           tokens,
           poolInfo,
           pendingReward,
           userInfo,
-          baseRewardsPerBlock,
-          specificPoolRewardsPerBlock,
-          lockRewardsRatio,
           lpTokenTotalSupply,
           lpTokenReserve,
           lpTokenBalance,
-          startBlock
+          rewardPerBlock,
+          totalAllocPoint
         )
       ) {
-        const baseBlockRewards = new TokenAmount(govToken, JSBI.BigInt(baseRewardsPerBlock?.result?.[0] ?? 0))
+        // poolInfo: lpToken address, allocPoint uint256, lastRewardBlock uint256, accGovTokenPerShare uint256
+        const poolInfoResult = poolInfo.result
+        const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
+        const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])
+        const active = poolInfoResult && JSBI.GT(JSBI.BigInt(allocPoint), 0) ? true : false
+        const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)
 
-        const poolBlockRewards = specificPoolRewardsPerBlock?.result?.[0]
-          ? new TokenAmount(govToken, JSBI.BigInt(specificPoolRewardsPerBlock?.result?.[0] ?? 0))
-          : baseBlockRewards
+        const poolShare = new Fraction(allocPoint, totalAllocPointResult)
 
-        const poolShare = new Fraction(poolBlockRewards.raw, baseBlockRewards.raw)
-
-        const lockedRewardsPercentageUnits = Number(lockRewardsRatio.result?.[0] ?? 0)
-        const unlockedRewardsPercentageUnits = 100 - lockedRewardsPercentageUnits
+        const baseBlockRewards = new TokenAmount(govToken, baseRewardsPerBlock)
+        const poolBlockRewards = baseBlockRewards.multiply(allocPoint).divide(totalAllocPointResult)
 
         const calculatedTotalPendingRewards = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
-        const calculatedLockedPendingRewards = JSBI.divide(
-          JSBI.multiply(calculatedTotalPendingRewards, JSBI.BigInt(lockedRewardsPercentageUnits)),
-          JSBI.BigInt(100)
-        )
-        const calculatedUnlockedPendingRewards = JSBI.divide(
-          JSBI.multiply(calculatedTotalPendingRewards, JSBI.BigInt(unlockedRewardsPercentageUnits)),
-          JSBI.BigInt(100)
-        )
 
         const dummyPair = new Pair(new TokenAmount(tokens[0], '0'), new TokenAmount(tokens[1], '0'))
         const stakedAmount = new TokenAmount(dummyPair.liquidityToken, JSBI.BigInt(userInfo?.result?.[0] ?? 0))
@@ -201,14 +167,7 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
           JSBI.BigInt(lpTokenTotalSupply.result?.[0] ?? 0)
         )
         const totalPendingRewardAmount = new TokenAmount(govToken, calculatedTotalPendingRewards)
-        const totalPendingLockedRewardAmount = new TokenAmount(govToken, calculatedLockedPendingRewards)
-        const totalPendingUnlockedRewardAmount = new TokenAmount(govToken, calculatedUnlockedPendingRewards)
         const startsAtBlock = startBlock.result?.[0] ?? 0
-
-        // poolInfo: lpToken address, allocPoint uint256, lastRewardBlock uint256, accGovTokenPerShare uint256
-        const poolInfoResult = poolInfo.result
-        const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])
-        const active = poolInfoResult && JSBI.GT(JSBI.BigInt(allocPoint), 0) ? true : false
 
         const baseToken = determineBaseToken(tokensWithPrices, tokens)
 
@@ -239,15 +198,11 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
           poolRewardsPerBlock: poolBlockRewards,
           blocksPerYear: blocksPerYear,
           poolShare: poolShare,
-          lockedRewardsPercentageUnits: lockedRewardsPercentageUnits,
-          unlockedRewardsPercentageUnits: unlockedRewardsPercentageUnits,
           totalLpTokenSupply: totalLpTokenSupply,
           totalStakedAmount: totalStakedAmount,
           stakedAmount: stakedAmount,
           stakedRatio: stakedRatio,
           earnedAmount: totalPendingRewardAmount,
-          lockedEarnedAmount: totalPendingLockedRewardAmount,
-          unlockedEarnedAmount: totalPendingUnlockedRewardAmount,
           valueOfTotalStakedAmountInWeth: totalStakedAmountWETH,
           valueOfTotalStakedAmountInUsd: totalStakedAmountBUSD,
           apr: apr,
@@ -274,8 +229,8 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
     lpTokenBalances,
     blocksPerYear,
     startBlock,
-    lockRewardsRatio,
-    poolRewardsPerBlock
+    rewardPerBlock,
+    totalAllocPoint
   ])
 }
 

@@ -29,16 +29,16 @@ const StatContainer = styled.div`
 `};
 `
 
-const StatContainerTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  gap: 12px;
-  margin: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  display: none;
-`};
-`
+// const StatContainerTop = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   flex-direction: column;
+//   gap: 12px;
+//   margin: 1rem;
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+//   display: none;
+// `};
+// `
 
 const Wrapper = styled(AutoColumn)<{ showBackground: boolean; bgColor: any }>`
   border-radius: 12px;
@@ -150,51 +150,6 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
 
       {isStaking && (
         <>
-          <Break />
-          <StatContainerTop>
-            <RowBetween>
-              <TYPE.white> Your Unlocked Rewards </TYPE.white>
-              <TYPE.white>
-                <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
-                  🔓
-                </span>
-                {stakingInfo
-                  ? stakingInfo.active
-                    ? `${stakingInfo.unlockedEarnedAmount.toSignificant(4, { groupSeparator: ',' })} ${
-                        govToken?.symbol
-                      } / $${
-                        govTokenPrice
-                          ? stakingInfo.unlockedEarnedAmount
-                              .multiply(govTokenPrice?.raw)
-                              .toSignificant(2, { groupSeparator: ',' })
-                          : '0'
-                      }`
-                    : `0 ${govToken?.symbol}`
-                  : '-'}
-              </TYPE.white>
-            </RowBetween>
-            <RowBetween>
-              <TYPE.white> Your Locked Rewards </TYPE.white>
-              <TYPE.white>
-                <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
-                  🔒
-                </span>
-                {stakingInfo
-                  ? stakingInfo.active
-                    ? `${stakingInfo.lockedEarnedAmount.toSignificant(4, { groupSeparator: ',' })} ${
-                        govToken?.symbol
-                      } / $${
-                        govTokenPrice
-                          ? stakingInfo.lockedEarnedAmount
-                              .multiply(govTokenPrice?.raw)
-                              .toSignificant(2, { groupSeparator: ',' })
-                          : '0'
-                      }`
-                    : `0 ${govToken?.symbol}`
-                  : '-'}
-              </TYPE.white>
-            </RowBetween>
-          </StatContainerTop>
           <Break />
           <BottomSection showBackground={true}>
             <TYPE.black color={'white'} fontWeight={500}>

@@ -20,7 +20,7 @@ export default function AwaitingRewards() {
   const masterBreederContract = useMasterBreederContract()
   const govToken = useGovernanceToken()
 
-  const rewardsStartBlock = useSingleCallResult(masterBreederContract, 'START_BLOCK').result?.[0]
+  const rewardsStartBlock = useSingleCallResult(masterBreederContract, 'startBlock').result?.[0]
   const currentBlock = useBlockNumber()
 
   const rewardsStarted = useMemo<boolean>(() => {

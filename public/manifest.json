@@ -1,7 +1,7 @@
 {
   "background_color": "#fff",
   "display": "standalone",
-  "homepage_url": "https://swap.farmersonly.fi",
+  "homepage_url": "https://amaterasu.finance",
   "icons": [
     {
       "src": "./favicon.png",
@@ -17,8 +17,8 @@
     }
   ],
   "orientation": "portrait",
-  "name": "FoxSwap",
-  "short_name": "FoxSwap",
+  "name": "Amaterasu Finance",
+  "short_name": "Amaterasu",
   "start_url": ".",
   "theme_color": "#e58a4c"
 }

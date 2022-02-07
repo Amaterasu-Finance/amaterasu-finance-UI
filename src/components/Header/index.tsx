@@ -1,18 +1,15 @@
 import { TokenAmount } from '@amaterasu-fi/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
-import { Moon, Sun } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { MouseoverTooltip } from '../Tooltip'
 import styled from 'styled-components'
-import DarkLogo from 'assets/images/logo.png'
-import LightLogo from 'assets/images/logo.png'
+import HeaderLogo from 'assets/images/Amaterasu_Sun_Logo-Header_02_Mirrored.png'
 import DarkIcon from 'assets/images/token-list/iza-blue.png'
 import LightIcon from 'assets/images/token-list/iza-purple.png'
 import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
 import { useTokenBalance, useETHBalances } from '../../state/wallet/hooks'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
 import usePitToken from '../../hooks/usePitToken'
@@ -119,9 +116,9 @@ const HeaderLinks = styled(Row)`
 `
 
 const LogoImage = styled('img')`
-  width: 100px;
-  height: 100px;
-  padding: 0.75rem;
+  width: 344px;
+  height: 80px;
+  padding: 0.25rem;
   cursor: pointer;
 `
 
@@ -251,7 +248,6 @@ export default function Header() {
   const { t } = useTranslation()
   const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
 
   const govToken = useGovernanceToken()
@@ -279,11 +275,7 @@ export default function Header() {
         <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
           <GovTokenBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
         </Modal>
-        {darkMode ? (
-          <LogoImage src={DarkLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
-        ) : (
-          <LogoImage src={LightLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
-        )}
+        <LogoImage src={HeaderLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
@@ -338,16 +330,14 @@ export default function Header() {
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userFoxBalance && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userFoxBalance?.toSignificant(4)} {govToken?.symbol} | {userEthBalance?.toSignificant(4)} ONE
+                {userFoxBalance?.toSignificant(4, { groupSeparator: ',' })} {govToken?.symbol} |{' '}
+                {userEthBalance?.toSignificant(4, { groupSeparator: ',' })} ONE
               </BalanceText>
             ) : null}
             <Web3Status />
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>

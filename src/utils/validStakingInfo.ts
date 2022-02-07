@@ -6,13 +6,11 @@ export default function validStakingInfo(
   poolInfo: CallState,
   pendingReward: CallState,
   userInfo: CallState,
-  baseRewardsPerBlock: CallState,
-  specificPoolRewardsPerBlock: CallState,
-  lockRewardsRatio: CallState,
   lpTokenTotalSupply: CallState,
   lpTokenReserve: CallState,
   lpTokenBalance: CallState,
-  startBlock: CallState
+  rewardPerBlock: CallState,
+  totalAllocPoint: CallState
 ): boolean {
   if (
     tokens &&
@@ -28,18 +26,6 @@ export default function validStakingInfo(
     !userInfo.error &&
     !userInfo.loading &&
     userInfo?.result?.[0] !== undefined &&
-    baseRewardsPerBlock &&
-    !baseRewardsPerBlock.error &&
-    !baseRewardsPerBlock.loading &&
-    baseRewardsPerBlock?.result?.[0] !== undefined &&
-    specificPoolRewardsPerBlock &&
-    !specificPoolRewardsPerBlock.error &&
-    !specificPoolRewardsPerBlock.loading &&
-    specificPoolRewardsPerBlock?.result?.[0] !== undefined &&
-    lockRewardsRatio &&
-    !lockRewardsRatio.error &&
-    !lockRewardsRatio.loading &&
-    lockRewardsRatio?.result?.[0] !== undefined &&
     lpTokenTotalSupply &&
     !lpTokenTotalSupply.error &&
     !lpTokenTotalSupply.loading &&
@@ -52,10 +38,14 @@ export default function validStakingInfo(
     !lpTokenBalance.error &&
     !lpTokenBalance.loading &&
     lpTokenBalance?.result?.[0] !== undefined &&
-    startBlock &&
-    !startBlock.error &&
-    !startBlock.loading &&
-    startBlock?.result?.[0] !== undefined
+    rewardPerBlock &&
+    !rewardPerBlock.error &&
+    !rewardPerBlock.loading &&
+    rewardPerBlock?.result?.[0] !== undefined &&
+    totalAllocPoint &&
+    !totalAllocPoint.error &&
+    !totalAllocPoint.loading &&
+    totalAllocPoint?.result?.[0] !== undefined
   ) {
     return true
   }

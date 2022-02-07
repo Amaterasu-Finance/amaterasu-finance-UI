@@ -15,17 +15,13 @@ export default function useTokensWithWethPrices(): Record<string, any> {
   const govToken = useGovernanceToken()
   const govTokenWETHPrice = useTokenWethPrice(govToken)
 
-  const BUSDTicker = chainId !== ChainId.MTV_MAINNET ? 'BUSD' : 'BUSD'
+  const BUSDTicker = chainId !== ChainId.MTV_MAINNET ? 'tUSDC' : 'tUSDC'
   const BUSD: Token | undefined = getToken(chainId, BUSDTicker)
   const BUSDWETHPrice = useTokenWethPrice(BUSD)
 
   const USDCTicker = blockchain === Blockchain.MTV ? 'tUSDC' : 'tUSDC'
   const USDC: Token | undefined = getToken(chainId, USDCTicker)
   const USDCWETHPrice = useTokenWethPrice(USDC)
-
-  // Harmony specific tokens
-  const bscBUSD: Token | undefined = blockchain === Blockchain.MTV ? getToken(chainId, 'bscBUSD') : undefined
-  const bscBUSDWETHPrice = useTokenWethPrice(bscBUSD)
 
   const bridgedETH: Token | undefined = Blockchain.MTV ? getToken(chainId, 'tETH') : undefined
   const bridgedETHWETHPrice = useTokenWethPrice(bridgedETH)
@@ -36,7 +32,6 @@ export default function useTokensWithWethPrices(): Record<string, any> {
       govToken: { token: govToken, price: govTokenWETHPrice },
       BUSD: { token: BUSD, price: BUSDWETHPrice },
       USDC: { token: USDC, price: USDCWETHPrice },
-      bscBUSD: { token: bscBUSD, price: bscBUSDWETHPrice },
       bridgedETH: { token: bridgedETH, price: bridgedETHWETHPrice }
     }
   }, [
@@ -49,8 +44,6 @@ export default function useTokensWithWethPrices(): Record<string, any> {
     BUSDWETHPrice,
     USDC,
     USDCWETHPrice,
-    bscBUSD,
-    bscBUSDWETHPrice,
     bridgedETH,
     bridgedETHWETHPrice
   ])
