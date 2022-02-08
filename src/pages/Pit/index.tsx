@@ -15,7 +15,7 @@ import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { CountUp } from 'use-count-up'
 import usePrevious from '../../hooks/usePrevious'
-import { PIT, PIT_SETTINGS, ZERO_ADDRESS } from '../../constants'
+import { PIT, ZERO_ADDRESS } from '../../constants'
 import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken'
 import { PIT_INTERFACE } from '../../constants/abis/pit'
 import useGovernanceToken from 'hooks/useGovernanceToken'
@@ -28,6 +28,7 @@ import WithdrawFeeTimer from '../../components/Pit/WithdrawFeeTimer'
 import { Text } from 'rebass'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import useBUSDPrice from '../../hooks/useBUSDPrice'
+import Loader from '../../components/Loader'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
@@ -100,7 +101,6 @@ export default function Pit({
   const withdrawalFeePeriod = '7200' // 2 hours
   const pit = chainId ? PIT[chainId] : undefined
   const pitContract = usePitContract()
-  const pitSettings = chainId ? PIT_SETTINGS[chainId] : undefined
   const pitBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, pit, 'balanceOf', PIT_INTERFACE)
   const pitTokenBalance = useSingleCallResult(pitContract, 'balanceOfThis')?.result?.[0]
   const userInfo = useSingleCallResult(pitContract, 'userInfo', [account ? account : ZERO_ADDRESS])
@@ -161,36 +161,52 @@ export default function Pit({
               </AutoRow>
               <AutoRow justify="space-between">
                 <AutoColumn>
-                  <Text fontWeight={200} fontSize={11}>
+                  <Text fontWeight={300} fontSize={13}>
                     TVL
                   </Text>
-                  <Text fontWeight={300} fontSize={18}>
-                    ${pitTVL.toFixed(2)}
-                  </Text>
+                  {pitTokenBalance && govTokenPrice ? (
+                    <Text fontWeight={500} fontSize={18}>
+                      ${pitTVL.toFixed(2)}
+                    </Text>
+                  ) : (
+                    <Loader />
+                  )}
                 </AutoColumn>
                 <AutoColumn>
-                  <Text fontWeight={200} fontSize={11}>
+                  <Text fontWeight={300} fontSize={13}>
                     Ratio
                   </Text>
-                  <Text fontWeight={300} fontSize={18}>
-                    {govTokenPitTokenRatio ? govTokenPitTokenRatio.toFixed(5) : '1.00000'}
-                  </Text>
+                  {govTokenPitTokenRatio ? (
+                    <Text fontWeight={500} fontSize={18}>
+                      {govTokenPitTokenRatio.toFixed(5)}
+                    </Text>
+                  ) : (
+                    <Loader />
+                  )}
                 </AutoColumn>
                 <AutoColumn>
-                  <Text fontWeight={200} fontSize={11}>
+                  <Text fontWeight={300} fontSize={13}>
                     Daily
                   </Text>
-                  <Text fontWeight={300} fontSize={18}>
-                    {apy.apyDay?.toFixed(3)}%
-                  </Text>
+                  {apy && pitTokenBalance ? (
+                    <Text fontWeight={500} fontSize={18}>
+                      {apy.apyDay?.toFixed(3)}%
+                    </Text>
+                  ) : (
+                    <Loader />
+                  )}
                 </AutoColumn>
                 <AutoColumn>
-                  <Text fontWeight={200} fontSize={11}>
+                  <Text fontWeight={300} fontSize={13}>
                     Yearly
                   </Text>
-                  <Text fontWeight={300} fontSize={18}>
-                    {apy.apy?.toPrecision(4)}%
-                  </Text>
+                  {apy && pitTokenBalance ? (
+                    <Text fontWeight={500} fontSize={18}>
+                      {apy.apy?.toPrecision(4)}%
+                    </Text>
+                  ) : (
+                    <Loader />
+                  )}
                   <RowBetween />
                 </AutoColumn>
                 <AutoColumn>
@@ -199,8 +215,8 @@ export default function Pit({
                       'xIZA has a 0.2% unstaking fee if withdrawn within 2h. All fees are distributed to xIZA holders.'
                     }
                   >
-                    <Text fontWeight={200} fontSize={11}>
-                      Withdrawal Fee Duration
+                    <Text fontWeight={300} fontSize={13}>
+                      Withdraw Fee Until
                     </Text>
                   </MouseoverTooltip>
                   {secondsRemaining ? (
@@ -218,12 +234,6 @@ export default function Pit({
               <RowBetween>
                 <div>
                   <TYPE.black>x{govToken?.symbol} Balance</TYPE.black>
-                  {account && (!adjustedPitBalance || adjustedPitBalance?.equalTo('0')) && (
-                    <TYPE.italic>
-                      You have {govTokenBalance?.toFixed(2, { groupSeparator: ',' })} {govToken?.symbol} tokens
-                      available to Stake.
-                    </TYPE.italic>
-                  )}
                 </div>
               </RowBetween>
               <RowBetween style={{ alignItems: 'baseline' }}>
@@ -231,7 +241,7 @@ export default function Pit({
                   <CountUp
                     key={countUpAmount}
                     isCounting
-                    decimalPlaces={4}
+                    decimalPlaces={3}
                     start={parseFloat(countUpAmountPrevious)}
                     end={parseFloat(countUpAmount)}
                     thousandsSeparator={','}
@@ -239,14 +249,39 @@ export default function Pit({
                   />
                 </TYPE.largeHeader>
               </RowBetween>
+              {account && adjustedPitBalance && (
+                <RowBetween>
+                  <TYPE.italic15>
+                    ≈{' '}
+                    <b>
+                      {adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })} {govToken?.symbol}
+                    </b>
+                  </TYPE.italic15>
+                </RowBetween>
+              )}
+              {account && adjustedPitBalance && govTokenPrice && (
+                <RowBetween>
+                  <TYPE.italic15>
+                    ≈{' $'}
+                    <b>
+                      {govTokenPrice
+                        ? adjustedPitBalance?.multiply(govTokenPrice?.raw).toFixed(2, { groupSeparator: ',' })
+                        : '0'}{' '}
+                    </b>
+                  </TYPE.italic15>
+                </RowBetween>
+              )}
             </AutoColumn>
           </StyledBottomCard>
         </BottomSection>
 
         {account && adjustedPitBalance && adjustedPitBalance?.greaterThan('0') && (
           <TYPE.main>
-            You have {adjustedPitBalance?.toFixed(2, { groupSeparator: ',' })} {govToken?.symbol} tokens staked in
-            the&nbsp;{pitSettings?.name}.
+            You have{' '}
+            <b>
+              {govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'} {govToken?.symbol}
+            </b>{' '}
+            available to Stake.
           </TYPE.main>
         )}
 

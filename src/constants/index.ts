@@ -14,13 +14,13 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 export const SOCKS_TESTNET_ADDRESS = '0x65770b5283117639760beA3F867b69b3697a91dd'
 
 export const ROUTER_ADDRESSES: { [chainId in ChainId]: string } = {
-  [ChainId.MTV_MAINNET]: '0x0eCC2630F635E3f9731c4732948B69033eCe9678'
+  [ChainId.MTV_MAINNET]: '0xab9eD095542E6F4d38c389f59B385E9CEdD473B9'
 }
 
 export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
   [ChainId.MTV_MAINNET]: new Token(
     ChainId.MTV_MAINNET,
-    '0x035Dd65CDf6b77741Cc1D7d033d3e07c9B5558dD',
+    '0xD0D6BcC9646192e18Ff7Da85aa0480142cc4E1aD',
     18,
     'IZA',
     'IZA Token'
@@ -28,17 +28,17 @@ export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
 }
 
 export const MASTER_BREEDER: { [chainId in ChainId]: string } = {
-  [ChainId.MTV_MAINNET]: '0x9d50Af80F76188774b2E7380B29c702df7032aE3'
+  [ChainId.MTV_MAINNET]: '0xeF8979C3b30D9a352436f7CaBa9653e1AB3671ED'
 }
 
 export const PIT_BREEDER: { [chainId in ChainId]: string } = {
-  [ChainId.MTV_MAINNET]: '0xa4980a43E5E33a5E3b67e25F02Fb3d4309de5e02'
+  [ChainId.MTV_MAINNET]: '0x2cd5F68179998e17F576b44ab18Be8c75b5aaAE7'
 }
 
 export const PIT: { [chainId in ChainId]: Token } = {
   [ChainId.MTV_MAINNET]: new Token(
     ChainId.MTV_MAINNET,
-    '0xd9c29b7b88E4Dd1F01580D1E3115270d7045F47B',
+    '0x1BC50a63F7168D28C8DF77781AB378365d9e38b7',
     18,
     'xIZA',
     'Staked IZA'
@@ -50,7 +50,7 @@ export const PIT_SETTINGS: { [chainId in ChainId]: Record<string, string> } = {
 }
 
 export const WEB_INTERFACES: { [chainId in ChainId]: string[] } = {
-  [ChainId.MTV_MAINNET]: ['swap.farmersonly.fi', 'foxswap.one', 'foxswap.fi']
+  [ChainId.MTV_MAINNET]: ['amaterasu.finance', 'swap.amaterasu.finance']
 }
 
 export { PRELOADED_PROPOSALS } from './proposals'

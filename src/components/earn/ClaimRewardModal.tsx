@@ -13,6 +13,7 @@ import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { calculateGasMargin } from '../../utils'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
+import usePitToken from '../../hooks/usePitToken'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -30,6 +31,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
   const { account } = useActiveWeb3React()
 
   const govToken = useGovernanceToken()
+  const pitToken = usePitToken()
 
   // monitor call to help UI loading state
   const addTransaction = useTransactionAdder()
@@ -45,6 +47,9 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
   }
 
   const masterBreeder = useMasterBreederContract()
+  const summary = autostake
+    ? `Autostake ${govToken?.symbol} rewards into ${pitToken?.symbol}`
+    : `Claim accumulated ${govToken?.symbol} rewards`
 
   async function onClaimReward() {
     if (masterBreeder && stakingInfo?.stakedAmount) {
@@ -58,7 +63,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
         })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Claim accumulated ${govToken?.symbol} rewards`
+            summary: summary
           })
           setHash(response.hash)
         })
@@ -97,7 +102,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
             </AutoColumn>
           )}
           <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onClaimReward}>
-            {error ?? 'Claim'} {autostake && ' + Stake'}
+            {error ?? 'Claim'} {autostake && ' + AutoStake into xIZA'}
           </ButtonError>
         </ContentWrapper>
       )}

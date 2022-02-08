@@ -374,6 +374,9 @@ export const TYPE = {
   italic(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={12} fontStyle={'italic'} color={'text2'} {...props} />
   },
+  italic15(props: TextProps) {
+    return <TextWrapper fontWeight={500} fontSize={15} fontStyle={'italic'} color={'text2'} {...props} />
+  },
   error({ error, ...props }: { error: boolean } & TextProps) {
     return <TextWrapper fontWeight={500} color={error ? 'red1' : 'text2'} {...props} />
   }
