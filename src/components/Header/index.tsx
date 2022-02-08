@@ -116,10 +116,18 @@ const HeaderLinks = styled(Row)`
 `
 
 const LogoImage = styled('img')`
-  width: 430px;
-  height: 100px;
+  width: 306px;
+  height: 72px;
   padding: 0.25rem;
   cursor: pointer;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    width: 306px;
+    height: 72px;
+`};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     width: 0px;
+    height: 0px;
+  `}
 `
 
 const LogoIcon = styled('img')`
