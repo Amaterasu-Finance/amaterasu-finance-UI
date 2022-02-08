@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 import styled from 'styled-components'
@@ -15,6 +15,7 @@ import useBUSDPrice from '../../hooks/useBUSDPrice'
 //import useUSDCPrice from '../../utils/useUSDCPrice'
 //import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
+import ClaimRewardModal from './ClaimRewardModal'
 
 const StatContainer = styled.div`
   display: flex;
@@ -83,6 +84,8 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
   const govToken = useGovernanceToken()
   const govTokenPrice = useBUSDPrice(govToken)
 
+  const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
+
   const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
   const poolSharePercentage = stakingInfo.poolShare.multiply(JSBI.BigInt(100))
 
@@ -98,8 +101,8 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
       <CardNoise />
 
       <TopSection>
-        <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={30} />
-        <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '8px' }}>
+        <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={40} />
+        <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '40px' }}>
           {currency0.symbol}-{currency1.symbol}
         </TYPE.white>
 
@@ -111,6 +114,12 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
       </TopSection>
 
       <StatContainer>
+        <ClaimRewardModal
+          isOpen={showClaimRewardModal}
+          onDismiss={() => setShowClaimRewardModal(false)}
+          stakingInfo={stakingInfo}
+          autostake={true}
+        />
         <RowBetween>
           <TYPE.white> APR*</TYPE.white>
           <TYPE.white fontWeight={500}>
@@ -155,6 +164,16 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
             <TYPE.black color={'white'} fontWeight={500}>
               <span>Your Total Rewards</span>
             </TYPE.black>
+            {stakingInfo && stakingInfo.earnedAmount.greaterThan('0') && (
+              <ButtonPrimary
+                padding="8px"
+                borderRadius="8px"
+                width="170px"
+                onClick={() => setShowClaimRewardModal(true)}
+              >
+                Claim + AutoStake
+              </ButtonPrimary>
+            )}
 
             <TYPE.black style={{ textAlign: 'right' }} color={'white'} fontWeight={500}>
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>

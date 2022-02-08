@@ -23,9 +23,10 @@ interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
   stakingInfo: StakingInfo
+  autostake: boolean
 }
 
-export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: StakingModalProps) {
+export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autostake }: StakingModalProps) {
   const { account } = useActiveWeb3React()
 
   const govToken = useGovernanceToken()
@@ -49,10 +50,10 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: Sta
     if (masterBreeder && stakingInfo?.stakedAmount) {
       setAttempting(true)
 
-      const estimatedGas = await masterBreeder.estimateGas.claimReward(stakingInfo.pid)
+      const estimatedGas = await masterBreeder.estimateGas.claimReward(stakingInfo.pid, autostake)
 
       await masterBreeder
-        .claimReward(stakingInfo.pid, {
+        .claimReward(stakingInfo.pid, autostake, {
           gasLimit: calculateGasMargin(estimatedGas)
         })
         .then((response: TransactionResponse) => {
@@ -84,7 +85,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: Sta
       {!attempting && !hash && !failed && (
         <ContentWrapper gap="lg">
           <RowBetween>
-            <TYPE.mediumHeader>Claim</TYPE.mediumHeader>
+            <TYPE.mediumHeader>Claim {autostake && ' + Stake'}</TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
           {stakingInfo?.earnedAmount && (
@@ -96,7 +97,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: Sta
             </AutoColumn>
           )}
           <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onClaimReward}>
-            {error ?? 'Claim'}
+            {error ?? 'Claim'} {autostake && ' + Stake'}
           </ButtonError>
         </ContentWrapper>
       )}

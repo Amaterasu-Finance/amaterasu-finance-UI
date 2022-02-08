@@ -124,6 +124,7 @@ export default function Manage({
 
   // toggle for staking modal and unstaking modal
   const [showStakingModal, setShowStakingModal] = useState(false)
+  const [autostake, setAutostake] = useState(false)
   const [showUnstakingModal, setShowUnstakingModal] = useState(false)
   const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
 
@@ -160,7 +161,7 @@ export default function Manage({
             <TYPE.body style={{ margin: 0 }}>Total Deposits</TYPE.body>
             <TYPE.body fontSize={24} fontWeight={500}>
               {stakingInfo && stakingInfo.valueOfTotalStakedAmountInUsd
-                ? `$${stakingInfo.valueOfTotalStakedAmountInUsd.toFixed(0, { groupSeparator: ',' })}`
+                ? `$${stakingInfo.valueOfTotalStakedAmountInUsd.toFixed(2, { groupSeparator: ',' })}`
                 : '-'}
             </TYPE.body>
           </AutoColumn>
@@ -171,7 +172,7 @@ export default function Manage({
             <TYPE.body fontSize={24} fontWeight={500}>
               {stakingInfo
                 ? stakingInfo.active
-                  ? `${stakingInfo.poolRewardsPerBlock.toSignificant(4, { groupSeparator: ',' })} 
+                  ? `${stakingInfo.poolRewardsPerBlock.toSignificant(5, { groupSeparator: ',' })} 
                   ${govToken?.symbol} / block`
                   : `0 ${govToken?.symbol} / block`
                 : '-'}
@@ -227,6 +228,7 @@ export default function Manage({
             isOpen={showClaimRewardModal}
             onDismiss={() => setShowClaimRewardModal(false)}
             stakingInfo={stakingInfo}
+            autostake={autostake}
           />
         </>
       )}
@@ -299,9 +301,7 @@ export default function Manage({
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '8px' }}>
                 💡
               </span>
-              The unclaimed {govToken?.symbol} amount listed above is your total rewards -
-              <br />
-              when claiming 95% will be locked and 5% will be immediately accessible.
+              The unclaimed {govToken?.symbol} amount listed above is your total rewards
             </TYPE.main>
           )}
         </>
@@ -322,6 +322,19 @@ export default function Manage({
                 onClick={() => setShowClaimRewardModal(true)}
               >
                 Claim
+              </ButtonPrimary>
+            )}
+            {stakingInfo?.earnedAmount && JSBI.notEqual(BIG_INT_ZERO, stakingInfo?.earnedAmount?.raw) && (
+              <ButtonPrimary
+                padding="8px"
+                borderRadius="8px"
+                width="160px"
+                onClick={() => {
+                  setShowClaimRewardModal(true)
+                  setAutostake(true)
+                }}
+              >
+                Claim + Stake
               </ButtonPrimary>
             )}
 

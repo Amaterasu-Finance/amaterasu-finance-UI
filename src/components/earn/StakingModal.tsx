@@ -19,7 +19,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
 import { useMasterBreederContract } from '../../hooks/useContract'
-import { ZERO_ADDRESS } from '../../constants'
+// import { ZERO_ADDRESS } from '../../constants'
 import { BlueCard } from '../Card'
 import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
@@ -46,7 +46,7 @@ interface StakingModalProps {
 }
 
 export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiquidityUnstaked }: StakingModalProps) {
-  const { library } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
 
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
@@ -75,7 +75,6 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [onDismiss])
 
   const masterBreeder = useMasterBreederContract()
-  const referral = ZERO_ADDRESS
 
   // pair contract for this token to be staked
   const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
@@ -92,10 +91,10 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
       if (approval === ApprovalState.APPROVED) {
         const formattedAmount = `0x${parsedAmount.raw.toString(16)}`
 
-        const estimatedGas = await masterBreeder.estimateGas.deposit(stakingInfo.pid, formattedAmount, referral)
+        const estimatedGas = await masterBreeder.estimateGas.deposit(stakingInfo.pid, formattedAmount, account)
 
         await masterBreeder
-          .deposit(stakingInfo.pid, formattedAmount, referral, {
+          .deposit(stakingInfo.pid, formattedAmount, account, {
             gasLimit: calculateGasMargin(estimatedGas)
           })
           .then((response: TransactionResponse) => {

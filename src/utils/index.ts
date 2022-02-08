@@ -19,7 +19,7 @@ export function isAddress(value: any): string | false {
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
-  62621: 'https://e.mtv.ac/'
+  62621: 'e.mtv.ac'
 }
 
 export function getEtherscanLink(

@@ -90,10 +90,12 @@ export default function Pool() {
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
+  // console.log('trackedTokenPairs', trackedTokenPairs)
   const tokenPairsWithLiquidityTokens = useMemo(
     () => trackedTokenPairs.map(tokens => ({ liquidityToken: toV2LiquidityToken(tokens), tokens })),
     [trackedTokenPairs]
   )
+  // console.log('tokenPairsWithLiquidityTokens', tokenPairsWithLiquidityTokens)
   const liquidityTokens = useMemo(() => tokenPairsWithLiquidityTokens.map(tpwlt => tpwlt.liquidityToken), [
     tokenPairsWithLiquidityTokens
   ])
@@ -101,6 +103,7 @@ export default function Pool() {
     account ?? undefined,
     liquidityTokens
   )
+  // console.log('v2PairsBalances', v2PairsBalances)
 
   // fetch the reserves for all V2 pools in which the user has a balance
   const liquidityTokensWithBalances = useMemo(
@@ -110,12 +113,16 @@ export default function Pool() {
       ),
     [tokenPairsWithLiquidityTokens, v2PairsBalances]
   )
+  // console.log('liquidityTokensWithBalances', liquidityTokensWithBalances)
 
   const v2Pairs = usePairs(liquidityTokensWithBalances.map(({ tokens }) => tokens))
+  // console.log('v2Pairs', v2Pairs)
   const v2IsLoading =
     fetchingV2PairBalances || v2Pairs?.length < liquidityTokensWithBalances.length || v2Pairs?.some(V2Pair => !V2Pair)
+  // console.log('v2IsLoading', v2IsLoading)
 
   const allV2PairsWithLiquidity = v2Pairs.map(([, pair]) => pair).filter((v2Pair): v2Pair is Pair => Boolean(v2Pair))
+  // console.log('allV2PairsWithLiquidity', allV2PairsWithLiquidity)
 
   const hasV1Liquidity = useUserHasLiquidityInAllTokens()
 
@@ -124,14 +131,6 @@ export default function Pool() {
   // const stakingInfosWithBalance = stakingInfo?.filter(pool => JSBI.greaterThan(pool.stakedAmount.raw, BIG_INT_ZERO))
   // const stakingPairs = usePairs(stakingInfosWithBalance?.map(stakingInfo => stakingInfo.tokens))
 
-  // remove any pairs that also are included in pairs with stake in mining pool
-  // const v2PairsWithoutStakedAmount = allV2PairsWithLiquidity.filter(v2Pair => {
-  //   return (
-  //     stakingPairs
-  //       ?.map(stakingPair => stakingPair[1])
-  //       .filter(stakingPair => stakingPair?.liquidityToken.address === v2Pair.liquidityToken.address).length === 0
-  //   )
-  // })
   const v2PairsWithoutStakedAmount = allV2PairsWithLiquidity
 
   return (

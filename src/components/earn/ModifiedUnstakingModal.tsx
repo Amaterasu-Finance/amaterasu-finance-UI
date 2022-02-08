@@ -3,25 +3,25 @@ import Modal from '../Modal'
 import { AutoColumn } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
-import { TYPE, CloseIcon, ExternalLink } from '../../theme'
+import { TYPE, CloseIcon } from '../../theme'
 import { ButtonError } from '../Button'
 import CurrencyInputPanel from '../CurrencyInputPanel'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
-import { TokenAmount, Pair, Blockchain } from '@amaterasu-fi/sdk'
-import { useActiveWeb3React } from '../../hooks'
+import { TokenAmount, Pair } from '@amaterasu-fi/sdk'
+// import { useActiveWeb3React } from '../../hooks'
 import { StakingInfo, useDerivedUnstakeInfo } from '../../state/stake/hooks'
 //import { wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
-import { ZERO_ADDRESS } from '../../constants'
+// import { ZERO_ADDRESS } from '../../constants'
 import usePlatformName from '../../hooks/usePlatformName'
 import { BlueCard } from '../Card'
 import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
 import { useMasterBreederContract } from '../../hooks/useContract'
-import useCalculateWithdrawalFee from '../../hooks/useCalculateWithdrawalFee'
-import useBlockchain from '../../hooks/useBlockchain'
+// import useCalculateWithdrawalFee from '../../hooks/useCalculateWithdrawalFee'
+// import useBlockchain from '../../hooks/useBlockchain'
 
 /*const HypotheticalRewardRate = styled.div<{ dim: boolean }>`
   display: flex;
@@ -37,18 +37,18 @@ const ContentWrapper = styled(AutoColumn)`
   padding: 1rem;
 `
 
-const Separator = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${({ theme }) => theme.bg2};
-  margin: 10px 0px;
-`
-
-const WithdrawalFee = styled.div`
-  margin: 10px 0px 0px 0px;
-  text-align: center;
-  font-size: 40px;
-`
+// const Separator = styled.div`
+//   width: 100%;
+//   height: 1px;
+//   background-color: ${({ theme }) => theme.bg2};
+//   margin: 10px 0px;
+// `
+//
+// const WithdrawalFee = styled.div`
+//   margin: 10px 0px 0px 0px;
+//   text-align: center;
+//   font-size: 40px;
+// `
 
 interface StakingModalProps {
   isOpen: boolean
@@ -57,22 +57,12 @@ interface StakingModalProps {
 }
 
 export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }: StakingModalProps) {
-  const { account } = useActiveWeb3React()
-  const blockchain = useBlockchain()
+  // const { account } = useActiveWeb3React()
+  // const blockchain = useBlockchain()
 
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
   const { parsedAmount, error } = useDerivedUnstakeInfo(typedValue, stakingInfo.stakedAmount)
-  /*const parsedAmountWrapped = wrappedCurrencyAmount(parsedAmount, chainId)
-
-  let hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
-  if (parsedAmountWrapped?.greaterThan('0')) {
-    hypotheticalRewardRate = stakingInfo.getHypotheticalRewardRate(
-      stakingInfo.stakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalStakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalRewardRate
-    )
-  }*/
 
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
@@ -88,27 +78,19 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
 
   const platformName = usePlatformName()
   const masterBreeder = useMasterBreederContract()
-  const referral = ZERO_ADDRESS
 
   // pair contract for this token to be staked
   const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
-
-  const { lastActionBlock, withdrawalFee } = useCalculateWithdrawalFee(stakingInfo.pid, account)
-
-  let feeInfoUrl = ''
-  if (blockchain == Blockchain.MTV) {
-    feeInfoUrl = 'https://docs.venomdao.org/viper/fees'
-  }
 
   async function onWithdraw() {
     if (masterBreeder && stakingInfo?.stakedAmount) {
       setAttempting(true)
 
       const formattedAmount = `0x${parsedAmount?.raw.toString(16)}`
-      const estimatedGas = await masterBreeder.estimateGas.withdraw(stakingInfo.pid, formattedAmount, referral)
+      const estimatedGas = await masterBreeder.estimateGas.withdraw(stakingInfo.pid, formattedAmount)
 
       await masterBreeder
-        .withdraw(stakingInfo.pid, formattedAmount, referral, {
+        .withdraw(stakingInfo.pid, formattedAmount, {
           gasLimit: calculateGasMargin(estimatedGas)
         })
         .then((response: TransactionResponse) => {
@@ -157,29 +139,6 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
                     <b>Important:</b> {platformName} utilizes LP withdrawal fees to disincentivize short term farming
                     and selling.
                   </TYPE.link>
-                  {feeInfoUrl && (
-                    <TYPE.link fontWeight={400} fontSize={12} color={'primaryText1'}>
-                      <ExternalLink href={feeInfoUrl}>Read more about the fees here.</ExternalLink>
-                    </TYPE.link>
-                  )}
-                  {withdrawalFee && (
-                    <>
-                      <Separator />
-                      <TYPE.link fontWeight={400} color={'primaryText1'}>
-                        <b>Your current withdrawal fee:</b>
-                        <br />
-                        <WithdrawalFee>{withdrawalFee.toSignificant(2)}%</WithdrawalFee>
-                      </TYPE.link>
-                    </>
-                  )}
-                  {lastActionBlock && (
-                    <TYPE.link fontWeight={400} fontSize={10} color={'primaryText1'}>
-                      <em>
-                        * You first deposited funds or last withdrew funds at block <b>{lastActionBlock?.toString()}</b>
-                        .
-                      </em>
-                    </TYPE.link>
-                  )}
                 </AutoColumn>
               </BlueCard>
             </ColumnCenter>

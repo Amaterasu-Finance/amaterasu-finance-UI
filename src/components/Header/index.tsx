@@ -6,7 +6,7 @@ import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { MouseoverTooltip } from '../Tooltip'
 import styled from 'styled-components'
-import HeaderLogo from 'assets/images/Amaterasu_Sun_Logo-Header_02_Mirrored.png'
+import HeaderLogo from 'assets/images/logo.png'
 import DarkIcon from 'assets/images/token-list/iza-blue.png'
 import LightIcon from 'assets/images/token-list/iza-purple.png'
 import { useActiveWeb3React } from '../../hooks'
@@ -116,8 +116,8 @@ const HeaderLinks = styled(Row)`
 `
 
 const LogoImage = styled('img')`
-  width: 344px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   padding: 0.25rem;
   cursor: pointer;
 `

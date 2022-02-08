@@ -41,6 +41,7 @@ import usePlatformName from '../hooks/usePlatformName'
 
 import { Blockchain } from '@amaterasu-fi/sdk'
 import useBlockchain from '../hooks/useBlockchain'
+import Manage from './Earn/Manage'
 // import { ExternalLink } from '../theme'
 
 const AppWrapper = styled.div`
@@ -129,6 +130,7 @@ export default function App() {
               <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
               <Route exact strict path="/migrate/v1" component={MigrateV1} />
               <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} />
+              <Route exact strict path="/staking/:currencyIdA/:currencyIdB" component={Manage} />
               {blockchain === Blockchain.ETHEREUM && <Route exact strict path="/vote/:id" component={VotePage} />}
               <Route component={RedirectPathToSwapOnly} />
             </Switch>
