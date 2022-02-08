@@ -90,7 +90,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
       {!attempting && !hash && !failed && (
         <ContentWrapper gap="lg">
           <RowBetween>
-            <TYPE.mediumHeader>Claim {autostake && ' + Stake'}</TYPE.mediumHeader>
+            <TYPE.mediumHeader>Claim {autostake && ' + AutoStake'}</TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
           {stakingInfo?.earnedAmount && (

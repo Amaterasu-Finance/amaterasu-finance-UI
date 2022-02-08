@@ -75,6 +75,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [onDismiss])
 
   const masterBreeder = useMasterBreederContract()
+  const depositFee = 0
 
   // pair contract for this token to be staked
   const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
@@ -147,17 +148,19 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
 
-          <RowBetween>
-            <ColumnCenter>
-              <BlueCard>
-                <AutoColumn gap="10px">
-                  <TYPE.link fontWeight={400} color={'primaryText1'}>
-                    <b>Important:</b> The deposit fee is now <b>0%</b>!
-                  </TYPE.link>
-                </AutoColumn>
-              </BlueCard>
-            </ColumnCenter>
-          </RowBetween>
+          {depositFee > 0 && (
+            <RowBetween>
+              <ColumnCenter>
+                <BlueCard>
+                  <AutoColumn gap="10px">
+                    <TYPE.link fontWeight={400} color={'primaryText1'}>
+                      <b>Important:</b> The deposit fee is now <b>{depositFee}%</b>!
+                    </TYPE.link>
+                  </AutoColumn>
+                </BlueCard>
+              </ColumnCenter>
+            </RowBetween>
+          )}
 
           <CurrencyInputPanel
             value={typedValue}

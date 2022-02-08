@@ -15,9 +15,9 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
 // import { ZERO_ADDRESS } from '../../constants'
-import usePlatformName from '../../hooks/usePlatformName'
-import { BlueCard } from '../Card'
-import { ColumnCenter } from '../Column'
+// import usePlatformName from '../../hooks/usePlatformName'
+// import { BlueCard } from '../Card'
+// import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
 import { useMasterBreederContract } from '../../hooks/useContract'
 // import useCalculateWithdrawalFee from '../../hooks/useCalculateWithdrawalFee'
@@ -76,7 +76,7 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
     onDismiss()
   }, [onDismiss])
 
-  const platformName = usePlatformName()
+  // const platformName = usePlatformName()
   const masterBreeder = useMasterBreederContract()
 
   // pair contract for this token to be staked
@@ -131,18 +131,18 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
 
-          <RowBetween>
-            <ColumnCenter>
-              <BlueCard>
-                <AutoColumn gap="10px">
-                  <TYPE.link fontWeight={400} color={'primaryText1'}>
-                    <b>Important:</b> {platformName} utilizes LP withdrawal fees to disincentivize short term farming
-                    and selling.
-                  </TYPE.link>
-                </AutoColumn>
-              </BlueCard>
-            </ColumnCenter>
-          </RowBetween>
+          {/*<RowBetween>*/}
+          {/*  <ColumnCenter>*/}
+          {/*    <BlueCard>*/}
+          {/*      <AutoColumn gap="10px">*/}
+          {/*        <TYPE.link fontWeight={400} color={'primaryText1'}>*/}
+          {/*          <b>Important:</b> {platformName} utilizes LP withdrawal fees to disincentivize short term farming*/}
+          {/*          and selling.*/}
+          {/*        </TYPE.link>*/}
+          {/*      </AutoColumn>*/}
+          {/*    </BlueCard>*/}
+          {/*  </ColumnCenter>*/}
+          {/*</RowBetween>*/}
 
           <CurrencyInputPanel
             value={typedValue}

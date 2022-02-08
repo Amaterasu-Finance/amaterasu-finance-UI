@@ -152,7 +152,7 @@ export default function Manage({
         <TYPE.mediumHeader style={{ margin: 0 }}>
           {currencyA?.symbol}-{currencyB?.symbol} Liquidity Mining
         </TYPE.mediumHeader>
-        <DoubleCurrencyLogo currency0={currencyA ?? undefined} currency1={currencyB ?? undefined} size={30} />
+        <DoubleCurrencyLogo currency0={currencyA ?? undefined} currency1={currencyB ?? undefined} size={40} />
       </RowBetween>
 
       <DataRow style={{ gap: '24px' }}>
@@ -267,9 +267,12 @@ export default function Manage({
                     padding="8px"
                     borderRadius="8px"
                     width="fit-content"
-                    onClick={() => setShowClaimRewardModal(true)}
+                    onClick={() => {
+                      setShowClaimRewardModal(true)
+                      setAutostake(true)
+                    }}
                   >
-                    Claim
+                    Claim + AutoStake
                   </ButtonEmpty>
                 )}
               </RowBetween>

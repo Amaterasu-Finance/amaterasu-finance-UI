@@ -339,7 +339,7 @@ export default function Header() {
             {account && userFoxBalance && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
                 {userFoxBalance?.toSignificant(4, { groupSeparator: ',' })} {govToken?.symbol} |{' '}
-                {userEthBalance?.toSignificant(4, { groupSeparator: ',' })} ONE
+                {userEthBalance?.toSignificant(4, { groupSeparator: ',' })} MTV
               </BalanceText>
             ) : null}
             <Web3Status />
