@@ -335,7 +335,11 @@ export default function Header() {
               <CardNoise />
             </UNIWrapper>
           )}
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+          <AccountElement
+            onClick={() => setShowUniBalanceModal(true)}
+            active={!!account}
+            style={{ pointerEvents: 'auto' }}
+          >
             {account && userFoxBalance && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
                 {userFoxBalance?.toSignificant(4, { groupSeparator: ',' })} {govToken?.symbol} |{' '}

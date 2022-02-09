@@ -31,6 +31,8 @@ export interface StakingInfo {
   baseToken: Token | undefined
   // the allocation point for the given pool
   allocPoint: JSBI
+  // deposit fee in bps
+  depositFee: number | undefined
   // start block for all the rewards pools
   startBlock: number
   // base rewards per block
@@ -140,10 +142,11 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
           totalAllocPoint
         )
       ) {
-        // poolInfo: lpToken address, allocPoint uint256, lastRewardBlock uint256, accGovTokenPerShare uint256
+        // poolInfo: lpToken address, allocPoint uint256, lastRewardBlock uint256, accGovTokenPerShare uint256, depositFee
         const poolInfoResult = poolInfo.result
         const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
         const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])
+        const depositFee = poolInfoResult && poolInfoResult[4] / 100
         const active = poolInfoResult && JSBI.GT(JSBI.BigInt(allocPoint), 0) ? true : false
         const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)
 
@@ -191,6 +194,7 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
         const stakingInfo = {
           pid: pid,
           allocPoint: allocPoint,
+          depositFee: depositFee,
           tokens: tokens,
           baseToken: baseToken,
           startBlock: startsAtBlock,

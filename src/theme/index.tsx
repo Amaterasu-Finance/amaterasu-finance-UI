@@ -85,15 +85,15 @@ export function defaultColors(darkMode: boolean): Colors {
     yellow2: '#F3841E',
     blue1: '#bb86fc',
 
+    // dont wanna forget these blue yet
+    // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
+    // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
+
     // Added:
     tokenButtonGradientStart: '#8458b3',
     tokenButtonGradientEnd: '#d0bdf4',
     customCardGradientStart: '#a0d2eb',
     customCardGradientEnd: '#8458b3'
-
-    // dont wanna forget these blue yet
-    // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
-    // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
   }
 }
 

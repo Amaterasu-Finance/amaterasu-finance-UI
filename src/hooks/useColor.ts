@@ -49,7 +49,7 @@ export function useColor(token?: Token) {
   const [color, setColor] = useState('#bb86fc')
 
   useLayoutEffect(() => {
-    let stale = false
+    let stale = true
 
     if (token) {
       getColorFromToken(token).then(tokenColor => {

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Send, Code, MessageSquare, PieChart } from 'react-feather'
+import { Send, Code, MessageSquare, Book, Twitter } from 'react-feather'
 import styled from 'styled-components'
 import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
 import { useActiveWeb3React } from '../../hooks'
@@ -89,7 +89,7 @@ const MenuItem = styled(ExternalLink)`
   }
 `
 
-const CODE_LINK = 'https://github.com/FarmersOnlyFi'
+const CODE_LINK = 'https://github.com/Amaterasu-Finance'
 
 export default function Menu() {
   const { account } = useActiveWeb3React()
@@ -110,17 +110,21 @@ export default function Menu() {
 
       {open && (
         <MenuFlyout>
-          <MenuItem id="link" href="https://app.farmersonly.fi">
-            <PieChart size={14} />
-            Analytics
+          <MenuItem id="link" href="https://docs.amaterasu.finance/overview/introduction">
+            <Book size={14} />
+            Docs
           </MenuItem>
-          <MenuItem id="link" href="https://discord.gg/tEDFEgHSJD">
+          <MenuItem id="link" href="https://discord.com/invite/UvV6bER3gz">
             <MessageSquare size={14} />
             Discord
           </MenuItem>
-          <MenuItem id="link" href="https://t.me/farmersonlyfi">
+          <MenuItem id="link" href="https://t.me/amaterasufinance">
             <Send size={14} />
             Telegram
+          </MenuItem>
+          <MenuItem id="link" href="https://twitter.com/amaterasufi?s=21">
+            <Twitter size={14} />
+            Twitter
           </MenuItem>
           <MenuItem id="link" href={CODE_LINK}>
             <Code size={14} />

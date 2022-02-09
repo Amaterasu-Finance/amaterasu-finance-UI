@@ -1,17 +1,5 @@
-# FoxSwap Interface
+# Amaterasu Interface
 
-[![Lint](https://github.com/Uniswap/uniswap-interface/workflows/Lint/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions?query=workflow%3ALint)
-[![Tests](https://github.com/Uniswap/uniswap-interface/workflows/Tests/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions?query=workflow%3ATests)
-[![Styled With Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
-
-- Swap: [foxswap.one](https://foxswap.one)
-- Main: [app.farmersonly.fi](https://app.farmersonly.fi)
-- Docs: [docs.farmersonly.fi](https://docs.farmersonly.fi)
-- Twitter: [@FarmersOnlyFi](https://twitter.com/FarmersOnlyFi)
-- Reddit: [/r/farmersonlyfi](https://www.reddit.com/r/farmersonlyfi)
-- Email: [peechz@farmersonly.fi](mailto:peechz@farmersonly.fi)
-- Discord: [FarmersOnlyFi](https://discord.gg/9dB8NjRR9V)
-- Whitepaper: [Link](https://docs.farmersonly.fi)
 
 ### Install Dependencies
 
