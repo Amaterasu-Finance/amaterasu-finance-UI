@@ -112,7 +112,7 @@ const HeaderLinks = styled(Row)`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
 `};
-  padding: 0.68rem;
+  padding: 0.61rem;
 `
 
 const LogoImage = styled('img')`

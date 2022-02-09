@@ -82,7 +82,7 @@ export const ButtonPrimary = styled(Base)`
     cursor: auto;
     box-shadow: none;
     outline: none;
-    opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
+    opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.4' : '0.4')};
   }
 `
 
@@ -103,7 +103,7 @@ export const ButtonLight = styled(Base)`
     background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
   }
   :disabled {
-    opacity: 0.4;
+    opacity: 40%;
     :hover {
       cursor: auto;
       background-color: ${({ theme }) => theme.primary5};
