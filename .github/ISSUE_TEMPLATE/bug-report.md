@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Describe an issue in the FoxSwap Interface
+about: Describe an issue
 title: ''
 labels: bug
 assignees: ''

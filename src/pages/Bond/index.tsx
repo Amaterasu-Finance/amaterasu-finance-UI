@@ -2,13 +2,14 @@ import styled from 'styled-components'
 import { AutoColumn } from '../../components/Column'
 import React, { useState } from 'react'
 import BondingModal from '../../components/Bond/BondingModal'
-import { Token, TokenAmount, ChainId } from '@amaterasu-fi/sdk'
+import { TokenAmount } from '@amaterasu-fi/sdk'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { CardSection, DataCard } from '../../components/earn/styled'
 import { AutoRow, RowBetween } from '../../components/Row'
 import { Text } from 'rebass'
 import { ButtonMint } from '../../components/Button'
+import useGovernanceToken from '../../hooks/useGovernanceToken'
 // import { BONDS } from '../../constants/bond'
 // import { useBondingContract } from '../../hooks/useContract'
 // import {PIT} from "../../constants";
@@ -43,13 +44,7 @@ export default function Bond() {
   // const [showInput, setShowInput] = useState(false)
   // const [typedValue, setTypedValue] = useState('')
 
-  const inputCurrency = new Token(
-    ChainId.MTV_MAINNET,
-    '0x0159ed2e06ddcd46a25e74eb8e159ce666b28687',
-    18,
-    'FOX',
-    'FOX Token'
-  )
+  const inputCurrency = useGovernanceToken()
 
   const tokenBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, inputCurrency)
   // const data = useBondingContract()
@@ -58,12 +53,14 @@ export default function Bond() {
   return (
     <PageWrapper gap="lg">
       <>
-        <BondingModal
-          isOpen={showBondingModal}
-          onDismiss={() => setShowBondingModal(false)}
-          bondingToken={inputCurrency}
-          userLiquidityUnstaked={tokenBalance}
-        />
+        {inputCurrency && (
+          <BondingModal
+            isOpen={showBondingModal}
+            onDismiss={() => setShowBondingModal(false)}
+            bondingToken={inputCurrency}
+            userLiquidityUnstaked={tokenBalance}
+          />
+        )}
       </>
       {!isActive ? (
         <MintCard>
@@ -80,7 +77,7 @@ export default function Bond() {
                   Token
                 </Text>
                 <Text fontWeight={300} fontSize={18}>
-                  FOX/UST
+                  IZA/USDC
                 </Text>
               </AutoColumn>
               <AutoColumn>

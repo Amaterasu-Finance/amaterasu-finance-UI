@@ -194,7 +194,7 @@ export default function BondingModal({ isOpen, onDismiss, bondingToken, userLiqu
               </RowBetween>
               <RowBetween>
                 <Text>You Will Get:</Text>
-                <Text>0 FOX</Text>
+                <Text>0 IZA</Text>
               </RowBetween>
               <RowBetween>
                 <Text>Max Purchase Volume</Text>
