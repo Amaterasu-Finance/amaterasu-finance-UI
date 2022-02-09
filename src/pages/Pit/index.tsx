@@ -166,7 +166,7 @@ export default function Pit({
                   </Text>
                   {pitTokenBalance && govTokenPrice ? (
                     <Text fontWeight={500} fontSize={18}>
-                      ${pitTVL.toFixed(2)}
+                      ${pitTVL.toLocaleString()}
                     </Text>
                   ) : (
                     <Loader />
@@ -190,7 +190,7 @@ export default function Pit({
                   </Text>
                   {apy && pitTokenBalance ? (
                     <Text fontWeight={500} fontSize={18}>
-                      {apy.apyDay?.toFixed(3)}%
+                      {apy.apyDay?.toFixed(4)}%
                     </Text>
                   ) : (
                     <Loader />
@@ -202,7 +202,7 @@ export default function Pit({
                   </Text>
                   {apy && pitTokenBalance ? (
                     <Text fontWeight={500} fontSize={18}>
-                      {apy.apy?.toPrecision(4)}%
+                      {apy.apy > 1e10 ? '∞' : apy.apy?.toLocaleString()}%
                     </Text>
                   ) : (
                     <Loader />

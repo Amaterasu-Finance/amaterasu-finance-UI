@@ -1,23 +1,21 @@
 import { useMemo } from 'react'
-import { TokenAmount, Fraction } from '@amaterasu-fi/sdk'
-import { useTokenBalance } from '../state/wallet/hooks'
+import { Fraction, TokenAmount } from '@amaterasu-fi/sdk'
 import useBUSDPrice from './useBUSDPrice'
 import usePitToken from './usePitToken'
-import { GOVERNANCE_TOKEN_INTERFACE } from '../constants/abis/governanceToken'
 import useGovernanceToken from 'hooks/useGovernanceToken'
+import { usePitContract } from './useContract'
+import { useSingleCallResult } from '../state/multicall/hooks'
 
 export default function usePitTVL(): Fraction | undefined {
   const govToken = useGovernanceToken()
   const govTokenBusdPrice = useBUSDPrice(govToken)
   const pit = usePitToken()
-  const pitGovTokenBalance: TokenAmount | undefined = useTokenBalance(
-    pit && pit.address,
-    govToken,
-    'balanceOf',
-    GOVERNANCE_TOKEN_INTERFACE
-  )
+
+  const pitContract = usePitContract()
+  const pitGovBalance = useSingleCallResult(pitContract, 'balanceOfThis')?.result?.[0]
+  const pitGovTokenBalance = govToken && new TokenAmount(govToken, pitGovBalance ?? '0')
 
   return useMemo(() => {
-    return govTokenBusdPrice ? pitGovTokenBalance?.multiply(govTokenBusdPrice?.raw) : undefined
-  }, [govToken, govTokenBusdPrice, pit, pitGovTokenBalance])
+    return govTokenBusdPrice && pitGovTokenBalance ? pitGovTokenBalance?.multiply(govTokenBusdPrice?.raw) : undefined
+  }, [govToken, govTokenBusdPrice, pit, pitGovBalance])
 }
