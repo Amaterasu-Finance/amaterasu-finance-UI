@@ -75,7 +75,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [onDismiss])
 
   const masterBreeder = useMasterBreederContract()
-  const depositFee = 0
+  const depositFee = stakingInfo.depositFee
 
   // pair contract for this token to be staked
   const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
@@ -148,13 +148,16 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
 
-          {depositFee > 0 && (
+          {depositFee && depositFee > 0 && (
             <RowBetween>
               <ColumnCenter>
                 <BlueCard>
                   <AutoColumn gap="10px">
-                    <TYPE.link fontWeight={400} color={'primaryText1'}>
-                      <b>Important:</b> The deposit fee is now <b>{depositFee}%</b>!
+                    <TYPE.link fontWeight={400} color={'primaryText1'} textAlign="center">
+                      📢 <b>Notice:</b> This pool has a <b>{depositFee.toFixed(1)}%</b> deposit fee
+                      <br />
+                      <br />
+                      Deposit fees are used to buy and burn <b>$IZA!</b>
                     </TYPE.link>
                   </AutoColumn>
                 </BlueCard>
