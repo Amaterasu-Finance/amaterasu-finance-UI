@@ -14,8 +14,8 @@ export const STAKING_REWARDS_INFO: {
     { pid: 1, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'IZA/WMTV') },
     { pid: 2, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'IZA/tUSDC') },
     { pid: 3, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'WMTV/tUSDC') },
-    { pid: 4, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tETH') },
-    { pid: 5, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tMIM') },
+    { pid: 4, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tMIM') },
+    { pid: 5, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tETH') },
     { pid: 6, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tFTM') },
     { pid: 7, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'tUSDC/tONE') }
   ]
