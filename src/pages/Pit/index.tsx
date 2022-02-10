@@ -47,7 +47,7 @@ const BottomSection = styled(AutoColumn)`
 `
 
 const StyledBottomCard = styled(DataCard)<{ dim: any }>`
-  background: ${({ theme }) => theme.bg3};
+  background: linear-gradient(60deg, #ff6600 50%, #000000 100%);
   opacity: ${({ dim }) => (dim ? 0.4 : 1)};
   margin-top: -40px;
   padding: 0 1.25rem 1rem 1.25rem;
@@ -56,7 +56,7 @@ const StyledBottomCard = styled(DataCard)<{ dim: any }>`
 `
 
 const CustomCard = styled(DataCard)`
-  background: linear-gradient(60deg, #bb86fc 0%, #6200ee 100%);
+  background: linear-gradient(50deg, #ffcc00 0%, #ff6600 100%);
   overflow: hidden;
   padding: 0.5rem;
   margin-bottom: 25px;

@@ -4,7 +4,7 @@ import { RowBetween } from '../Row'
 import styled from 'styled-components'
 import { TYPE, StyledInternalLink } from '../../theme'
 import DoubleCurrencyLogo from '../DoubleLogo'
-import { JSBI } from '@amaterasu-fi/sdk'
+// import { JSBI } from '@amaterasu-fi/sdk'
 import { ButtonPrimary } from '../Button'
 import { StakingInfo } from '../../state/stake/hooks'
 import { useColor } from '../../hooks/useColor'
@@ -87,7 +87,6 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
   const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
 
   const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
-  const poolSharePercentage = stakingInfo.poolShare.multiply(JSBI.BigInt(100))
 
   // get the color of the token
   const token0 = stakingInfo.tokens[0]
@@ -145,10 +144,6 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
                 : '-'}
             </b>
           </TYPE.white>
-        </RowBetween>
-        <RowBetween>
-          <TYPE.white> Pool reward allocation </TYPE.white>
-          <TYPE.white>{poolSharePercentage ? `${poolSharePercentage.toSignificant(4)}%` : '-'}</TYPE.white>
         </RowBetween>
         <RowBetween>
           <TYPE.white> Emission rate </TYPE.white>
