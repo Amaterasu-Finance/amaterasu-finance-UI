@@ -40,7 +40,6 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0 1rem 0 1rem;
   z-index: 2;
   text-align: center;

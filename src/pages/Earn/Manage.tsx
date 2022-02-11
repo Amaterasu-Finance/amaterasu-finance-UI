@@ -73,7 +73,7 @@ const PoolData = styled(DataCard)`
 `
 
 const VoteCard = styled(DataCard)`
-  background: radial-gradient(76.02% 75.41% at 1.84% 0%, #27ae60 0%, #000000 100%);
+  background: linear-gradient(50deg, #ffcc00 0%, #f3841e 100%);
   overflow: hidden;
 `
 

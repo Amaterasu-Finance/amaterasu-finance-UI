@@ -96,11 +96,9 @@ export function viperColors(darkMode: boolean): Colors {
 
     // Added:
     tokenButtonGradientStart: '#ffcc00',
-    tokenButtonGradientEnd: '#FF6600',
-    customCardGradientStart: '#ff6600',
-    customCardGradientEnd: '#FFCC00',
-    customStakeCardGradientStart: '#990099',
-    customStakeCardGradientEnd: '#00ccff'
+    tokenButtonGradientEnd: '#f3841e',
+    customCardGradientStart: '#f3841e',
+    customCardGradientEnd: '#FFCC00'
   }
 }
 
@@ -117,7 +115,7 @@ export function bscColors(darkMode: boolean): Colors {
     text4: darkMode ? '#565A69' : '#E5EAF5',
     text5: darkMode ? '#494D5F' : '#EDEEF2',
 
-    // backgrounds / greys
+    // backgrounds / greysF
     bg1: darkMode ? '#212429' : '#FFFFFF',
     bg2: darkMode ? '#494D5F' : '#F7F8FA',
     bg3: darkMode ? '#40444F' : '#EDEEF2',
@@ -129,7 +127,7 @@ export function bscColors(darkMode: boolean): Colors {
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
     //primary colors
-    primary1: darkMode ? '#FF6600' : '#ffad00',
+    primary1: darkMode ? '#f3841e' : '#ffad00',
     primary2: darkMode ? '#3680E7' : '#FFE08C',
     primary3: darkMode ? '#4D8FEA' : '#F2CB61',
     primary4: darkMode ? '#376bad70' : '#FFE08C',
@@ -157,12 +155,10 @@ export function bscColors(darkMode: boolean): Colors {
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
 
     // Added:
-    tokenButtonGradientStart: '#ff6600',
-    tokenButtonGradientEnd: '#ff6600',
-    customCardGradientStart: '#ff6600',
-    customCardGradientEnd: '#FFCC00',
-    customStakeCardGradientStart: '#990099',
-    customStakeCardGradientEnd: '#ff6600'
+    tokenButtonGradientStart: '#f3841e',
+    tokenButtonGradientEnd: '#f3841e',
+    customCardGradientStart: '#f3841e',
+    customCardGradientEnd: '#FFCC00'
   }
 }
 
@@ -181,8 +177,8 @@ export function harmonyColors(darkMode: boolean): Colors {
 
     // backgrounds / greys
 
-    bg1: darkMode ? '#212429' : '#FFFFFF',
-    bg2: darkMode ? '#121212' : '#F7F8FA',
+    bg1: darkMode ? '#302F40' : '#FFFFFF',
+    bg2: darkMode ? '#1F1F26' : '#F7F8FA',
     bg3: darkMode ? '#40444F' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
@@ -222,11 +218,9 @@ export function harmonyColors(darkMode: boolean): Colors {
 
     // Added:
     tokenButtonGradientStart: '#ff6600',
-    tokenButtonGradientEnd: '#ffcc00',
+    tokenButtonGradientEnd: '#F3841E',
     customCardGradientStart: '#ff6600',
-    customCardGradientEnd: '#ffcc00',
-    customStakeCardGradientStart: '#990099',
-    customStakeCardGradientEnd: '#ff6600'
+    customCardGradientEnd: '#F3841E'
   }
 }
 

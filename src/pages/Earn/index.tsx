@@ -10,7 +10,7 @@ import PoolCard from '../../components/earn/PoolCard'
 import { CustomButtonWhite } from '../../components/Button'
 import AwaitingRewards from '../../components/earn/AwaitingRewards'
 import { RowBetween } from '../../components/Row'
-import { CardSection, ExtraDataCard, CardNoise, CardBGImage } from '../../components/earn/styled'
+import { CardSection, ExtraDataCard } from '../../components/earn/styled'
 //import { Countdown } from './Countdown'
 import Loader from '../../components/Loader'
 // import ClaimAllRewardsModal from '../../components/earn/ClaimAllRewardsModal'
@@ -32,19 +32,6 @@ const TopSection = styled(AutoColumn)`
   max-width: 720px;
   width: 100%;
 `
-/*
-const ButtonWrapper = styled(AutoColumn)`
-  max-width: 150px;
-  width: 100%;
-`
-<ButtonWrapper>
-  <StyledInternalLink to={`/claimAllRewards`} style={{ width: '100%' }}>
-    <ButtonPrimary padding="8px" borderRadius="8px" >
-      Claim all rewards
-    </ButtonPrimary>
-  </StyledInternalLink>
-</ButtonWrapper>
-*/
 
 const PoolSection = styled.div`
   display: grid;
@@ -95,8 +82,6 @@ export default function Earn() {
     <PageWrapper gap="lg" justify="center">
       <TopSection gap="md">
         <ExtraDataCard>
-          <CardBGImage />
-          <CardNoise />
           <CardSection>
             <AutoColumn gap="md">
               <RowBetween>
@@ -118,8 +103,6 @@ export default function Earn() {
               )}
             </AutoColumn>
           </CardSection>
-          <CardBGImage />
-          <CardNoise />
         </ExtraDataCard>
       </TopSection>
 

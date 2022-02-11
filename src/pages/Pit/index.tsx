@@ -47,24 +47,15 @@ const BottomSection = styled(AutoColumn)`
 `
 
 const StyledBottomCard = styled(DataCard)<{ dim: any }>`
-  background: linear-gradient(
-    140deg,
-    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
-    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
-  );
   opacity: ${({ dim }) => (dim ? 0.4 : 1)};
   margin-top: -40px;
-  padding: 0 1.25rem 1rem 1.25rem;
-  padding-top: 32px;
+  padding: 1rem 1.25rem 1rem 1.25rem;
+  //padding-top: 32px;
   z-index: 1;
 `
 
 const CustomCard = styled(DataCard)`
-  background: linear-gradient(
-    140deg,
-    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
-    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
-  );
+  background: linear-gradient(50deg, #ffcc00 0%, #f3841e 100%);
   overflow: hidden;
   padding: 0.5rem;
   margin-bottom: 25px;

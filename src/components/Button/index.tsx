@@ -61,7 +61,7 @@ export const ButtonMint = styled(Base)`
 `
 
 export const ButtonPrimary = styled(Base)`
-  background: linear-gradient(60deg, #ffcc00 0%, #ff6600 100%);
+  background: linear-gradient(60deg, #ffcc00 0%, #f3841e 100%);
   border: 1px solid #ffcc00;
   color: white;
   transition: all 0.2s ease-in-out;
