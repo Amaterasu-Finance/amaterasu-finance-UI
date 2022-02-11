@@ -36,6 +36,8 @@ const mediaWidthTemplates: { [width in keyof typeof MEDIA_WIDTHS]: typeof css } 
 
 // Amaterasu colors
 // 'ff6600', 'ffcc00', 'ffff66'
+// iza blue 00ccff
+// xiza purple 990099
 
 const white = '#FFFFFF'
 const black = '#000000'
@@ -75,7 +77,7 @@ export function viperColors(darkMode: boolean): Colors {
     primaryText1: darkMode ? '#669999' : '#a0d2eb',
 
     // secondary colors
-    secondary1: darkMode ? '#FF6600' : '#ff007a',
+    secondary1: darkMode ? '#D60000' : '#ff007a',
     secondary2: darkMode ? '#17000b26' : '#F6DDE8',
     secondary3: darkMode ? '#17000b26' : '#FDEAF1',
 
@@ -96,7 +98,9 @@ export function viperColors(darkMode: boolean): Colors {
     tokenButtonGradientStart: '#ffcc00',
     tokenButtonGradientEnd: '#FF6600',
     customCardGradientStart: '#ff6600',
-    customCardGradientEnd: '#FFCC00'
+    customCardGradientEnd: '#FFCC00',
+    customStakeCardGradientStart: '#990099',
+    customStakeCardGradientEnd: '#00ccff'
   }
 }
 
@@ -154,9 +158,11 @@ export function bscColors(darkMode: boolean): Colors {
 
     // Added:
     tokenButtonGradientStart: '#ff6600',
-    tokenButtonGradientEnd: '#FF6600',
+    tokenButtonGradientEnd: '#ff6600',
     customCardGradientStart: '#ff6600',
-    customCardGradientEnd: '#FFCC00'
+    customCardGradientEnd: '#FFCC00',
+    customStakeCardGradientStart: '#990099',
+    customStakeCardGradientEnd: '#ff6600'
   }
 }
 
@@ -216,9 +222,11 @@ export function harmonyColors(darkMode: boolean): Colors {
 
     // Added:
     tokenButtonGradientStart: '#ff6600',
-    tokenButtonGradientEnd: '#ff6600',
+    tokenButtonGradientEnd: '#ffcc00',
     customCardGradientStart: '#ff6600',
-    customCardGradientEnd: '#FFCC00'
+    customCardGradientEnd: '#ffcc00',
+    customStakeCardGradientStart: '#990099',
+    customStakeCardGradientEnd: '#ff6600'
   }
 }
 

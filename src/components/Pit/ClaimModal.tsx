@@ -32,6 +32,15 @@ interface ClaimModalProps {
   onDismiss: () => void
 }
 
+const ButtonErrorPit = styled(ButtonError)`
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+  );
+  border: 1px solid #ffcc00;
+`
+
 export default function ClaimModal({ isOpen, onDismiss }: ClaimModalProps) {
   const { account, chainId } = useActiveWeb3React()
 
@@ -132,9 +141,9 @@ export default function ClaimModal({ isOpen, onDismiss }: ClaimModalProps) {
                 The purchased {govToken?.symbol} tokens will then be distributed to the {pitSettings?.name} stakers as a
                 reward.
               </TYPE.body>
-              <ButtonError disabled={!!error} error={!!error} onClick={onClaimRewards}>
+              <ButtonErrorPit disabled={!!error} error={!!error} onClick={onClaimRewards}>
                 {error ?? 'Claim'}
-              </ButtonError>
+              </ButtonErrorPit>
             </>
           )}
           {!rewardsAreClaimable && (

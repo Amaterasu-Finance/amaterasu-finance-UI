@@ -36,6 +36,24 @@ const ContentWrapper = styled(AutoColumn)`
   padding: 1rem;
 `
 
+const ButtonConfirmedPit = styled(ButtonConfirmed)`
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+  );
+  border: 1px solid #ffcc00;
+`
+
+const ButtonErrorPit = styled(ButtonError)`
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+  );
+  border: 1px solid #ffcc00;
+`
+
 interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
@@ -137,27 +155,28 @@ export default function StakingModal({ isOpen, onDismiss, stakingToken, userLiqu
             showMaxButton={!atMaxAmount}
             currency={stakingToken}
             label={''}
+            isPit={true}
             disableCurrencySelect={true}
             customBalanceText={'Available to deposit: '}
             id="stake-liquidity-token"
           />
 
           <RowBetween>
-            <ButtonConfirmed
+            <ButtonConfirmedPit
               mr="0.5rem"
               onClick={onAttemptToApprove}
               confirmed={approval === ApprovalState.APPROVED}
               disabled={approval !== ApprovalState.NOT_APPROVED}
             >
               Approve
-            </ButtonConfirmed>
-            <ButtonError
+            </ButtonConfirmedPit>
+            <ButtonErrorPit
               disabled={!!error || approval !== ApprovalState.APPROVED}
               error={!!error && !!parsedAmount}
               onClick={onStake}
             >
               {error ?? 'Deposit'}
-            </ButtonError>
+            </ButtonErrorPit>
           </RowBetween>
           <ProgressCircles steps={[approval === ApprovalState.APPROVED]} disabled={true} />
         </ContentWrapper>

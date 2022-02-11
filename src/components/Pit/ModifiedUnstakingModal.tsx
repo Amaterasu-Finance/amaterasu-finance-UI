@@ -34,6 +34,15 @@ const ContentWrapper = styled(AutoColumn)`
   padding: 1rem;
 `
 
+const ButtonErrorPit = styled(ButtonError)`
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+  );
+  border: 1px solid #ffcc00;
+`
+
 interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
@@ -125,6 +134,7 @@ export default function ModifiedStakingModal({
             showMaxButton={!atMaxAmount}
             currency={pitToken}
             label={''}
+            isPit={true}
             disableCurrencySelect={true}
             overrideSelectedCurrencyBalance={userLiquidityStaked}
             customBalanceText={'Available to withdraw: '}
@@ -132,9 +142,9 @@ export default function ModifiedStakingModal({
           />
 
           <RowBetween>
-            <ButtonError disabled={!!error} error={!!error && !!parsedAmount} onClick={onWithdraw}>
+            <ButtonErrorPit disabled={!!error} error={!!error && !!parsedAmount} onClick={onWithdraw}>
               {error ?? 'Withdraw'}
-            </ButtonError>
+            </ButtonErrorPit>
           </RowBetween>
         </ContentWrapper>
       )}
