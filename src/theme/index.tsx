@@ -226,7 +226,7 @@ export function harmonyColors(darkMode: boolean): Colors {
     customCardGradientStart: '#ff6600',
     customCardGradientEnd: '#ffcc00',
     customStakeCardGradientStart: '#990099',
-    customStakeCardGradientEnd: '#ff6600'
+    customStakeCardGradientEnd: '#ffff66'
   }
 }
 
