@@ -28,7 +28,11 @@ const CurrencySelect = styled.button<{ selected: boolean; isPit: boolean }>`
   font-weight: 500;
   background: ${({ isPit, theme }) =>
     isPit
-      ? 'linear-gradient(60deg,' + theme.customCardGradientStart + ' 20%, ' + theme.customCardGradientEnd + ' 100%)'
+      ? 'linear-gradient(60deg,' +
+        theme.customStakeCardGradientStart +
+        ' 20%, ' +
+        theme.customStakeCardGradientEnd +
+        ' 100%)'
       : 'linear-gradient(60deg, #ffcc00 0%, #ff6600 100%)'};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
   border-radius: 12px;

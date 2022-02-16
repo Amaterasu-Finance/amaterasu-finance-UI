@@ -39,8 +39,8 @@ const ContentWrapper = styled(AutoColumn)`
 const ButtonConfirmedPit = styled(ButtonConfirmed)`
   background: linear-gradient(
     60deg,
-    ${({ theme }) => theme.customCardGradientStart} 20%,
-    ${({ theme }) => theme.customCardGradientEnd} 100%
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
   );
   border: 1px solid #ffcc00;
 `
@@ -48,8 +48,8 @@ const ButtonConfirmedPit = styled(ButtonConfirmed)`
 const ButtonErrorPit = styled(ButtonError)`
   background: linear-gradient(
     60deg,
-    ${({ theme }) => theme.customCardGradientStart} 20%,
-    ${({ theme }) => theme.customCardGradientEnd} 100%
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
   );
   border: 1px solid #ffcc00;
 `

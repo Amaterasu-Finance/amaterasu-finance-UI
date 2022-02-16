@@ -9,7 +9,7 @@ import { ButtonPrimary } from '../Button'
 import { StakingInfo } from '../../state/stake/hooks'
 import { useColor } from '../../hooks/useColor'
 import { currencyId } from '../../utils/currencyId'
-import { Break } from './styled'
+import { Break, CardNoise } from './styled'
 import { unwrappedToken } from '../../utils/wrappedCurrency'
 import useBUSDPrice from '../../hooks/useBUSDPrice'
 //import useUSDCPrice from '../../utils/useUSDCPrice'
@@ -30,13 +30,26 @@ const StatContainer = styled.div`
 `};
 `
 
+// const StatContainerTop = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   flex-direction: column;
+//   gap: 12px;
+//   margin: 1rem;
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+//   display: none;
+// `};
+// `
+
 const Wrapper = styled(AutoColumn)<{ showBackground: boolean; bgColor: any }>`
   border-radius: 12px;
   width: 100%;
   overflow: hidden;
   position: relative;
   opacity: ${({ showBackground }) => (showBackground ? '1' : '1')};
-  background: ${({ theme }) => theme.bg1};
+  background: ${({ theme, bgColor, showBackground }) =>
+    `radial-gradient(91.85% 100% at 1.84% 0%, ${bgColor} 0%, ${showBackground ? theme.black : theme.bg5} 100%) `};
+  color: ${({ theme, showBackground }) => (showBackground ? theme.white : theme.text1)} !important;
 
   ${({ showBackground }) =>
     showBackground &&
@@ -84,6 +97,8 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
 
   return (
     <Wrapper showBackground={isStaking} bgColor={backgroundColor}>
+      <CardNoise />
+
       <TopSection>
         <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={40} />
         <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '40px' }}>

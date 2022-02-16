@@ -32,7 +32,7 @@ const PageWrapper = styled(AutoColumn)`
 `
 
 const VoteCard = styled(DataCard)`
-  background: linear-gradient(50deg, #ffcc00 0%, #f3841e 100%);
+  background: linear-gradient(60deg, #ffcc00 0%, #ff6600 100%);
   overflow: hidden;
 `
 
@@ -57,7 +57,7 @@ const ButtonRow = styled(RowFixed)`
 const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   width: fit-content;
   border-radius: 8px;
-  background: linear-gradient(50deg, #ffcc00 0%, #f3841e 100%);
+  background: linear-gradient(60deg, #ffcc00 0%, #ff6600 100%);
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 48%;
   `};

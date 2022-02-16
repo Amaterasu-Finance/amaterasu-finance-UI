@@ -13,6 +13,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalance, useETHBalances } from '../../state/wallet/hooks'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
 import usePitToken from '../../hooks/usePitToken'
+import { CardNoise } from '../earn/styled'
 import { TYPE } from '../../theme'
 import Menu from '../Menu'
 import Row, { RowFixed } from '../Row'
@@ -25,6 +26,7 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import GovTokenBalanceContent from './GovTokenBalanceContent'
 import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken'
+// import { BASE_CURRENCY } from '../../connectors'
 import { PIT_SETTINGS } from '../../constants'
 import useAddTokenToMetamask from '../../hooks/useAddTokenToMetamask'
 import usePitRatio from '../../hooks/usePitRatio'
@@ -38,6 +40,7 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0 1rem 0 1rem;
   z-index: 2;
   text-align: center;
@@ -329,6 +332,7 @@ export default function Header() {
                   )}
                 </TYPE.white>
               </UNIAmount>
+              <CardNoise />
             </UNIWrapper>
           )}
           <AccountElement

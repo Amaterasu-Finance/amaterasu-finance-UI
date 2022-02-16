@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { TYPE } from '../../theme'
 import { AutoRow, RowBetween } from '../../components/Row'
-import { DataCard, CardSection } from '../../components/earn/styled'
+import { DataCard, CardSection, CardBGImage, CardNoise } from '../../components/earn/styled'
 import { ButtonPrimary } from '../../components/Button'
 import StakingModal from '../../components/Pit/StakingModal'
 import ModifiedUnstakingModal from '../../components/Pit/ModifiedUnstakingModal'
@@ -47,15 +47,24 @@ const BottomSection = styled(AutoColumn)`
 `
 
 const StyledBottomCard = styled(DataCard)<{ dim: any }>`
+  background: linear-gradient(
+    140deg,
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+  );
   opacity: ${({ dim }) => (dim ? 0.4 : 1)};
   margin-top: -40px;
-  padding: 1rem 1.25rem 1rem 1.25rem;
-  //padding-top: 32px;
+  padding: 0 1.25rem 1rem 1.25rem;
+  padding-top: 32px;
   z-index: 1;
 `
 
 const CustomCard = styled(DataCard)`
-  background: linear-gradient(50deg, #ffcc00 0%, #f3841e 100%);
+  background: linear-gradient(
+    140deg,
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+  );
   overflow: hidden;
   padding: 0.5rem;
   margin-bottom: 25px;
@@ -78,6 +87,15 @@ const DataRow = styled(RowBetween)`
     flex-direction: column;
     gap: 12px;
   `};
+`
+
+const ButtonPit = styled(ButtonPrimary)`
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
+    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+  );
+  border: 1px solid #ffcc00;
 `
 
 export default function Pit({
@@ -154,6 +172,7 @@ export default function Pit({
       <TopSection gap="lg" justify="center">
         <BottomSection gap="lg" justify="center">
           <CustomCard>
+            <CardNoise />
             <CardSection gap="md">
               <AutoRow>
                 <Text>DEX Fee Sharing Vault</Text>
@@ -229,6 +248,8 @@ export default function Pit({
             </CardSection>
           </CustomCard>
           <StyledBottomCard dim={false}>
+            <CardBGImage />
+            <CardNoise />
             <AutoColumn gap="sm">
               <RowBetween>
                 <div>
@@ -286,17 +307,17 @@ export default function Pit({
 
         {account && (
           <DataRow style={{ marginBottom: '0rem' }}>
-            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={handleDepositClick}>
+            <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={handleDepositClick}>
               Deposit
-            </ButtonPrimary>
+            </ButtonPit>
 
-            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal(true)}>
+            <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal(true)}>
               Claim
-            </ButtonPrimary>
+            </ButtonPit>
 
-            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowUnstakingModal(true)}>
+            <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={() => setShowUnstakingModal(true)}>
               Withdraw
-            </ButtonPrimary>
+            </ButtonPit>
           </DataRow>
         )}
       </TopSection>
