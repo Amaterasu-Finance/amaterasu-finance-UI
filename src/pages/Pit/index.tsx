@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { TYPE } from '../../theme'
 import { AutoRow, RowBetween } from '../../components/Row'
-import { DataCard, CardSection, CardBGImage, CardNoise } from '../../components/earn/styled'
+import { DataCard, CardSection } from '../../components/earn/styled'
 import { ButtonPrimary } from '../../components/Button'
 import StakingModal from '../../components/Pit/StakingModal'
 import ModifiedUnstakingModal from '../../components/Pit/ModifiedUnstakingModal'
@@ -78,15 +78,6 @@ const DataRow = styled(RowBetween)`
     flex-direction: column;
     gap: 12px;
   `};
-`
-
-const ButtonPit = styled(ButtonPrimary)`
-  background: linear-gradient(
-    60deg,
-    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
-    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
-  );
-  border: 1px solid #ffcc00;
 `
 
 export default function Pit({
@@ -163,7 +154,6 @@ export default function Pit({
       <TopSection gap="lg" justify="center">
         <BottomSection gap="lg" justify="center">
           <CustomCard>
-            <CardNoise />
             <CardSection gap="md">
               <AutoRow>
                 <Text>DEX Fee Sharing Vault</Text>
@@ -239,8 +229,6 @@ export default function Pit({
             </CardSection>
           </CustomCard>
           <StyledBottomCard dim={false}>
-            <CardBGImage />
-            <CardNoise />
             <AutoColumn gap="sm">
               <RowBetween>
                 <div>
@@ -298,17 +286,17 @@ export default function Pit({
 
         {account && (
           <DataRow style={{ marginBottom: '0rem' }}>
-            <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={handleDepositClick}>
+            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={handleDepositClick}>
               Deposit
-            </ButtonPit>
+            </ButtonPrimary>
 
-            <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal(true)}>
+            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal(true)}>
               Claim
-            </ButtonPit>
+            </ButtonPrimary>
 
-            <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={() => setShowUnstakingModal(true)}>
+            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowUnstakingModal(true)}>
               Withdraw
-            </ButtonPit>
+            </ButtonPrimary>
           </DataRow>
         )}
       </TopSection>
