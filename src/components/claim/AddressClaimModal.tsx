@@ -15,7 +15,6 @@ import useENS from '../../hooks/useENS'
 import { useActiveWeb3React } from '../../hooks'
 import { isAddress } from 'ethers/lib/utils'
 import Confetti from '../Confetti'
-import { CardNoise, CardBGImage, CardBGImageSmaller } from '../earn/styled'
 import { useIsTransactionPending } from '../../state/transactions/hooks'
 import { TokenAmount } from '@amaterasu-fi/sdk'
 import { getEtherscanLink, shortenAddress } from '../../utils'
@@ -105,8 +104,6 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
       {!attempting && (
         <ContentWrapper gap="lg">
           <ModalUpper>
-            <CardBGImage />
-            <CardNoise />
             <CardSection gap="md">
               <RowBetween>
                 <TYPE.white fontWeight={500}>Claim {govToken?.symbol} Token</TYPE.white>
@@ -143,8 +140,6 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
       )}
       {(attempting || claimConfirmed) && (
         <ConfirmOrLoadingWrapper activeBG={true}>
-          <CardNoise />
-          <CardBGImageSmaller desaturate />
           <RowBetween>
             <div />
             <CloseIcon onClick={wrappedOnDismiss} style={{ zIndex: 99 }} stroke="black" />

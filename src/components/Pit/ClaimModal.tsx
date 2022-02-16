@@ -35,8 +35,8 @@ interface ClaimModalProps {
 const ButtonErrorPit = styled(ButtonError)`
   background: linear-gradient(
     60deg,
-    ${({ theme }) => theme.customStakeCardGradientStart} 20%,
-    ${({ theme }) => theme.customStakeCardGradientEnd} 100%
+    ${({ theme }) => theme.customCardGradientStart} 20%,
+    ${({ theme }) => theme.customCardGradientEnd} 100%
   );
   border: 1px solid #ffcc00;
 `
