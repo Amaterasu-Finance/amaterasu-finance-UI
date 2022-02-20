@@ -26,14 +26,7 @@ const CurrencySelect = styled.button<{ selected: boolean; isPit: boolean }>`
   height: 2.2rem;
   font-size: 20px;
   font-weight: 500;
-  background: ${({ isPit, theme }) =>
-    isPit
-      ? 'linear-gradient(60deg,' +
-        theme.customStakeCardGradientStart +
-        ' 20%, ' +
-        theme.customStakeCardGradientEnd +
-        ' 100%)'
-      : 'linear-gradient(60deg, #ffcc00 0%, #ff6600 100%)'};
+  background: linear-gradient(60deg, #f3841e 0%, #ff6600 100%);
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
   border-radius: 12px;
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
@@ -82,12 +75,14 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   background-color: ${({ theme }) => theme.bg2};
   z-index: 1;
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   border: 1px solid ${({ theme }) => theme.bg2};
   background-color: ${({ theme }) => theme.bg1};
 `
