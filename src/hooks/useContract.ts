@@ -15,6 +15,7 @@ import {
   GOVERNANCE_ADDRESS,
   MASTER_BREEDER,
   MERKLE_DISTRIBUTOR_ADDRESS,
+  PAYOUT_ADDRESSES,
   PIT,
   PIT_BREEDER,
   SOCKS_TESTNET_ADDRESS
@@ -30,6 +31,7 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
 import UNISOCKS_ABI from '../constants/abis/unisocks.json'
 import WETH_ABI from '../constants/abis/weth.json'
+import PAYOUT_ABI from '../constants/abis/payouts.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
 import { getContract } from '../utils'
@@ -133,6 +135,11 @@ export function useGovTokenContract(): Contract | null {
 export function usePitContract(withSignerIfPossible?: boolean): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(chainId ? PIT[chainId].address : undefined, PIT_ABI, withSignerIfPossible)
+}
+
+export function usePayoutContract(withSignerIfPossible?: boolean): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(chainId ? PAYOUT_ADDRESSES[chainId] : undefined, PAYOUT_ABI, withSignerIfPossible)
 }
 
 export function usePitBreederContract(withSignerIfPossible?: boolean): Contract | null {

@@ -17,6 +17,10 @@ export const ROUTER_ADDRESSES: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0xab9eD095542E6F4d38c389f59B385E9CEdD473B9'
 }
 
+export const PAYOUT_ADDRESSES: { [chainId in ChainId]: string } = {
+  [ChainId.MTV_MAINNET]: '0x41705A23De7517D931D1967c13B5696a71279ff1'
+}
+
 export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
   [ChainId.MTV_MAINNET]: new Token(
     ChainId.MTV_MAINNET,

@@ -363,9 +363,7 @@ export default function WalletModal({
               {blockchain === Blockchain.MTV && (
                 <>
                   <span>New to MultiVAC? &nbsp;</span>{' '}
-                  <ExternalLink href="https://docs.harmony.one/home/network/wallets/browser-extensions-wallets/metamask-wallet">
-                    Learn more about wallets
-                  </ExternalLink>
+                  <ExternalLink href="https://mtv.ac/">Learn more about wallets</ExternalLink>
                 </>
               )}
             </Blurb>

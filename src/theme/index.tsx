@@ -193,7 +193,7 @@ export function harmonyColors(darkMode: boolean): Colors {
 
     //primary colors
 
-    primary1: darkMode ? '#FFFFFF' : '#6200ee',
+    primary1: darkMode ? '#993E02' : '#6200ee',
     primary2: darkMode ? '#FFFFFF' : '#3700b3',
     primary3: darkMode ? '#03dac6' : '#018786',
     primary4: darkMode ? '#376bad70' : '#bcecfd',
