@@ -8,11 +8,9 @@ import { MouseoverTooltip } from '../Tooltip'
 import styled from 'styled-components'
 import HeaderLogo from 'assets/images/Amaterasu_Sun_Logo-Header_02_Mirrored.png'
 import DarkIcon from 'assets/images/token-list/iza-blue.png'
-import LightIcon from 'assets/images/token-list/iza-purple.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalance, useETHBalances } from '../../state/wallet/hooks'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
-import usePitToken from '../../hooks/usePitToken'
 import { CardNoise } from '../earn/styled'
 import { TYPE } from '../../theme'
 import Menu from '../Menu'
@@ -26,10 +24,8 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import GovTokenBalanceContent from './GovTokenBalanceContent'
 import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken'
-// import { BASE_CURRENCY } from '../../connectors'
 import { PIT_SETTINGS } from '../../constants'
 import useAddTokenToMetamask from '../../hooks/useAddTokenToMetamask'
-import usePitRatio from '../../hooks/usePitRatio'
 import useBUSDPrice from '../../hooks/useBUSDPrice'
 
 const HeaderFrame = styled.div`
@@ -131,15 +127,15 @@ const LogoImage = styled('img')`
 `
 
 const LogoIcon = styled('img')`
-  width: 60px;
-  height: 60px;
-  margin: 8px;
+  width: 45px;
+  height: 45px;
   cursor: pointer;
-  box-shadow: 0 0 2px ${({ theme }) => theme.bg1};
+  margin: 3px 3px 0 3px;
+  padding: 1px;
   transition: box-shadow 0.3s ease-in-out;
   border-radius: 50%;
   &:hover {
-    box-shadow: 0 0 10px ${({ theme }) => darken(0.05, theme.primary1)};
+    box-shadow: 0 0 10px ${({ theme }) => darken(0.05, theme.secondary1)};
   }
 `
 
@@ -208,16 +204,15 @@ const StyledNavLink = styled(NavLink).attrs({
   margin-left: 20px;
   border-radius: 15px;
   &:hover {
-    color: ${({ theme }) => theme.primary1}
-    // box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
+    color: ${({ theme }) => theme.secondary1}
   }
 
   &:focus {
-    color: ${({ theme }) => darken(0.1, theme.primary1)}
+    color: ${({ theme }) => darken(0.1, theme.secondary1)}
   }
   
   &:active {
-    color: ${({ theme }) => darken(0.1, theme.primary1)}
+    color: ${({ theme }) => darken(0.1, theme.secondary1)}
     transform: translateY(0.1rem)
   }
 `
@@ -240,7 +235,7 @@ export const StyledMenuButton = styled.button`
   :focus {
     cursor: pointer;
     outline: none;
-    background-color: ${({ theme }) => theme.bg4};
+    background-color: ${({ theme }) => theme.secondary1};
   }
 
   svg {
@@ -251,6 +246,15 @@ export const StyledMenuButton = styled.button`
   }
 `
 
+const IzaPricePill = styled(Row)`
+  align-content: center;
+  color: ${({ theme }) => theme.primary1};
+  border-radius: 2rem;
+  font-weight: 500;
+  display: flex;
+  background: ${({ theme }) => theme.bg2};
+`
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
@@ -259,11 +263,8 @@ export default function Header() {
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
 
   const govToken = useGovernanceToken()
-  const pitToken = usePitToken()
-  const pitRatio = usePitRatio()
   const govTokenPrice = useBUSDPrice(govToken)
   const addGov = useAddTokenToMetamask(govToken)
-  const addPit = useAddTokenToMetamask(pitToken)
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const userFoxBalance: TokenAmount | undefined = useTokenBalance(
     account ?? undefined,
@@ -313,12 +314,16 @@ export default function Header() {
         <HeaderElement>
           <TokenSelectionWrapper>
             <HeaderElementWrap>
-              <MouseoverTooltip text={`Add IZA ($${govTokenPrice?.toFixed(2)}) to MetaMask`}>
-                <LogoIcon src={DarkIcon} onClick={addGov.addToken} alt="logo" />
-              </MouseoverTooltip>
-              <MouseoverTooltip text={`Add xIZA to MetaMask. (1 IZA = ${pitRatio?.toSignificant(4)} xIZA)`}>
-                <LogoIcon src={LightIcon} onClick={addPit.addToken} alt="logo" />
-              </MouseoverTooltip>
+              <IzaPricePill>
+                <MouseoverTooltip text={'Add IZA to MetaMask'}>
+                  <LogoIcon src={DarkIcon} onClick={addGov.addToken} alt="logo" />
+                </MouseoverTooltip>
+                <div>
+                  <Text margin={'0 10px 0 0'} fontSize={'16px'}>
+                    ${govTokenPrice ? govTokenPrice?.toFixed(2) : '0.00'}
+                  </Text>
+                </div>
+              </IzaPricePill>
             </HeaderElementWrap>
           </TokenSelectionWrapper>
           {availableClaim && !showClaimPopup && (

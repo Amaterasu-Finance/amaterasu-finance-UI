@@ -36,6 +36,7 @@ export interface Colors {
   secondary1: Color
   secondary2: Color
   secondary3: Color
+  secondary4: Color
 
   // other
   red1: Color
@@ -51,8 +52,6 @@ export interface Colors {
   tokenButtonGradientEnd: Color
   customCardGradientStart: Color
   customCardGradientEnd: Color
-  customStakeCardGradientStart: Color
-  customStakeCardGradientEnd: Color
 }
 
 export interface Grids {

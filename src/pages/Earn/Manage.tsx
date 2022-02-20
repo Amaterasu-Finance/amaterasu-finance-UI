@@ -11,7 +11,7 @@ import { useWalletModalToggle, useBlockNumber } from '../../state/application/ho
 import { TYPE } from '../../theme'
 
 import { RowBetween } from '../../components/Row'
-import { CardSection, DataCard, CardNoise, CardBGImage } from '../../components/earn/styled'
+import { CardSection, DataCard } from '../../components/earn/styled'
 import { ButtonPrimary, ButtonEmpty } from '../../components/Button'
 import StakingModal from '../../components/earn/StakingModal'
 import AwaitingRewards from '../../components/earn/AwaitingRewards'
@@ -49,11 +49,9 @@ const BottomSection = styled(AutoColumn)`
 `
 
 const StyledDataCard = styled(DataCard)<{ bgColor?: any; showBackground?: any }>`
-  background: radial-gradient(76.02% 75.41% at 1.84% 0%, #1e1a31 0%, #3d51a5 100%);
   z-index: 2;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  background: ${({ theme, bgColor, showBackground }) =>
-    `radial-gradient(91.85% 100% at 1.84% 0%, ${bgColor} 0%,  ${showBackground ? theme.black : theme.bg5} 100%) `};
+  box-shadow: #04ccfb 0 2px 8px 0;
+  background: ${({ theme }) => theme.bg1};
 `
 
 const StyledBottomCard = styled(DataCard)<{ dim: any }>`
@@ -73,14 +71,13 @@ const PoolData = styled(DataCard)`
 `
 
 const VoteCard = styled(DataCard)`
-  background: radial-gradient(76.02% 75.41% at 1.84% 0%, #27ae60 0%, #000000 100%);
+  background: ${({ theme }) => theme.bg1};
   overflow: hidden;
 `
 
 const DataRow = styled(RowBetween)`
   justify-content: center;
   gap: 12px;
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     gap: 12px;
@@ -183,8 +180,6 @@ export default function Manage({
 
       {showAddLiquidityButton && (
         <VoteCard>
-          <CardBGImage />
-          <CardNoise />
           <CardSection>
             <AutoColumn gap="md">
               <RowBetween>
@@ -206,8 +201,6 @@ export default function Manage({
               </ButtonPrimary>
             </AutoColumn>
           </CardSection>
-          <CardBGImage />
-          <CardNoise />
         </VoteCard>
       )}
 
@@ -237,8 +230,6 @@ export default function Manage({
         <BottomSection gap="lg" justify="center">
           <StyledDataCard disabled={disableTop} bgColor={backgroundColor} showBackground={!showAddLiquidityButton}>
             <CardSection>
-              <CardBGImage desaturate />
-              <CardNoise />
               <AutoColumn gap="md">
                 <RowBetween>
                   <TYPE.white fontWeight={600}>Your liquidity deposits</TYPE.white>
@@ -255,8 +246,6 @@ export default function Manage({
             </CardSection>
           </StyledDataCard>
           <StyledBottomCard dim={stakingInfo?.stakedAmount?.equalTo(JSBI.BigInt(0))}>
-            <CardBGImage desaturate />
-            <CardNoise />
             <AutoColumn gap="sm">
               <RowBetween>
                 <div>
