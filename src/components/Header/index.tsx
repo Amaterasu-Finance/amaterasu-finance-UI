@@ -27,6 +27,7 @@ import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken
 import { PIT_SETTINGS } from '../../constants'
 import useAddTokenToMetamask from '../../hooks/useAddTokenToMetamask'
 import useBUSDPrice from '../../hooks/useBUSDPrice'
+import CondensedMenu from '../Menu/CondensedMenu'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -97,6 +98,17 @@ const HeaderElementWrap = styled.div`
   align-items: center;
 `
 
+const HeaderSubMenu = styled(Row)`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    padding: 1rem 0 1rem 1rem;
+  `};
+`
+
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToLarge`
    width: 100%;
@@ -107,8 +119,9 @@ const HeaderLinks = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToLarge`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
+    display: none;
 `};
-  padding: 0.61rem;
+  padding: 0.68rem;
 `
 
 const LogoImage = styled('img')`
@@ -309,6 +322,9 @@ export default function Header() {
             {t('Farm')}
           </StyledNavLink>
         </HeaderLinks>
+        <HeaderSubMenu>
+          <CondensedMenu />
+        </HeaderSubMenu>
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
