@@ -28,9 +28,9 @@ const ContentWrapper = styled(AutoColumn)`
 `
 
 const ModalUpper = styled(DataCard)`
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow:  2px 8px 0;
   //background: radial-gradient(76.02% 75.41% at 1.84% 0%, //${({ theme }) => theme.bg1} 90%, #ff6600 10%);
-  background: radial-gradient(circle, rgba(66,0,159,1) 0%, rgba(33,36,41,1) 100%);
+  background: radial-gradient(circle, #04ccfb 0 0%, rgba(33,36,41,1) 100%);
   padding: 0.5rem;
 `
 

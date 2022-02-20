@@ -61,8 +61,8 @@ export const ButtonMint = styled(Base)`
 `
 
 export const ButtonPrimary = styled(Base)`
-  background: linear-gradient(60deg, #ffcc00 0%, #ff6600 100%);
-  border: 1px solid #ffcc00;
+  background: linear-gradient(60deg, #f3841e 0%, #ff6600 100%);
+  border: 1px solid #ff6600;
   color: white;
   transition: all 0.2s ease-in-out;
   &:focus {
@@ -186,7 +186,7 @@ export const ButtonUNIGradient = styled(ButtonPrimary)`
   height: 36px;
   font-weight: 500;
   background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #ffcc00 100%), #edeef2;
+  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #ff6600 100%), #edeef2;
   width: fit-content;
   position: relative;
   cursor: pointer;

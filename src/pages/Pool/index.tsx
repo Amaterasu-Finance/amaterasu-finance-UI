@@ -7,7 +7,7 @@ import { SwapPoolTabs } from '../../components/NavigationTabs'
 import FullPositionCard from '../../components/PositionCard'
 import { useUserHasLiquidityInAllTokens } from '../../data/V1'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
-import { StyledInternalLink, TYPE, HideSmall } from '../../theme'
+import { HideSmall, StyledInternalLink, TYPE } from '../../theme'
 import { Text } from 'rebass'
 import Card from '../../components/Card'
 import { RowBetween, RowFixed } from '../../components/Row'
@@ -21,7 +21,6 @@ import { Dots } from '../../components/swap/styleds'
 import { CardSection, DataCard } from '../../components/earn/styled'
 // import { useStakingInfo } from '../../state/stake/hooks'
 // import { BIG_INT_ZERO } from '../../constants'
-
 // import { Blockchain } from '@amaterasu-fi/sdk'
 // import useBlockchain from '../../hooks/useBlockchain'
 import baseCurrencies from '../../utils/baseCurrencies'
@@ -32,7 +31,7 @@ const PageWrapper = styled(AutoColumn)`
 `
 
 const VoteCard = styled(DataCard)`
-  background: linear-gradient(60deg, #ffcc00 0%, #ff6600 100%);
+  background: linear-gradient(50deg, #f3841e 0%, #ff6600 100%);
   overflow: hidden;
 `
 
@@ -57,7 +56,7 @@ const ButtonRow = styled(RowFixed)`
 const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   width: fit-content;
   border-radius: 8px;
-  background: linear-gradient(60deg, #ffcc00 0%, #ff6600 100%);
+  background: linear-gradient(50deg, #f3841e 0%, #ff6600 100%);
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 48%;
   `};
@@ -90,12 +89,10 @@ export default function Pool() {
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
-  // console.log('trackedTokenPairs', trackedTokenPairs)
   const tokenPairsWithLiquidityTokens = useMemo(
     () => trackedTokenPairs.map(tokens => ({ liquidityToken: toV2LiquidityToken(tokens), tokens })),
     [trackedTokenPairs]
   )
-  // console.log('tokenPairsWithLiquidityTokens', tokenPairsWithLiquidityTokens)
   const liquidityTokens = useMemo(() => tokenPairsWithLiquidityTokens.map(tpwlt => tpwlt.liquidityToken), [
     tokenPairsWithLiquidityTokens
   ])
@@ -103,8 +100,6 @@ export default function Pool() {
     account ?? undefined,
     liquidityTokens
   )
-  // console.log('v2PairsBalances', v2PairsBalances)
-
   // fetch the reserves for all V2 pools in which the user has a balance
   const liquidityTokensWithBalances = useMemo(
     () =>
@@ -113,25 +108,13 @@ export default function Pool() {
       ),
     [tokenPairsWithLiquidityTokens, v2PairsBalances]
   )
-  // console.log('liquidityTokensWithBalances', liquidityTokensWithBalances)
 
   const v2Pairs = usePairs(liquidityTokensWithBalances.map(({ tokens }) => tokens))
-  // console.log('v2Pairs', v2Pairs)
   const v2IsLoading =
     fetchingV2PairBalances || v2Pairs?.length < liquidityTokensWithBalances.length || v2Pairs?.some(V2Pair => !V2Pair)
-  // console.log('v2IsLoading', v2IsLoading)
 
   const allV2PairsWithLiquidity = v2Pairs.map(([, pair]) => pair).filter((v2Pair): v2Pair is Pair => Boolean(v2Pair))
-  // console.log('allV2PairsWithLiquidity', allV2PairsWithLiquidity)
-
   const hasV1Liquidity = useUserHasLiquidityInAllTokens()
-
-  // show liquidity even if its deposited in rewards contract
-  // const stakingInfo = useStakingInfo(true)
-  // const stakingInfosWithBalance = stakingInfo?.filter(pool => JSBI.greaterThan(pool.stakedAmount.raw, BIG_INT_ZERO))
-  // const stakingPairs = usePairs(stakingInfosWithBalance?.map(stakingInfo => stakingInfo.tokens))
-
-  const v2PairsWithoutStakedAmount = allV2PairsWithLiquidity
 
   return (
     <>
@@ -192,19 +175,9 @@ export default function Pool() {
               </EmptyProposals>
             ) : allV2PairsWithLiquidity?.length > 0 ? (
               <>
-                {v2PairsWithoutStakedAmount.map(v2Pair => (
+                {allV2PairsWithLiquidity.map(v2Pair => (
                   <FullPositionCard key={v2Pair.liquidityToken.address} pair={v2Pair} />
                 ))}
-                {/* stakingPairs.map(
-                  (stakingPair, i) =>
-                    stakingPair[1] && ( // skip pairs that arent loaded
-                      <FullPositionCard
-                        key={stakingInfosWithBalance[i].pid}
-                        pair={stakingPair[1]}
-                        stakedBalance={stakingInfosWithBalance[i].stakedAmount}
-                      />
-                    )
-                )*/}
               </>
             ) : (
               <EmptyProposals>
