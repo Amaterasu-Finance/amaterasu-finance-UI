@@ -336,7 +336,7 @@ export default function Header() {
                 </MouseoverTooltip>
                 <div>
                   <Text margin={'0 10px 0 0'} fontSize={'16px'}>
-                    ${govTokenPrice ? govTokenPrice?.toFixed(2) : '0.00'}
+                    ${govTokenPrice ? govTokenPrice?.toFixed(3) : '0.00'}
                   </Text>
                 </div>
               </IzaPricePill>
@@ -363,8 +363,7 @@ export default function Header() {
           >
             {account && userFoxBalance && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userFoxBalance?.toSignificant(4, { groupSeparator: ',' })} {govToken?.symbol} |{' '}
-                {userEthBalance?.toSignificant(4, { groupSeparator: ',' })} MTV
+                {userEthBalance?.toSignificant(5, { groupSeparator: ',' })} MTV
               </BalanceText>
             ) : null}
             <Web3Status />
