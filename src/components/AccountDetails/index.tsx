@@ -276,7 +276,7 @@ export default function AccountDetails({
   const NetworkCard = styled(YellowCard)`
     border-radius: 12px;
     padding: 8px 12px;
-    background: ${({ theme }) => theme.primary1};
+    background: ${({ theme }) => theme.primary2};
     ${({ theme }) => theme.mediaWidth.upToSmall`
       margin: 0;
       margin-right: 0.5rem;

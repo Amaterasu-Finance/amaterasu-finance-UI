@@ -336,7 +336,7 @@ export default function Header() {
                 </MouseoverTooltip>
                 <div>
                   <Text margin={'0 10px 0 0'} fontSize={'16px'}>
-                    ${govTokenPrice ? govTokenPrice?.toFixed(2) : '0.00'}
+                    ${govTokenPrice ? govTokenPrice?.toFixed(3) : '0.00'}
                   </Text>
                 </div>
               </IzaPricePill>
