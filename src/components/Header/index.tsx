@@ -11,9 +11,8 @@ import DarkIcon from 'assets/images/token-list/iza-blue.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalance, useETHBalances } from '../../state/wallet/hooks'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
-import { CardNoise } from '../earn/styled'
 import { TYPE } from '../../theme'
-import Menu from '../Menu'
+import MiscMenu from '../Menu'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -27,29 +26,29 @@ import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken
 import { PIT_SETTINGS } from '../../constants'
 import useAddTokenToMetamask from '../../hooks/useAddTokenToMetamask'
 import useBUSDPrice from '../../hooks/useBUSDPrice'
-import CondensedMenu from '../Menu/CondensedMenu'
+import { Menu, Dropdown } from 'antd'
+import { MenuOutlined, ExperimentOutlined, SwapOutlined, WalletOutlined, FireOutlined } from '@ant-design/icons'
 
 const HeaderFrame = styled.div`
   display: grid;
+  background-color: ${({ theme }) => theme.bg1};
   grid-template-columns: 1fr 120px;
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
+  padding: 0 1rem;
   width: 100%;
+  top: 0;
   position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 0 1rem 0 1rem;
   z-index: 2;
-  text-align: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
     padding: 0 1rem;
     width: calc(100%);
     position: relative;
   `};
-  background: ${({ theme }) => theme.bg1};
-  border-radius: 12px;
-  margin: 30px;
+
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
         padding: 0.5rem 1rem;
   `}
@@ -73,7 +72,6 @@ const HeaderControls = styled.div`
     width: 100%;
     z-index: 99;
     height: 72px;
-    border-radius: 12px;
     background-color: ${({ theme }) => theme.bg1};
   `};
 `
@@ -134,8 +132,7 @@ const LogoImage = styled('img')`
     height: 72px;
 `};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-     width: 0px;
-    height: 0px;
+    display: none;
   `}
 `
 
@@ -268,6 +265,42 @@ const IzaPricePill = styled(Row)`
   background: ${({ theme }) => theme.bg2};
 `
 
+const CondensedMenu = (
+  <Menu style={{ background: '#212429' }}>
+    <Menu.Item icon={<SwapOutlined style={{ fontSize: '1.25em' }} />}>
+      <StyledNavLink id={`swap-nav-link`} to={'/swap'} style={{ marginLeft: '0px' }}>
+        Swap
+      </StyledNavLink>
+    </Menu.Item>
+    <Menu.Item icon={<ExperimentOutlined style={{ fontSize: '1.25em' }} />}>
+      <StyledNavLink
+        id={`pool-nav-link`}
+        to={'/pool'}
+        style={{ marginLeft: '0px' }}
+        isActive={(match, { pathname }) =>
+          Boolean(match) ||
+          pathname.startsWith('/add') ||
+          pathname.startsWith('/remove') ||
+          pathname.startsWith('/create') ||
+          pathname.startsWith('/find')
+        }
+      >
+        Pool
+      </StyledNavLink>
+    </Menu.Item>
+    <Menu.Item icon={<WalletOutlined style={{ fontSize: '1.25em' }} />}>
+      <StyledNavLink id={`pit-nav-link`} to={'/stake'} style={{ marginLeft: '0px' }}>
+        Stake
+      </StyledNavLink>
+    </Menu.Item>
+    <Menu.Item icon={<FireOutlined style={{ fontSize: '1.25em' }} />}>
+      <StyledNavLink id={`pit-nav-link`} to={'/farm'} style={{ marginLeft: '0px' }}>
+        Farm
+      </StyledNavLink>
+    </Menu.Item>
+  </Menu>
+)
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
@@ -300,6 +333,7 @@ export default function Header() {
         <LogoImage src={HeaderLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+            <SwapOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }} />
             {t('swap')}
           </StyledNavLink>
           <StyledNavLink
@@ -313,17 +347,24 @@ export default function Header() {
               pathname.startsWith('/find')
             }
           >
+            <ExperimentOutlined
+              style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }}
+            />
             {t('pool')}
           </StyledNavLink>
           <StyledNavLink id={`pit-nav-link`} to={`${pitSettings?.path}`}>
+            <WalletOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }} />
             {pitSettings?.name}
           </StyledNavLink>
           <StyledNavLink id={`farm-nav-link`} to={'/farm'}>
+            <FireOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }} />
             {t('Farm')}
           </StyledNavLink>
         </HeaderLinks>
         <HeaderSubMenu>
-          <CondensedMenu />
+          <Dropdown overlay={CondensedMenu}>
+            <MenuOutlined style={{ fontSize: '3em' }} />
+          </Dropdown>
         </HeaderSubMenu>
       </HeaderRow>
       <HeaderControls>
@@ -353,7 +394,6 @@ export default function Header() {
                   )}
                 </TYPE.white>
               </UNIAmount>
-              <CardNoise />
             </UNIWrapper>
           )}
           <AccountElement
@@ -370,7 +410,7 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          <Menu />
+          <MiscMenu />
         </HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>

@@ -17,7 +17,7 @@ import {
   RedirectOldAddLiquidityPathStructure,
   RedirectToAddLiquidity
 } from './AddLiquidity/redirects'
-
+import 'antd/dist/antd.dark.css'
 import Admin from './Admin'
 import Pit from './Pit'
 import MigrateV1 from './MigrateV1'
@@ -43,7 +43,6 @@ import usePlatformName from '../hooks/usePlatformName'
 import { Blockchain } from '@amaterasu-fi/sdk'
 import useBlockchain from '../hooks/useBlockchain'
 import Manage from './Earn/Manage'
-// import { ExternalLink } from '../theme'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -56,6 +55,7 @@ const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   justify-content: space-between;
+  bottom: 10px;
 `
 
 const BodyWrapper = styled.div`

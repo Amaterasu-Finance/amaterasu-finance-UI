@@ -31,7 +31,11 @@ const PageWrapper = styled(AutoColumn)`
 `
 
 const VoteCard = styled(DataCard)`
-  background: linear-gradient(50deg, #f3841e 0%, #ff6600 100%);
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
+    ${({ theme }) => theme.customCardGradientEnd} 100%
+  );
   overflow: hidden;
 `
 
@@ -56,7 +60,11 @@ const ButtonRow = styled(RowFixed)`
 const ResponsiveButtonPrimary = styled(ButtonPrimary)`
   width: fit-content;
   border-radius: 8px;
-  background: linear-gradient(50deg, #f3841e 0%, #ff6600 100%);
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
+    ${({ theme }) => theme.customCardGradientEnd} 100%
+  );
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 48%;
   `};
@@ -145,7 +153,9 @@ export default function Pool() {
               </HideSmall>
               <ButtonRow>
                 <ResponsiveButtonPrimary as={Link} padding="6px 8px" to={createPoolUrl}>
-                  Create Pair
+                  <Text fontWeight={500} fontSize={16}>
+                    Create Pair
+                  </Text>
                 </ResponsiveButtonPrimary>
                 <ResponsiveButtonPrimary
                   id="join-pool-button"

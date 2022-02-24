@@ -25,7 +25,11 @@ export const DataCard = styled(AutoColumn)<{ disabled?: boolean }>`
 `
 
 export const ExtraDataCard = styled(AutoColumn)<{ disabled?: boolean }>`
-  background: linear-gradient(50deg, #f3841e 0%, #ff6600 100%);
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
+    ${({ theme }) => theme.customCardGradientEnd} 100%
+  );
   border-radius: 12px;
   width: 100%;
   position: relative;
