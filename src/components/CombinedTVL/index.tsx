@@ -21,7 +21,7 @@ export default function CombinedTVL({}) {
             <>
               {TVLs.stakingPoolTVL?.greaterThan('0') && (
                 <>
-                  <b>Staking:</b> $
+                  <b>Farm:</b> $
                   {TVLs.stakingPoolTVL.toSignificant(8, {
                     groupSeparator: ','
                   })}
