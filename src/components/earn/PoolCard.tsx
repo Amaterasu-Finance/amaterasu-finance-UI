@@ -166,7 +166,7 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
 
             <TYPE.black style={{ textAlign: 'right' }} color={'white'} fontWeight={500}>
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
-                ⚡
+                🎁
               </span>
               {stakingInfo
                 ? stakingInfo.active
@@ -174,7 +174,7 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
                       govTokenPrice
                         ? stakingInfo.earnedAmount
                             .multiply(govTokenPrice?.raw)
-                            .toSignificant(2, { groupSeparator: ',' })
+                            .toSignificant(4, { groupSeparator: ',' })
                         : '0'
                     }`
                   : `0 ${govToken?.symbol}`

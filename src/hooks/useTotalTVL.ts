@@ -7,7 +7,9 @@ export default function useTotalTVL(stakingInfos: StakingInfo[]): Fraction {
     return stakingInfos.reduce<Fraction>((memo, stakingInfo) => {
       if (stakingInfo && stakingInfo.valueOfTotalStakedAmountInUsd) {
         if (stakingInfo.valueOfTotalStakedAmountInUsd) {
-          memo = memo.add(stakingInfo.valueOfTotalStakedAmountInUsd)
+          // Use total LP amount for TVL
+          const mult = stakingInfo.totalLpTokenSupply.divide(stakingInfo.totalStakedAmount)
+          memo = memo.add(stakingInfo.valueOfTotalStakedAmountInUsd.multiply(mult))
         }
       }
       return memo
