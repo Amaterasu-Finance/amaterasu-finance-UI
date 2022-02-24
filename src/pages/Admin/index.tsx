@@ -40,7 +40,7 @@ const BottomSection = styled(AutoColumn)`
 const StyledBottomCard = styled(DataCard)<{ dim: any }>`
   background: linear-gradient(
     140deg,
-    ${({ theme }) => theme.customCardGradientStart} 20%,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
     ${({ theme }) => theme.customCardGradientEnd} 100%
   );
   opacity: ${({ dim }) => (dim ? 0.4 : 1)};
@@ -64,7 +64,7 @@ const DataRow = styled(RowBetween)`
 const ButtonPit = styled(ButtonPrimary)`
   background: linear-gradient(
     60deg,
-    ${({ theme }) => theme.customCardGradientStart} 20%,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
     ${({ theme }) => theme.customCardGradientEnd} 100%
   );
   border: 1px solid #ffcc00;

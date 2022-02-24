@@ -44,6 +44,7 @@ const black = '#000000'
 
 export function harmonyColors(darkMode: boolean): Colors {
   return {
+    // base
     white,
     black,
 
@@ -56,8 +57,8 @@ export function harmonyColors(darkMode: boolean): Colors {
 
     // backgrounds / greys
 
-    bg1: darkMode ? '#302F40' : '#FFFFFF',
-    bg2: darkMode ? '#1F1F26' : '#F7F8FA',
+    bg1: darkMode ? '#212429' : '#FFFFFF',
+    bg2: darkMode ? '#000000' : '#F7F8FA',
     bg3: darkMode ? '#40444F' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
@@ -68,20 +69,19 @@ export function harmonyColors(darkMode: boolean): Colors {
 
     //primary colors
 
-    primary1: darkMode ? '#FFFFFF' : '#f3841e',
-    primary2: darkMode ? '#f3841e' : '#ff6600',
-    primary3: darkMode ? '#04ccfb' : '#04ccfb',
-    primary4: darkMode ? '#376bad70' : '#bcecfd',
-    primary5: darkMode ? '#153d6f70' : '#d9f4fd',
+    primary1: darkMode ? '#FFFFFF' : '#6200ee',
+    primary2: darkMode ? '#FFFFFF' : '#3700b3',
+    primary3: darkMode ? '#00ccff' : '#018786',
+    primary4: darkMode ? '#376bad70' : '#F6DDE8',
+    primary5: darkMode ? '#153d6f70' : '#FDEAF1',
 
     // color text
-    primaryText1: darkMode ? '#04ccfb' : '#ffff66',
+    primaryText1: darkMode ? '#00ccff' : '#00ccff',
 
     // secondary colors
-    secondary1: darkMode ? '#04ccfb' : '#04ccfb',
+    secondary1: darkMode ? '#00D0FF' : '#bb86fc',
     secondary2: darkMode ? '#17000b26' : '#F6DDE8',
-    secondary3: darkMode ? '#17000b26' : '#FDEAF1',
-    secondary4: darkMode ? '#ff6600' : '#ff6600',
+    secondary3: darkMode ? '#00ccff' : '#FDEAF1',
 
     // other
     red1: '#FD4040',
@@ -89,13 +89,18 @@ export function harmonyColors(darkMode: boolean): Colors {
     red3: '#D60000',
     green1: '#27AE60',
     yellow1: '#FFE270',
-    yellow2: '#FFCC00',
+    yellow2: '#F3841E',
     blue1: '#FF6600',
 
-    tokenButtonGradientStart: '#ff6600',
-    tokenButtonGradientEnd: '#f3841e',
-    customCardGradientStart: '#ff6600',
-    customCardGradientEnd: '#f3841e'
+    // dont wanna forget these blue yet
+    // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
+    // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
+
+    // Added:
+    tokenButtonGradientStart: '#f3841e',
+    tokenButtonGradientEnd: '#ffcc00',
+    customCardGradientStart: '#f3841e',
+    customCardGradientEnd: '#ffcc00'
   }
 }
 

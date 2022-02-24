@@ -61,7 +61,11 @@ export const ButtonMint = styled(Base)`
 `
 
 export const ButtonPrimary = styled(Base)`
-  background: linear-gradient(60deg, #f3841e 0%, #ff6600 100%);
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
+    ${({ theme }) => theme.customCardGradientEnd} 100%
+  );
   border: 1px solid #ff6600;
   color: white;
   transition: all 0.2s ease-in-out;
@@ -186,13 +190,13 @@ export const ButtonUNIGradient = styled(ButtonPrimary)`
   height: 36px;
   font-weight: 500;
   background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #ff6600 100%), #edeef2;
   width: fit-content;
   position: relative;
   cursor: pointer;
   border: none;
   white-space: no-wrap;
   :hover {
+    background-color: ${({ theme }) => theme.secondary3};
     opacity: 0.8;
   }
   :active {
@@ -206,13 +210,13 @@ export const ButtonOutlined = styled(Base)`
   color: ${({ theme }) => theme.text1};
 
   &:focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.secondary3};
   }
   &:hover {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.secondary3};
   }
   &:active {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.secondary3};
   }
   &:disabled {
     opacity: 50%;
@@ -222,7 +226,6 @@ export const ButtonOutlined = styled(Base)`
 
 export const ButtonEmpty = styled(Base)`
   background-color: transparent;
-  color: ${({ theme }) => theme.primary1};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -232,6 +235,7 @@ export const ButtonEmpty = styled(Base)`
   }
   &:hover {
     text-decoration: none;
+    color: ${({ theme }) => theme.secondary3};
   }
   &:active {
     text-decoration: none;
