@@ -55,7 +55,11 @@ const StyledBottomCard = styled(DataCard)<{ dim: any }>`
 `
 
 const CustomCard = styled(DataCard)`
-  background: linear-gradient(60deg, #f3841e 0%, #ff6600 100%);
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
+    ${({ theme }) => theme.customCardGradientEnd} 100%
+  );
   overflow: hidden;
   padding: 0.5rem;
   margin-bottom: 25px;

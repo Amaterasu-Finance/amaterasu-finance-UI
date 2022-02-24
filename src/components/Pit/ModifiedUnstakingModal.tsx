@@ -37,7 +37,7 @@ const ContentWrapper = styled(AutoColumn)`
 const ButtonErrorPit = styled(ButtonError)`
   background: linear-gradient(
     60deg,
-    ${({ theme }) => theme.customCardGradientStart} 20%,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
     ${({ theme }) => theme.customCardGradientEnd} 100%
   );
   border: 1px solid #ff6600;
