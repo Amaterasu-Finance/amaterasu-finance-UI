@@ -333,7 +333,7 @@ export default function Header() {
         <LogoImage src={HeaderLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            <SwapOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }} />
+            <SwapOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {t('swap')}
           </StyledNavLink>
           <StyledNavLink
@@ -348,16 +348,16 @@ export default function Header() {
             }
           >
             <ExperimentOutlined
-              style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }}
+              style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }}
             />
             {t('pool')}
           </StyledNavLink>
           <StyledNavLink id={`pit-nav-link`} to={`${pitSettings?.path}`}>
-            <WalletOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }} />
+            <WalletOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {pitSettings?.name}
           </StyledNavLink>
           <StyledNavLink id={`farm-nav-link`} to={'/farm'}>
-            <FireOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#ffe270' }} />
+            <FireOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {t('Farm')}
           </StyledNavLink>
         </HeaderLinks>
