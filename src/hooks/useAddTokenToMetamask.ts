@@ -15,6 +15,10 @@ export default function useAddTokenToMetamask(
 
   const addToken = useCallback(() => {
     if (library && library.provider.isMetaMask && library.provider.request && token) {
+      const imageUrl =
+        token?.symbol == 'IZA'
+          ? 'https://raw.githubusercontent.com/Amaterasu-Finance/amaterasu-finance-mediakit/main/Amaterasu%20Finance%20logos/IZANAGI%20Logos/Izanagi%20light%20blue%20-%20transparent.png'
+          : getTokenFallbackLogoURL(token)
       library.provider
         .request({
           method: 'wallet_watchAsset',
@@ -26,7 +30,7 @@ export default function useAddTokenToMetamask(
               address: token.address,
               symbol: token.symbol,
               decimals: token.decimals,
-              image: getTokenFallbackLogoURL(token)
+              image: imageUrl
             }
           }
         })

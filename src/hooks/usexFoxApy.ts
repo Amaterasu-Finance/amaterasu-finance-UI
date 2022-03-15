@@ -10,7 +10,7 @@ export default function useXFoxApy() {
   const govTokenContract = useGovTokenContract()
 
   const blocksPerYear = getBlocksPerYear(chainId)
-  const baseBlockRewards = new Fraction(BigInt(1), BigInt(20)) // 0.05 per block
+  const baseBlockRewards = new Fraction(BigInt(25), BigInt(1000)) // 0.025 per second
 
   const poolRewardsPerBlock = useSingleCallResult(masterBreederContract, 'poolInfo', [0])
   const totalAllocPoints = useSingleCallResult(masterBreederContract, 'totalAllocPoint')

@@ -11,7 +11,7 @@ export default function baseCurrencies(chainId: ChainId | undefined): Currency[]
         currencies.push(WETH[chainId])
         break
       default:
-        currencies.push(MTV)
+        currencies.push(ETHER)
         currencies.push(WETH[chainId])
         break
     }

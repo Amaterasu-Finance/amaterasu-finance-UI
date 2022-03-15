@@ -68,6 +68,5 @@ export default function calculateWethAdjustedTotalStakedAmount(
     totalLpTokenSupply
   )
   if (!valueOfTotalStakedAmountInPairCurrency) return undefined
-
   return pairCurrencyAmountInWeth(baseToken, tokenData, valueOfTotalStakedAmountInPairCurrency)
 }

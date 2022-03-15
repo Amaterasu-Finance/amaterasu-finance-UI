@@ -403,7 +403,7 @@ export default function Header() {
           >
             {account && userFoxBalance && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(5, { groupSeparator: ',' })} MTV
+                {userEthBalance?.toSignificant(4, { groupSeparator: ',' })} ETH
               </BalanceText>
             ) : null}
             <Web3Status />

@@ -7,6 +7,7 @@ export default function calculateTotalStakedAmount(
   totalLpTokenSupply: TokenAmount
 ): TokenAmount {
   // take the total amount of LP tokens staked, multiply by ETH value of all LP tokens, divide by all LP tokens
+  if (totalLpTokenSupply.equalTo('0')) return totalLpTokenSupply
   return new TokenAmount(
     baseToken,
     JSBI.divide(

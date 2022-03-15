@@ -19,7 +19,9 @@ export function isAddress(value: any): string | false {
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
-  62621: 'e.mtv.ac'
+  62621: 'e.mtv.ac',
+  1313161554: 'aurorascan.dev/',
+  1313161555: 'testnet.aurorascan.dev/'
 }
 
 export function getEtherscanLink(
@@ -28,7 +30,7 @@ export function getEtherscanLink(
   type: 'transaction' | 'token' | 'address' | 'block'
 ): string {
   let prefix = `https://${ETHERSCAN_PREFIXES[chainId]}`
-  prefix = [56, 97, 62621, 1666600000, 1666700000].includes(chainId) ? prefix : `${prefix}etherscan.io`
+  prefix = [56, 97, 62621, 1313161554, 1313161555].includes(chainId) ? prefix : `${prefix}etherscan.io`
 
   switch (type) {
     case 'transaction': {

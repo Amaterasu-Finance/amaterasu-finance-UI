@@ -7,6 +7,6 @@ export default function getExplorerName(blockchain: Blockchain): string {
     case Blockchain.MTV:
       return 'MTV Explorer'
     default:
-      return 'Etherscan'
+      return 'Explorer'
   }
 }

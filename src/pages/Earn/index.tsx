@@ -62,7 +62,7 @@ export default function Earn() {
   const stakingRewardsExist = Boolean(typeof chainId === 'number' && (STAKING_REWARDS_INFO[chainId]?.length ?? 0) > 0)
 
   const baseEmissions = useBaseStakingRewardsEmission()
-  const blocksPerMinute = blockchainSettings?.blockTime ? 60 / blockchainSettings.blockTime : 0
+  const blocksPerMinute = 60
   const emissionsPerMinute =
     baseEmissions && blockchainSettings ? baseEmissions.multiply(JSBI.BigInt(blocksPerMinute)) : undefined
 
@@ -142,7 +142,7 @@ export default function Earn() {
               ☁️
             </span>
             The base emission rate is currently <b>{baseEmissions.toSignificant(4, { groupSeparator: ',' })}</b>{' '}
-            {govToken?.symbol} per block.
+            {govToken?.symbol} per second.
             <br />
             <b>{emissionsPerMinute?.toSignificant(4, { groupSeparator: ',' })}</b> {govToken?.symbol} will be minted
             every minute given the current emission schedule.

@@ -1,4 +1,4 @@
-import { Currency, currencyEquals, JSBI, Token, Price, WETH, ChainId } from '@amaterasu-fi/sdk'
+import { Currency, currencyEquals, JSBI, Token, Price, WETH } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { PairState, usePairs } from '../data/Reserves'
 import { useActiveWeb3React } from '.'
@@ -12,7 +12,7 @@ import getToken from '../utils/getToken'
 export default function useBUSDPrice(currency?: Currency): Price | undefined {
   const { chainId } = useActiveWeb3React()
   const wrapped = wrappedCurrency(currency, chainId)
-  const usdTicker = chainId !== ChainId.MTV_MAINNET ? 'tUSDC' : 'tUSDC'
+  const usdTicker = 'USDC'
   const usd: Token | undefined = getToken(chainId, usdTicker)
 
   const tokenPairs: [Currency | undefined, Currency | undefined][] = useMemo(

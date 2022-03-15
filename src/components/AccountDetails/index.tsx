@@ -36,7 +36,9 @@ const HeaderRow = styled.div`
 `
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.MTV_MAINNET]: 'MultiVAC Mainnet'
+  [ChainId.MTV_MAINNET]: 'MultiVAC Mainnet',
+  [ChainId.AURORA_MAINNET]: 'Aurora Mainnet',
+  [ChainId.AURORA_TESTNET]: 'Aurora Testnet'
 }
 
 const UpperSection = styled.div`

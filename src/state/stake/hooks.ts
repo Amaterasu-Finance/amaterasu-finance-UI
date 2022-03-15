@@ -112,8 +112,8 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
   ])
 
   const totalAllocPoint = useSingleCallResult(masterBreederContract, 'totalAllocPoint')
-  const startBlock = useSingleCallResult(masterBreederContract, 'startBlock')
-  const rewardPerBlock = useSingleCallResult(masterBreederContract, 'tokenPerBlock')
+  const startBlock = useSingleCallResult(masterBreederContract, 'startTime')
+  const rewardPerBlock = useSingleCallResult(masterBreederContract, 'tokenPerSecond')
 
   return useMemo(() => {
     if (!chainId || !weth || !govToken) return []
@@ -185,7 +185,9 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
         )
 
         const totalStakedAmountBUSD =
-          wethBusdPrice && totalStakedAmountWETH && totalStakedAmountWETH.multiply(wethBusdPrice?.raw)
+          wethBusdPrice &&
+          totalStakedAmountWETH &&
+          totalStakedAmountWETH.multiply(wethBusdPrice).multiply('1000000000000')
 
         const apr = totalStakedAmountWETH
           ? calculateApr(govTokenWETHPrice, baseBlockRewards, blocksPerYear, poolShare, totalStakedAmountWETH)
@@ -224,6 +226,7 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
     weth,
     govToken,
     govTokenWETHPrice,
+    wethBusdPrice,
     pids,
     poolInfos,
     userInfos,

@@ -40,6 +40,12 @@ switch (BLOCKCHAIN) {
   case Blockchain.BINANCE_SMART_CHAIN:
     supportedChainIds = [56, 97]
     break
+  case Blockchain.AURORA_MAINNET:
+    supportedChainIds = [1313161554, 1313161555]
+    break
+  case Blockchain.AURORA_TESTNET:
+    supportedChainIds = [1313161554, 1313161555]
+    break
   case Blockchain.MTV:
     supportedChainIds = [62621]
     break

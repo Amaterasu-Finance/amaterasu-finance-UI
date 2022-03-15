@@ -2,38 +2,39 @@ import React, { useMemo } from 'react'
 import { AutoColumn } from '../../components/Column'
 import { JSBI } from '@amaterasu-fi/sdk'
 import { TYPE } from '../../theme'
-import { useBlockNumber } from '../../state/application/hooks'
+// import { useBlockNumber } from '../../state/application/hooks'
 import { useSingleCallResult } from '../../state/multicall/hooks'
 import { useMasterBreederContract } from '../../hooks/useContract'
-import useBlockchain from '../../hooks/useBlockchain'
-import getBlockchainBlockTime from '../../utils/getBlockchainBlockTime'
+// import useBlockchain from '../../hooks/useBlockchain'
+// import getBlockchainBlockTime from '../../utils/getBlockchainBlockTime'
 import { BlueCard } from '../../components/Card'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
+import useCurrentBlockTimestamp from '../../hooks/useCurrentBlockTimestamp'
 
 const MINUTE = 60
 const HOUR = MINUTE * 60
 const DAY = HOUR * 24
 
 export default function AwaitingRewards() {
-  const blockchain = useBlockchain()
-  const blockTime = getBlockchainBlockTime(blockchain)
+  // const blockchain = useBlockchain()
+  // const blockTime = getBlockchainBlockTime(blockchain)
   const masterBreederContract = useMasterBreederContract()
   const govToken = useGovernanceToken()
 
-  const rewardsStartBlock = useSingleCallResult(masterBreederContract, 'startBlock').result?.[0]
-  const currentBlock = useBlockNumber()
+  const rewardsStartTime = useSingleCallResult(masterBreederContract, 'startTime').result?.[0]
+  const currentTimestamp = useCurrentBlockTimestamp()
 
   const rewardsStarted = useMemo<boolean>(() => {
-    return rewardsStartBlock && currentBlock
-      ? JSBI.greaterThanOrEqual(JSBI.BigInt(currentBlock), JSBI.BigInt(rewardsStartBlock))
+    return rewardsStartTime && currentTimestamp
+      ? JSBI.greaterThanOrEqual(JSBI.BigInt(currentTimestamp), JSBI.BigInt(rewardsStartTime))
       : false
-  }, [rewardsStartBlock, currentBlock])
+  }, [rewardsStartTime, currentTimestamp])
 
   const blocksLeftUntilRewards = useMemo<number>(() => {
-    return rewardsStartBlock && currentBlock ? rewardsStartBlock - currentBlock : 0
-  }, [rewardsStartBlock, currentBlock])
+    return rewardsStartTime && currentTimestamp ? rewardsStartTime - currentTimestamp.toNumber() : 0
+  }, [rewardsStartTime, currentTimestamp])
 
-  const secondsToRewards = !rewardsStarted ? blocksLeftUntilRewards * blockTime : 0
+  const secondsToRewards = !rewardsStarted ? blocksLeftUntilRewards : 0
   let startingAt = secondsToRewards
   const days = (startingAt - (startingAt % DAY)) / DAY
   startingAt -= days * DAY
@@ -45,7 +46,7 @@ export default function AwaitingRewards() {
 
   return (
     <>
-      {rewardsStartBlock && blocksLeftUntilRewards && !rewardsStarted && (
+      {rewardsStartTime && blocksLeftUntilRewards && !rewardsStarted && (
         <BlueCard>
           <AutoColumn gap="10px">
             <TYPE.link fontWeight={400} color={'primaryText1'}>
@@ -53,8 +54,8 @@ export default function AwaitingRewards() {
                 💡
               </span>
               <b>{govToken?.symbol}</b> rewards haven&apos;t started yet - they will be activated at block{' '}
-              <b>{rewardsStartBlock?.toLocaleString()}</b>. There are <b>{blocksLeftUntilRewards}</b> blocks left until
-              the rewards start.
+              <b>{rewardsStartTime?.toLocaleString()}</b>. There are <b>{blocksLeftUntilRewards}</b> time left until the
+              rewards start.
               <br />
               <br />
               Expected start:{' '}
@@ -69,8 +70,8 @@ export default function AwaitingRewards() {
               from now.
               <br />
               <br />
-              You can deposit your LP tokens now if you want to, and you&apos;ll start earning rewards at block{' '}
-              <b>{rewardsStartBlock?.toLocaleString()}</b> and thereafter.
+              You can deposit your LP tokens now if you want to, and you&apos;ll start earning rewards at time{' '}
+              <b>{rewardsStartTime?.toLocaleString()}</b> and thereafter.
             </TYPE.link>
           </AutoColumn>
         </BlueCard>

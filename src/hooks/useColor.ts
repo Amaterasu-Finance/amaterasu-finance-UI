@@ -10,9 +10,7 @@ async function getColorFromToken(token: Token): Promise<string | null> {
     return Promise.resolve('#FAAB14')
   }
 
-  const path = [56, 97, 62621, 1666700000].includes(token.chainId)
-    ? `images/token-list/${token.symbol?.toLowerCase()}.png`
-    : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`
+  const path = `images/token-list/${token.symbol?.toLowerCase()}.png`
 
   return Vibrant.from(path)
     .getPalette()

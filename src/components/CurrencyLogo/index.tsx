@@ -51,9 +51,9 @@ export default function CurrencyLogo({
     if (currency && DEFAULT_CURRENCIES.includes(currency)) return []
 
     if (currency instanceof Token) {
-      const logoUrlLocation = [1666600000, 1666700000, 62621].includes(currency.chainId)
+      const logoUrlLocation = [1313161554, 1313161555, 62621].includes(currency.chainId)
         ? getTokenFallbackLogoURL(currency)
-        : getTokenLogoURL(currency.address)
+        : getTokenFallbackLogoURL(currency)
 
       if (currency instanceof WrappedTokenInfo) {
         return [...uriLocations, logoUrlLocation]

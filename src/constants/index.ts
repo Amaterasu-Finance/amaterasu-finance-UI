@@ -14,17 +14,35 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 export const SOCKS_TESTNET_ADDRESS = '0x65770b5283117639760beA3F867b69b3697a91dd'
 
 export const ROUTER_ADDRESSES: { [chainId in ChainId]: string } = {
-  [ChainId.MTV_MAINNET]: '0xab9eD095542E6F4d38c389f59B385E9CEdD473B9'
+  [ChainId.MTV_MAINNET]: '0xfee8B01BdB8354ac730D4b28F500e70384158b10',
+  [ChainId.AURORA_MAINNET]: '0x96D2A794b8efaF01EA1975D5557f4028393f2a35',
+  [ChainId.AURORA_TESTNET]: '0x96D2A794b8efaF01EA1975D5557f4028393f2a35'
 }
 
 export const PAYOUT_ADDRESSES: { [chainId in ChainId]: string } = {
-  [ChainId.MTV_MAINNET]: '0x41705A23De7517D931D1967c13B5696a71279ff1'
+  [ChainId.MTV_MAINNET]: '0x41705A23De7517D931D1967c13B5696a71279ff1',
+  [ChainId.AURORA_MAINNET]: '0x39CeFDd2ED8E8bD62f893810A0E2E75A6C0d9E15',
+  [ChainId.AURORA_TESTNET]: '0x39CeFDd2ED8E8bD62f893810A0E2E75A6C0d9E15'
 }
 
 export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
   [ChainId.MTV_MAINNET]: new Token(
     ChainId.MTV_MAINNET,
-    '0xD0D6BcC9646192e18Ff7Da85aa0480142cc4E1aD',
+    '0x045d0bc9E3cFF68fAeB3a9285239B4c095Dd2cdd',
+    18,
+    'IZA',
+    'IZA Token'
+  ),
+  [ChainId.AURORA_MAINNET]: new Token(
+    ChainId.AURORA_MAINNET,
+    '0xb82A2B57828f1127062A3B35aC470D2F55FF5eCD',
+    18,
+    'IZA',
+    'IZA Token'
+  ),
+  [ChainId.AURORA_TESTNET]: new Token(
+    ChainId.AURORA_TESTNET,
+    '0xb82A2B57828f1127062A3B35aC470D2F55FF5eCD',
     18,
     'IZA',
     'IZA Token'
@@ -32,17 +50,35 @@ export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
 }
 
 export const MASTER_BREEDER: { [chainId in ChainId]: string } = {
-  [ChainId.MTV_MAINNET]: '0xeF8979C3b30D9a352436f7CaBa9653e1AB3671ED'
+  [ChainId.MTV_MAINNET]: '0x701294Ca6FAb80319abD74F3790D17F7F9c45FA1',
+  [ChainId.AURORA_MAINNET]: '0x3F3b5104C0c86316d2442F01bEc3EeEc30d6d14f',
+  [ChainId.AURORA_TESTNET]: '0x3F3b5104C0c86316d2442F01bEc3EeEc30d6d14f'
 }
 
 export const PIT_BREEDER: { [chainId in ChainId]: string } = {
-  [ChainId.MTV_MAINNET]: '0x2cd5F68179998e17F576b44ab18Be8c75b5aaAE7'
+  [ChainId.MTV_MAINNET]: '0x02Dd0Aba3734B270436753550d9365ac85BA7f14',
+  [ChainId.AURORA_MAINNET]: '0x87eFA71742Eb78724F23AF3Af1c0C8A918cf6BFF',
+  [ChainId.AURORA_TESTNET]: '0x87eFA71742Eb78724F23AF3Af1c0C8A918cf6BFF'
 }
 
 export const PIT: { [chainId in ChainId]: Token } = {
   [ChainId.MTV_MAINNET]: new Token(
     ChainId.MTV_MAINNET,
-    '0x1BC50a63F7168D28C8DF77781AB378365d9e38b7',
+    '0x214C6dA089B3fdA57d39a8E1bFF01ef27a4C62FA',
+    18,
+    'xIZA',
+    'Staked IZA'
+  ),
+  [ChainId.AURORA_MAINNET]: new Token(
+    ChainId.AURORA_MAINNET,
+    '0x19d8db04e69358F7211E4cf4e56F938101382556',
+    18,
+    'xIZA',
+    'Staked IZA'
+  ),
+  [ChainId.AURORA_TESTNET]: new Token(
+    ChainId.AURORA_TESTNET,
+    '0x19d8db04e69358F7211E4cf4e56F938101382556',
     18,
     'xIZA',
     'Staked IZA'
@@ -50,11 +86,15 @@ export const PIT: { [chainId in ChainId]: Token } = {
 }
 
 export const PIT_SETTINGS: { [chainId in ChainId]: Record<string, string> } = {
-  [ChainId.MTV_MAINNET]: { name: 'Stake', path: '/stake' }
+  [ChainId.MTV_MAINNET]: { name: 'Stake', path: '/stake' },
+  [ChainId.AURORA_MAINNET]: { name: 'Stake', path: '/stake' },
+  [ChainId.AURORA_TESTNET]: { name: 'Stake', path: '/stake' }
 }
 
 export const WEB_INTERFACES: { [chainId in ChainId]: string[] } = {
-  [ChainId.MTV_MAINNET]: ['amaterasu.finance', 'swap.amaterasu.finance']
+  [ChainId.MTV_MAINNET]: ['amaterasu.finance', 'swap.amaterasu.finance'],
+  [ChainId.AURORA_MAINNET]: ['amaterasu.finance', 'swap.amaterasu.finance'],
+  [ChainId.AURORA_TESTNET]: ['amaterasu.finance', 'swap.amaterasu.finance']
 }
 
 export { PRELOADED_PROPOSALS } from './proposals'
@@ -80,17 +120,20 @@ export const FALLBACK_GAS_LIMIT = BigNumber.from(6721900)
 export const MERKLE_DISTRIBUTOR_ADDRESS: { [chainId in ChainId]?: string } = {}
 
 const WETH_ONLY: ChainTokenList = {
-  [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET]]
+  [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET]],
+  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET]],
+  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET]]
 }
 
-export const WMTV = WETH_ONLY[ChainId.MTV_MAINNET]
-export const IZA = getTokenWithDefault(ChainId.MTV_MAINNET, 'IZA')
-export const USDC = getTokenWithDefault(ChainId.MTV_MAINNET, 'tUSDC')
-export const ETH = getTokenWithDefault(ChainId.MTV_MAINNET, 'tETH')
+export const IZA = getTokenWithDefault(ChainId.AURORA_TESTNET, 'IZA')
+export const NEAR = getTokenWithDefault(ChainId.AURORA_TESTNET, 'NEAR')
+export const USDC = getTokenWithDefault(ChainId.AURORA_TESTNET, 'USDC')
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
-  [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, ETH, USDC]
+  [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, USDC],
+  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, NEAR, USDC],
+  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, NEAR, USDC]
 }
 
 /**
@@ -101,17 +144,23 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
-  [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, USDC, ETH]
+  [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, USDC],
+  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, USDC, NEAR],
+  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, USDC, NEAR]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MTV_MAINNET]: [IZA, ...WETH_ONLY[ChainId.MTV_MAINNET], USDC, ETH]
+  [ChainId.MTV_MAINNET]: [IZA, ...WETH_ONLY[ChainId.MTV_MAINNET], USDC],
+  [ChainId.AURORA_MAINNET]: [IZA, ...WETH_ONLY[ChainId.AURORA_MAINNET], USDC, NEAR],
+  [ChainId.AURORA_TESTNET]: [IZA, ...WETH_ONLY[ChainId.AURORA_TESTNET], USDC, NEAR]
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
-  [ChainId.MTV_MAINNET]: [[USDC, WETH[ChainId.MTV_MAINNET]]]
+  [ChainId.MTV_MAINNET]: [[USDC, WETH[ChainId.MTV_MAINNET]]],
+  [ChainId.AURORA_MAINNET]: [[USDC, WETH[ChainId.AURORA_MAINNET]]],
+  [ChainId.AURORA_TESTNET]: [[USDC, WETH[ChainId.AURORA_TESTNET]]]
 }
 
 export interface WalletInfo {
