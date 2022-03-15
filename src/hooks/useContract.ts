@@ -77,12 +77,8 @@ export function useWETHContract(withSignerIfPossible?: boolean): Contract | null
 }
 
 export function useArgentWalletDetectorContract(): Contract | null {
-  const { chainId } = useActiveWeb3React()
-  return useContract(
-    chainId === ChainId.MTV_MAINNET ? ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS : undefined,
-    ARGENT_WALLET_DETECTOR_ABI,
-    false
-  )
+  // const { chainId } = useActiveWeb3React()
+  return useContract(ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS, ARGENT_WALLET_DETECTOR_ABI, false)
 }
 
 export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contract | null {
@@ -91,6 +87,9 @@ export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contrac
   if (chainId) {
     switch (chainId) {
       case ChainId.MTV_MAINNET:
+        address = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+        break
+      default:
         address = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
         break
     }
@@ -158,8 +157,8 @@ export function useMasterBreederContract(withSignerIfPossible?: boolean): Contra
 }
 
 export function useBondingContract(): Contract | null {
-  const { chainId } = useActiveWeb3React()
-  return useContract(chainId === ChainId.MTV_MAINNET ? BONDING_ADDRESS : undefined, LP_BOND_ABI, false)
+  // const { chainId } = useActiveWeb3React()
+  return useContract(BONDING_ADDRESS, LP_BOND_ABI, false)
 }
 
 export function useSocksController(): Contract | null {

@@ -1,10 +1,10 @@
 import { CurrencyAmount, ETHER, Percent, Route, TokenAmount, Trade } from '@amaterasu-fi/sdk'
-import { USDC } from '../constants'
+import { BUSD } from '../constants'
 import { MockV1Pair } from '../data/V1'
 import v1SwapArguments from './v1SwapArguments'
 
 describe('v1SwapArguments', () => {
-  const USDC_WETH = new MockV1Pair('1000000', new TokenAmount(USDC, '1000000'))
+  const USDC_WETH = new MockV1Pair('1000000', new TokenAmount(BUSD, '1000000'))
 
   // just some random address
   const TEST_RECIPIENT_ADDRESS = USDC_WETH.liquidityToken.address
@@ -21,7 +21,7 @@ describe('v1SwapArguments', () => {
     expect(result.value).toEqual('0x64')
   })
   it('exact token to eth', () => {
-    const trade = Trade.exactIn(new Route([USDC_WETH], USDC, ETHER), new TokenAmount(USDC, '100'))
+    const trade = Trade.exactIn(new Route([USDC_WETH], BUSD, ETHER), new TokenAmount(BUSD, '100'))
     const result = v1SwapArguments(trade, {
       recipient: TEST_RECIPIENT_ADDRESS,
       allowedSlippage: new Percent('1', '100'),
@@ -35,7 +35,7 @@ describe('v1SwapArguments', () => {
     expect(result.value).toEqual('0x0')
   })
   it('eth to exact token', () => {
-    const trade = Trade.exactOut(new Route([USDC_WETH], ETHER), new TokenAmount(USDC, '100'))
+    const trade = Trade.exactOut(new Route([USDC_WETH], ETHER), new TokenAmount(BUSD, '100'))
     const result = v1SwapArguments(trade, {
       recipient: TEST_RECIPIENT_ADDRESS,
       allowedSlippage: new Percent('1', '100'),
@@ -48,7 +48,7 @@ describe('v1SwapArguments', () => {
     expect(result.value).toEqual('0x66')
   })
   it('token to exact eth', () => {
-    const trade = Trade.exactOut(new Route([USDC_WETH], USDC, ETHER), CurrencyAmount.ether('100'))
+    const trade = Trade.exactOut(new Route([USDC_WETH], BUSD, ETHER), CurrencyAmount.ether('100'))
     const result = v1SwapArguments(trade, {
       recipient: TEST_RECIPIENT_ADDRESS,
       allowedSlippage: new Percent('1', '100'),

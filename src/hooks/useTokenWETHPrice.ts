@@ -7,8 +7,9 @@ export default function useTokenWethPrice(token: Token | undefined): Price | und
   const { chainId } = useActiveWeb3React()
   const [, tokenWETHPair] = usePair(chainId && WETH[chainId], token)
   // console.log('useTokenWethPrice', token, tokenWETHPair)
-
   return useMemo(() => {
-    return token && chainId && tokenWETHPair ? tokenWETHPair.priceOf(token) : undefined
+    return token && chainId && tokenWETHPair && tokenWETHPair?.reserve0.greaterThan('0')
+      ? tokenWETHPair.priceOf(token)
+      : undefined
   }, [chainId, token, tokenWETHPair])
 }

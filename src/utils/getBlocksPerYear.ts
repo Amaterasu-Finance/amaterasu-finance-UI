@@ -2,7 +2,7 @@ import { ChainId, JSBI, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 
 export default function getBlocksPerYear(chainId: ChainId | undefined): JSBI {
   const blockchainSettings = chainId ? BLOCKCHAIN_SETTINGS[chainId] : undefined
-  const blocksPerMinute = blockchainSettings ? JSBI.BigInt(30) : JSBI.BigInt(30)
+  const blocksPerMinute = blockchainSettings ? JSBI.BigInt(60) : JSBI.BigInt(60)
   const blocksPerHour = JSBI.multiply(blocksPerMinute, JSBI.BigInt(60))
   const blocksPerDay = JSBI.multiply(blocksPerHour, JSBI.BigInt(24))
   const blocksPerYear = JSBI.multiply(blocksPerDay, JSBI.BigInt(365))
