@@ -27,7 +27,7 @@ export default function useXFoxApy() {
     poolRewardsPerBlock.result &&
     totalAllocPoints.result &&
     new Fraction(BigInt(poolRewardsPerBlock.result?.allocPoint), BigInt(totalAllocPoints.result))
-  const rewardsPerCoumpound =
+  const rewardsPerCompound =
     poolShare &&
     poolShare
       .multiply(baseBlockRewards)
@@ -35,9 +35,9 @@ export default function useXFoxApy() {
       .divide(BigInt(nCompounds))
       .multiply(JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)))
   const aprDay =
-    rewardsPerCoumpound &&
+    rewardsPerCompound &&
     govTokenMasterchefBalanceResult > 0 &&
-    rewardsPerCoumpound.divide(govTokenMasterchefBalanceResult)
+    rewardsPerCompound.divide(govTokenMasterchefBalanceResult)
 
   const apyDay = aprDay ? (Number(aprDay?.add(JSBI.BigInt(1)).toFixed(10)) ** (nCompounds / 365) - 1) * 100 : 0
   const apy = aprDay ? (Number(aprDay?.add(JSBI.BigInt(1)).toFixed(10)) ** nCompounds - 1) * 100 : 0
