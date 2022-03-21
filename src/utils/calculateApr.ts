@@ -8,7 +8,7 @@ export default function calculateApr(
   poolShare: Fraction,
   valueOfTotalStakedAmountInPairCurrency: TokenAmount | Fraction
 ): Fraction | undefined {
-  const multiplied = govTokenWethPrice?.raw
+  const multiplied = govTokenWethPrice?.adjusted
     .multiply(baseBlockRewards.raw)
     .multiply(blocksPerYear.toString())
     .multiply(poolShare)
