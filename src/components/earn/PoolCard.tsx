@@ -117,12 +117,14 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
             </b>
           </TYPE.white>
         </RowBetween>
-        <RowBetween>
-          <TYPE.white> Deposit Fee </TYPE.white>
-          <TYPE.white>
-            {typeof stakingInfo.depositFee === 'number' ? `${stakingInfo.depositFee.toFixed(1)}%` : '-'}
-          </TYPE.white>
-        </RowBetween>
+        {stakingInfo.depositFee && stakingInfo.depositFee > 0 && (
+          <RowBetween>
+            <TYPE.white> Deposit Fee </TYPE.white>
+            <TYPE.white>
+              {typeof stakingInfo.depositFee === 'number' ? `${stakingInfo.depositFee.toFixed(1)}%` : '-'}
+            </TYPE.white>
+          </RowBetween>
+        )}
         <RowBetween>
           <TYPE.white> Total deposited </TYPE.white>
           <TYPE.white fontWeight={500}>
