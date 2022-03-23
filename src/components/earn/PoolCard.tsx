@@ -138,9 +138,9 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
           <TYPE.white>
             {stakingInfo
               ? stakingInfo.active
-                ? `${stakingInfo.poolRewardsPerBlock.toSignificant(4, { groupSeparator: ',' })} 
-                ${govToken?.symbol} / second`
-                : `0 ${govToken?.symbol} / second`
+                ? `${stakingInfo.poolRewardsPerBlock.multiply('86400').toSignificant(4, { groupSeparator: ',' })} 
+                ${govToken?.symbol} / day`
+                : `0 ${govToken?.symbol} / day`
               : '-'}
           </TYPE.white>
         </RowBetween>

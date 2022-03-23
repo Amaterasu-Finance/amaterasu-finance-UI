@@ -18,6 +18,8 @@ import { ExternalLink } from '../../theme/components'
 import { useCombinedInactiveList } from 'state/lists/hooks'
 import ListLogo from 'components/ListLogo'
 import { PaddedColumn, Checkbox } from './styleds'
+import { useIsScamToken } from '../../hooks/Tokens'
+import useGovernanceToken from '../../hooks/useGovernanceToken'
 
 const Wrapper = styled.div`
   position: relative;
@@ -54,6 +56,8 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
   const [confirmed, setConfirmed] = useState(false)
 
   const addToken = useAddUserToken()
+  const govToken = useGovernanceToken()
+  const isScamToken = useIsScamToken(tokens[0])
 
   // use for showing import source on inactive tokens
   const inactiveTokenList = useCombinedInactiveList()
@@ -113,50 +117,69 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
           )
         })}
 
-        <Card
-          style={{ backgroundColor: fromLists ? transparentize(0.8, theme.yellow2) : transparentize(0.8, theme.red1) }}
-        >
-          <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
-            <AlertTriangle stroke={fromLists ? theme.yellow2 : theme.red1} size={32} />
-            <TYPE.body fontWeight={600} fontSize={20} color={fromLists ? theme.yellow2 : theme.red1}>
-              Trade at your own risk!
-            </TYPE.body>
-          </AutoColumn>
+        {isScamToken ? (
+          <Card
+            style={{
+              backgroundColor: fromLists ? transparentize(0.8, theme.yellow2) : transparentize(0.8, theme.red1)
+            }}
+          >
+            <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
+              <AlertTriangle stroke={fromLists ? theme.yellow2 : theme.red1} size={32} />
+              <TYPE.body fontWeight={600} fontSize={20} color={fromLists ? theme.yellow2 : theme.red1}>
+                This is a scam token! You cannot trade it here.
+              </TYPE.body>
+            </AutoColumn>
+          </Card>
+        ) : (
+          <Card
+            style={{
+              backgroundColor: fromLists ? transparentize(0.8, theme.yellow2) : transparentize(0.8, theme.red1)
+            }}
+          >
+            <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
+              <AlertTriangle stroke={fromLists ? theme.yellow2 : theme.red1} size={32} />
+              <TYPE.body fontWeight={600} fontSize={20} color={fromLists ? theme.yellow2 : theme.red1}>
+                Trade at your own risk!
+              </TYPE.body>
+            </AutoColumn>
 
-          <AutoColumn style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
-            <TYPE.body fontWeight={400} color={fromLists ? theme.yellow2 : theme.red1}>
-              Anyone can create a token, including creating fake versions of existing tokens that claim to represent
-              projects.
-            </TYPE.body>
-            <TYPE.body fontWeight={600} color={fromLists ? theme.yellow2 : theme.red1}>
-              If you purchase this token, you may not be able to sell it back.
-            </TYPE.body>
-          </AutoColumn>
-          <AutoRow justify="center" style={{ cursor: 'pointer' }} onClick={() => setConfirmed(!confirmed)}>
-            <Checkbox
-              className=".understand-checkbox"
-              name="confirmed"
-              type="checkbox"
-              checked={confirmed}
-              onChange={() => setConfirmed(!confirmed)}
-            />
-            <TYPE.body ml="10px" fontSize="16px" color={fromLists ? theme.yellow2 : theme.red1} fontWeight={500}>
-              I understand
-            </TYPE.body>
-          </AutoRow>
-        </Card>
+            <AutoColumn style={{ textAlign: 'center', gap: '16px', marginBottom: '12px' }}>
+              <TYPE.body fontWeight={400} color={fromLists ? theme.yellow2 : theme.red1}>
+                Anyone can create a token, including creating fake versions of existing tokens that claim to represent
+                projects.
+              </TYPE.body>
+              <TYPE.body fontWeight={600} color={fromLists ? theme.yellow2 : theme.red1}>
+                If you purchase this token, you may not be able to sell it back.
+              </TYPE.body>
+            </AutoColumn>
+            <AutoRow justify="center" style={{ cursor: 'pointer' }} onClick={() => setConfirmed(!confirmed)}>
+              <Checkbox
+                className=".understand-checkbox"
+                name="confirmed"
+                type="checkbox"
+                checked={confirmed}
+                onChange={() => setConfirmed(!confirmed)}
+              />
+              <TYPE.body ml="10px" fontSize="16px" color={fromLists ? theme.yellow2 : theme.red1} fontWeight={500}>
+                I understand
+              </TYPE.body>
+            </AutoRow>
+          </Card>
+        )}
         <ButtonPrimary
-          disabled={!confirmed}
+          disabled={!confirmed && !isScamToken}
           altDisabledStyle={true}
           borderRadius="20px"
           padding="10px 1rem"
           onClick={() => {
-            tokens.map(token => addToken(token))
-            handleCurrencySelect && handleCurrencySelect(tokens[0])
+            !isScamToken && tokens.map(token => addToken(token))
+            handleCurrencySelect &&
+              govToken &&
+              (isScamToken ? handleCurrencySelect(govToken) : handleCurrencySelect(tokens[0]))
           }}
           className=".token-dismiss-button"
         >
-          Import
+          {isScamToken ? 'Close' : 'Import'}
         </ButtonPrimary>
       </PaddedColumn>
     </Wrapper>

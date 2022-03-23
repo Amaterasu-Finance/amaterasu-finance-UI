@@ -141,8 +141,9 @@ export default function Earn() {
             <span role="img" aria-label="wizard-icon" style={{ marginRight: '8px' }}>
               ☁️
             </span>
-            The base emission rate is currently <b>{baseEmissions.toSignificant(4, { groupSeparator: ',' })}</b>{' '}
-            {govToken?.symbol} per second.
+            The base emission rate is currently{' '}
+            <b>{baseEmissions.multiply('86400').toSignificant(4, { groupSeparator: ',' })}</b> {govToken?.symbol} per
+            day.
             <br />
             <b>{emissionsPerMinute?.toSignificant(4, { groupSeparator: ',' })}</b> {govToken?.symbol} will be minted
             every minute given the current emission schedule.
