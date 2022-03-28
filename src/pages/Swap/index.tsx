@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
 import Card, { BlueCard, GreyCard } from '../../components/Card'
@@ -64,6 +64,38 @@ import AntiWhaleImg from 'assets/images/antiwhale.png'
 //   margin-top: 15px;
 //   margin-bottom: 25px;
 // `
+
+const StyledBalanceMax = styled.button`
+  height: 25px;
+  width: 22%;
+  background-color: ${({ theme }) => theme.primary5};
+  border: 1px solid ${({ theme }) => theme.primary5};
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+
+  font-weight: 500;
+  cursor: pointer;
+  color: ${({ theme }) => theme.primaryText1};
+  :hover {
+    border: 1px solid ${({ theme }) => theme.primary1};
+  }
+  :focus {
+    border: 1px solid ${({ theme }) => theme.primary1};
+    outline: none;
+  }
+`
+
+const InputRow = styled.div<{ selected: boolean }>`
+  ${({ theme }) => theme.flexRowNoWrap}
+  justify: center;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: '0.15rem 0.15rem 0.15rem 0.15rem';
+  margin-bottom: 0.25rem;
+`
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -196,7 +228,7 @@ export default function Swap() {
   }, [approval, approvalSubmitted])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
@@ -293,7 +325,26 @@ export default function Swap() {
     [onCurrencySelection]
   )
 
-  const handleMaxInput = useCallback(() => {
+  const handleInput25 = useCallback(() => {
+    maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.divide('4').toFixed(10))
+  }, [maxAmountInput, onUserInput])
+
+  const handleInput50 = useCallback(() => {
+    maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.divide('2').toFixed(10))
+  }, [maxAmountInput, onUserInput])
+
+  const handleInput75 = useCallback(() => {
+    maxAmountInput &&
+      onUserInput(
+        Field.INPUT,
+        maxAmountInput
+          .multiply('3')
+          .divide('4')
+          .toFixed(10)
+      )
+  }, [maxAmountInput, onUserInput])
+
+  const handleInputMax = useCallback(() => {
     maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.toExact())
   }, [maxAmountInput, onUserInput])
 
@@ -348,15 +399,31 @@ export default function Swap() {
             <CurrencyInputPanel
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
-              showMaxButton={!atMaxAmountInput}
+              showMaxButton={false}
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
-              onMax={handleMaxInput}
+              onMax={handleInputMax}
               onCurrencySelect={handleInputSelect}
               otherCurrency={currencies[Field.OUTPUT]}
               id="swap-currency-input"
             />
             <AutoColumn justify="space-between">
+              <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
+                <InputRow selected={false}>
+                  {account && currencies[Field.INPUT] && (
+                    <StyledBalanceMax onClick={handleInput25}>25%</StyledBalanceMax>
+                  )}
+                  {account && currencies[Field.INPUT] && (
+                    <StyledBalanceMax onClick={handleInput50}>50%</StyledBalanceMax>
+                  )}
+                  {account && currencies[Field.INPUT] && (
+                    <StyledBalanceMax onClick={handleInput75}>75%</StyledBalanceMax>
+                  )}
+                  {account && currencies[Field.INPUT] && (
+                    <StyledBalanceMax onClick={handleInputMax}>MAX</StyledBalanceMax>
+                  )}
+                </InputRow>
+              </AutoRow>
               <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                 <ArrowWrapper clickable>
                   <ArrowDown

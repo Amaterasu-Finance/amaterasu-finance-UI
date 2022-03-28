@@ -126,14 +126,16 @@ const WETH_ONLY: ChainTokenList = {
 }
 
 export const IZA = getTokenWithDefault(ChainId.AURORA_TESTNET, 'IZA')
+export const AURORA = getTokenWithDefault(ChainId.AURORA_TESTNET, 'AURORA')
 export const NEAR = getTokenWithDefault(ChainId.AURORA_TESTNET, 'NEAR')
+export const ETH = getTokenWithDefault(ChainId.AURORA_TESTNET, 'ETH')
 export const USDC = getTokenWithDefault(ChainId.AURORA_TESTNET, 'USDC')
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, USDC],
-  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, NEAR, USDC],
-  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, NEAR, USDC]
+  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, NEAR, USDC, AURORA],
+  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, NEAR, USDC, AURORA]
 }
 
 /**
@@ -145,8 +147,8 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, USDC],
-  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, USDC, NEAR],
-  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, USDC, NEAR]
+  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, USDC, NEAR, ETH],
+  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, USDC, NEAR, ETH]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
