@@ -1,4 +1,4 @@
-import { Currency, currencyEquals, JSBI, Token, Price, WETH } from '@amaterasu-fi/sdk'
+import { Currency, currencyEquals, JSBI, Token, Price } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { PairState, usePairs } from '../data/Reserves'
 import { useActiveWeb3React } from '.'
@@ -6,23 +6,23 @@ import { wrappedCurrency } from '../utils/wrappedCurrency'
 import getToken from '../utils/getToken'
 
 /**
- * Returns the price in BUSD of the input currency
- * @param currency currency to compute the BUSD price of
+ * Returns the price by going through Token <> AURORA <> USDC
+ * @param currency currency to compute the price of
  */
-export default function useBUSDPrice(currency?: Currency): Price | undefined {
+export default function useAuroraPrice(currency?: Currency): Price | undefined {
   const { chainId } = useActiveWeb3React()
   const wrapped = wrappedCurrency(currency, chainId)
-  const usdTicker = 'USDC'
-  const usd: Token | undefined = getToken(chainId, usdTicker)
+  const usd: Token | undefined = getToken(chainId, 'USDC')
+  const aurora: Token | undefined = getToken(chainId, 'AURORA')
 
   const tokenPairs: [Currency | undefined, Currency | undefined][] = useMemo(
     () => [
       [
-        chainId && wrapped && currencyEquals(WETH[chainId], wrapped) ? undefined : currency,
-        chainId ? WETH[chainId] : undefined
+        chainId && aurora && wrapped && currencyEquals(aurora, wrapped) ? undefined : currency,
+        chainId ? aurora : undefined
       ],
       [usd && wrapped?.equals(usd) ? undefined : wrapped, usd],
-      [chainId ? WETH[chainId] : undefined, usd]
+      [chainId ? aurora : undefined, usd]
     ],
     [chainId, currency, wrapped, usd]
   )
@@ -34,9 +34,9 @@ export default function useBUSDPrice(currency?: Currency): Price | undefined {
       return undefined
     }
     // handle weth/eth
-    if (wrapped.equals(WETH[chainId])) {
+    if (aurora && wrapped.equals(aurora)) {
       if (busdPair) {
-        const price = busdPair.priceOf(WETH[chainId])
+        const price = busdPair.priceOf(aurora)
         return usd && price.greaterThan('0') ? new Price(currency, usd, price.denominator, price.numerator) : undefined
       } else {
         return undefined
@@ -48,10 +48,10 @@ export default function useBUSDPrice(currency?: Currency): Price | undefined {
       return usd ? new Price(usd, usd, '1', '1') : undefined
     }
 
-    const ethPairETHAmount = ethPair?.reserveOf(WETH[chainId])
+    const ethPairETHAmount = aurora && ethPair?.reserveOf(aurora)
     const ethPairETHBUSDValue: JSBI =
-      usd && ethPairETHAmount && busdEthPair && busdEthPair.reserveOf(usd).greaterThan('0')
-        ? busdEthPair.priceOf(WETH[chainId]).quote(ethPairETHAmount).raw
+      usd && aurora && ethPairETHAmount && busdEthPair && busdEthPair.reserveOf(usd).greaterThan('0')
+        ? busdEthPair.priceOf(aurora).quote(ethPairETHAmount).raw
         : JSBI.BigInt(0)
 
     // all other tokens
@@ -66,9 +66,9 @@ export default function useBUSDPrice(currency?: Currency): Price | undefined {
       return usd && price.greaterThan('0') ? new Price(currency, usd, price.denominator, price.numerator) : undefined
     }
     if (ethPairState === PairState.EXISTS && ethPair && busdEthPairState === PairState.EXISTS && busdEthPair) {
-      if (usd && busdEthPair.reserveOf(usd).greaterThan('0') && ethPair.reserveOf(WETH[chainId]).greaterThan('0')) {
+      if (usd && aurora && busdEthPair.reserveOf(usd).greaterThan('0') && ethPair.reserveOf(aurora).greaterThan('0')) {
         const ethUsdcPrice = busdEthPair.priceOf(usd)
-        const currencyEthPrice = ethPair.priceOf(WETH[chainId])
+        const currencyEthPrice = ethPair.priceOf(aurora)
         const usdcPrice = ethUsdcPrice.multiply(currencyEthPrice).invert()
         return new Price(currency, usd, usdcPrice.denominator, usdcPrice.numerator)
       }

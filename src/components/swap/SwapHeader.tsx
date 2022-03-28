@@ -15,8 +15,11 @@ const StyledSwapHeader = styled.div`
 export default function SwapHeader() {
   return (
     <StyledSwapHeader>
-      <RowBetween>
-        <TYPE.black fontWeight={500}>Swap</TYPE.black>
+      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+        <TYPE.black color={'#212429'}>...</TYPE.black>
+        <TYPE.black fontWeight={500} fontSize={'20px'}>
+          Swap
+        </TYPE.black>
         <Settings />
       </RowBetween>
     </StyledSwapHeader>

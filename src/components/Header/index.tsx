@@ -25,9 +25,17 @@ import GovTokenBalanceContent from './GovTokenBalanceContent'
 import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken'
 import { PIT_SETTINGS } from '../../constants'
 import useAddTokenToMetamask from '../../hooks/useAddTokenToMetamask'
-import useBUSDPrice from '../../hooks/useBUSDPrice'
 import { Menu, Dropdown } from 'antd'
-import { MenuOutlined, ExperimentOutlined, SwapOutlined, WalletOutlined, FireOutlined } from '@ant-design/icons'
+import {
+  MenuOutlined,
+  ExperimentOutlined,
+  SwapOutlined,
+  WalletOutlined,
+  FireOutlined,
+  LoginOutlined
+} from '@ant-design/icons'
+// import useBUSDPrice from '../../hooks/useBUSDPrice'
+import useAuroraPrice from '../../hooks/useAuroraPrice'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -82,7 +90,7 @@ const HeaderElement = styled.div`
 
   /* addresses safari's lack of support for "gap" */
   & > *:not(:first-child) {
-    margin-left: 8px;
+    margin-left: 4px;
   }
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
@@ -115,7 +123,7 @@ const HeaderRow = styled(RowFixed)`
 
 const HeaderLinks = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToLarge`
-    padding: 1rem 0 1rem 1rem;
+    padding: 1rem 0 0.5rem 1rem;
     justify-content: flex-end;
     display: none;
 `};
@@ -211,7 +219,7 @@ const StyledNavLink = styled(NavLink).attrs({
   font-size: 1rem;
   width: fit-content;
   padding: .65rem;
-  margin-left: 20px;
+  margin-left: 4px;
   border-radius: 15px;
   &:hover {
     color: ${({ theme }) => theme.secondary1}
@@ -294,8 +302,13 @@ const CondensedMenu = (
       </StyledNavLink>
     </Menu.Item>
     <Menu.Item icon={<FireOutlined style={{ fontSize: '1.25em' }} />}>
-      <StyledNavLink id={`pit-nav-link`} to={'/farm'} style={{ marginLeft: '0px' }}>
+      <StyledNavLink id={`farm-nav-link`} to={'/farm'} style={{ marginLeft: '0px' }}>
         Farm
+      </StyledNavLink>
+    </Menu.Item>
+    <Menu.Item icon={<LoginOutlined style={{ fontSize: '1.25em' }} />}>
+      <StyledNavLink id={`bridge-nav-link`} to={'/bridge'} style={{ marginLeft: '0px' }}>
+        Bridge
       </StyledNavLink>
     </Menu.Item>
   </Menu>
@@ -309,7 +322,7 @@ export default function Header() {
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
 
   const govToken = useGovernanceToken()
-  const govTokenPrice = useBUSDPrice(govToken)
+  const govTokenPrice = useAuroraPrice(govToken)
   const addGov = useAddTokenToMetamask(govToken)
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const userFoxBalance: TokenAmount | undefined = useTokenBalance(
@@ -359,6 +372,10 @@ export default function Header() {
           <StyledNavLink id={`farm-nav-link`} to={'/farm'}>
             <FireOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {t('Farm')}
+          </StyledNavLink>
+          <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
+            <LoginOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
+            {t('Bridge')}
           </StyledNavLink>
         </HeaderLinks>
         <HeaderSubMenu>

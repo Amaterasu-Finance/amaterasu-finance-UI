@@ -15,11 +15,22 @@ export const PIT_POOLS: {
   ],
   [ChainId.AURORA_TESTNET]: [
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'USDC/WETH') },
-    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'USDC/UST') },
-    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'USDC/USDT') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/USDC') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/WETH') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/NEAR') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'WETH/AURORA') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/AURORA') }
+  ],
+  [ChainId.AURORA_MAINNET]: [
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'USDC/WETH') },
+    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'USDC/UST') },
+    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'USDC/USDT') },
+    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'WETH/ONE') },
+    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/ONE') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/USDC') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/WETH') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/NEAR') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'WETH/AURORA') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/AURORA') }
   ]
 }

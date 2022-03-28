@@ -6,7 +6,7 @@ import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
-import Card, { GreyCard } from '../../components/Card'
+import Card, { BlueCard, GreyCard } from '../../components/Card'
 import Column, { AutoColumn } from '../../components/Column'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
@@ -47,10 +47,27 @@ import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
-// import { isTradeBetter } from 'utils/trades'
+import useAntiWhalePerc from '../../hooks/useAntiWhalePerc'
+// import { DataCard } from '../../components/earn/styled'
+// import { transparentize } from 'polished'
+import AntiWhaleImg from 'assets/images/antiwhale.png'
+
+// const CustomCard = styled(DataCard)`
+//   position: relative;
+//   max-width: 300px;
+//   width: 100%;
+//   background-color: ${({ theme }) => transparentize(0.5, theme.primaryText1)};
+//   border: 1px solid ${({ theme }) => theme.bg4};
+//   overflow: hidden;
+//   padding: 1rem;
+//   z-index: 1;
+//   margin-top: 15px;
+//   margin-bottom: 25px;
+// `
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
+  const showAntiWhaleHeader = true
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -161,6 +178,9 @@ export default function Swap() {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
   )
   const noRoute = !route
+
+  const antiWhale = useAntiWhalePerc()
+  const isIza = currencies[Field.INPUT]?.symbol == 'IZA' || currencies[Field.OUTPUT]?.symbol == 'IZA'
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
@@ -291,6 +311,22 @@ export default function Swap() {
         onConfirm={handleConfirmTokenWarning}
       />
       <SwapPoolTabs active={'swap'} />
+
+      {showAntiWhaleHeader && isIza && antiWhale && antiWhale.maxTransferAmountPerc < 5 && (
+        <BlueCard maxWidth={'300px'} marginBottom={'10px'}>
+          <TYPE.mediumHeader textAlign={'center'} fontWeight={800}>
+            <img src={AntiWhaleImg} alt={'antiwhale'} style={{ height: '50px', width: '50px' }} /> Anti-Whale is active
+          </TYPE.mediumHeader>
+          <RowBetween />
+          {/*<TYPE.mediumHeader textAlign={'center'} fontWeight={800}>*/}
+          {/*  Anti-Whale is active*/}
+          {/*</TYPE.mediumHeader>*/}
+          <RowBetween />
+          <TYPE.body textAlign={'center'} fontWeight={400}>
+            Max trade is {antiWhale.maxTransferAmount.toFixed(0)} IZA ({antiWhale.maxTransferAmountPerc}% of supply)
+          </TYPE.body>
+        </BlueCard>
+      )}
       <AppBody>
         <SwapHeader />
         <Wrapper id="swap-page">
