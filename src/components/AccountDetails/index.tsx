@@ -64,7 +64,7 @@ const UpperSection = styled.div`
 const InfoCard = styled.div`
   padding: 1rem;
   border: 1px solid ${({ theme }) => theme.bg3};
-  border-radius: 20px;
+  border-radius: 8px;
   position: relative;
   display: grid;
   grid-row-gap: 12px;
@@ -276,7 +276,7 @@ export default function AccountDetails({
 
   const explorerName = getExplorerName(blockchain)
   const NetworkCard = styled(YellowCard)`
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 8px 12px;
     background: ${({ theme }) => theme.primary2};
     ${({ theme }) => theme.mediaWidth.upToSmall`

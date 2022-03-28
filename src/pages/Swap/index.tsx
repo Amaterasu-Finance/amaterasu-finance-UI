@@ -19,7 +19,7 @@ import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../
 import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
-import SwapHeader from '../../components/swap/SwapHeader'
+// import SwapHeader from '../../components/swap/SwapHeader'
 
 import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { getTradeVersion } from '../../data/V1'
@@ -42,16 +42,23 @@ import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } 
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
-import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import useAntiWhalePerc from '../../hooks/useAntiWhalePerc'
-// import { DataCard } from '../../components/earn/styled'
-// import { transparentize } from 'polished'
 import AntiWhaleImg from 'assets/images/antiwhale.png'
+import Settings from '../../components/Settings'
 
+const PageWrapper = styled(AutoColumn)`
+  max-width: 720px;
+  width: 100%;
+  position: relative;
+  background: ${({ theme }) => theme.bg1};
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
+  border-radius: 8px;
+`
 // const CustomCard = styled(DataCard)`
 //   position: relative;
 //   max-width: 300px;
@@ -68,20 +75,20 @@ import AntiWhaleImg from 'assets/images/antiwhale.png'
 const StyledBalanceMax = styled.button`
   height: 25px;
   width: 22%;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: 0.5rem;
+  background-color: transparent;
+  border: 1px solid ${({ theme }) => theme.customCardGradientEnd};
+  border-radius: 8px;
   font-size: 0.85rem;
-
   font-weight: 500;
   cursor: pointer;
-  color: ${({ theme }) => theme.primaryText1};
+  color: ${({ theme }) => theme.customCardGradientEnd};
   :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
+    border: 1px solid ${({ theme }) => theme.customCardGradientStart};
+    color: ${({ theme }) => theme.customCardGradientStart};
   }
   :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-    outline: none;
+    border: 1px solid ${({ theme }) => theme.customCardGradientStart};
+    color: ${({ theme }) => theme.customCardGradientStart};
   }
 `
 
@@ -93,7 +100,7 @@ const InputRow = styled.div<{ selected: boolean }>`
   align-items: center;
   justify-content: space-between;
   position: relative;
-  padding: '0.15rem 0.15rem 0.15rem 0.15rem';
+  padding: 0.15rem 0.15rem 0.15rem 0.15rem;
   margin-bottom: 0.25rem;
 `
 
@@ -378,8 +385,14 @@ export default function Swap() {
           </TYPE.body>
         </BlueCard>
       )}
-      <AppBody>
-        <SwapHeader />
+      <PageWrapper>
+        <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+          <TYPE.black color={'#212429'}>...</TYPE.black>
+          <TYPE.black fontWeight={500} fontSize={'20px'}>
+            Swap
+          </TYPE.black>
+          <Settings />
+        </RowBetween>
         <Wrapper id="swap-page">
           <ConfirmSwapModal
             isOpen={showConfirm}
@@ -411,16 +424,12 @@ export default function Swap() {
               <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                 <InputRow selected={false}>
                   {account && currencies[Field.INPUT] && (
-                    <StyledBalanceMax onClick={handleInput25}>25%</StyledBalanceMax>
-                  )}
-                  {account && currencies[Field.INPUT] && (
-                    <StyledBalanceMax onClick={handleInput50}>50%</StyledBalanceMax>
-                  )}
-                  {account && currencies[Field.INPUT] && (
-                    <StyledBalanceMax onClick={handleInput75}>75%</StyledBalanceMax>
-                  )}
-                  {account && currencies[Field.INPUT] && (
-                    <StyledBalanceMax onClick={handleInputMax}>MAX</StyledBalanceMax>
+                    <>
+                      <StyledBalanceMax onClick={handleInput25}>25%</StyledBalanceMax>
+                      <StyledBalanceMax onClick={handleInput50}>50%</StyledBalanceMax>
+                      <StyledBalanceMax onClick={handleInput75}>75%</StyledBalanceMax>
+                      <StyledBalanceMax onClick={handleInputMax}>MAX</StyledBalanceMax>
+                    </>
                   )}
                 </InputRow>
               </AutoRow>
@@ -468,7 +477,7 @@ export default function Swap() {
             ) : null}
 
             {showWrap ? null : (
-              <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
+              <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'8px'}>
                 <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
                   {Boolean(trade) && (
                     <RowBetween align="center">
@@ -601,7 +610,7 @@ export default function Swap() {
             ) : null}
           </BottomGrouping>
         </Wrapper>
-      </AppBody>
+      </PageWrapper>
       {!swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
       ) : (

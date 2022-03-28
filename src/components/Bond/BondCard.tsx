@@ -10,14 +10,14 @@ export const MinterButton = styled(ButtonMint)`
   height: 55%;
   align-self: center;
   width: 85px;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 16px;
   margin: 5px;
 `
 
 export const MintCard = styled(DataCard)`
   background: ${({ theme }) => theme.bg1};
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 17px;
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
 `
