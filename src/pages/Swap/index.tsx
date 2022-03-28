@@ -422,18 +422,6 @@ export default function Swap() {
             />
             <AutoColumn justify="space-between">
               <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
-                <InputRow selected={false}>
-                  {account && currencies[Field.INPUT] && (
-                    <>
-                      <StyledBalanceMax onClick={handleInput25}>25%</StyledBalanceMax>
-                      <StyledBalanceMax onClick={handleInput50}>50%</StyledBalanceMax>
-                      <StyledBalanceMax onClick={handleInput75}>75%</StyledBalanceMax>
-                      <StyledBalanceMax onClick={handleInputMax}>MAX</StyledBalanceMax>
-                    </>
-                  )}
-                </InputRow>
-              </AutoRow>
-              <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                 <ArrowWrapper clickable>
                   <ArrowDown
                     size="16"
@@ -505,6 +493,18 @@ export default function Swap() {
               </Card>
             )}
           </AutoColumn>
+          <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
+            <InputRow selected={false}>
+              {account && currencies[Field.INPUT] && (
+                <>
+                  <StyledBalanceMax onClick={handleInput25}>25%</StyledBalanceMax>
+                  <StyledBalanceMax onClick={handleInput50}>50%</StyledBalanceMax>
+                  <StyledBalanceMax onClick={handleInput75}>75%</StyledBalanceMax>
+                  <StyledBalanceMax onClick={handleInputMax}>MAX</StyledBalanceMax>
+                </>
+              )}
+            </InputRow>
+          </AutoRow>
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true}>
