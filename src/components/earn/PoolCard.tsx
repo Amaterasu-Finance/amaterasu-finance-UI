@@ -31,7 +31,7 @@ const StatContainer = styled.div`
 `
 
 const Wrapper = styled(AutoColumn)<{ showBackground: boolean; bgColor: any }>`
-  border-radius: 12px;
+  border-radius: 8px;
   width: 100%;
   overflow: hidden;
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
@@ -117,13 +117,15 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
             </b>
           </TYPE.white>
         </RowBetween>
-        {stakingInfo.depositFee && stakingInfo.depositFee > 0 && (
+        {stakingInfo.depositFee && stakingInfo.depositFee > 0 ? (
           <RowBetween>
             <TYPE.white> Deposit Fee </TYPE.white>
             <TYPE.white>
               {typeof stakingInfo.depositFee === 'number' ? `${stakingInfo.depositFee.toFixed(1)}%` : '-'}
             </TYPE.white>
           </RowBetween>
+        ) : (
+          <></>
         )}
         <RowBetween>
           <TYPE.white> Total deposited </TYPE.white>

@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, Pair } from '@amaterasu-fi/sdk'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { darken } from 'polished'
+import { darken, lighten } from 'polished'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
@@ -32,7 +32,7 @@ const CurrencySelect = styled.button<{ selected: boolean; isPit: boolean }>`
     ${({ theme }) => theme.customCardGradientEnd} 100%
   );
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
   outline: none;
   cursor: pointer;
@@ -78,17 +78,17 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  border-radius: 8px;
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   background-color: ${({ theme }) => theme.bg2};
   z-index: 1;
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  border-radius: 8px;
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   border: 1px solid ${({ theme }) => theme.bg2};
-  background-color: ${({ theme }) => theme.bg1};
+  background-color: ${({ theme }) => lighten(0.05, theme.bg1)};
 `
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
@@ -98,12 +98,11 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
 `
 
 const StyledBalanceMax = styled.button`
-  height: 28px;
+  height: 18px;
   background-color: ${({ theme }) => theme.primary5};
   border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-
+  border-radius: 8px;
+  font-size: 0.605rem;
   font-weight: 500;
   cursor: pointer;
   margin-right: 0.5rem;

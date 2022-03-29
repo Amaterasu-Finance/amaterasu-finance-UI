@@ -43,6 +43,7 @@ import usePlatformName from '../hooks/usePlatformName'
 import { Blockchain } from '@amaterasu-fi/sdk'
 import useBlockchain from '../hooks/useBlockchain'
 import Manage from './Earn/Manage'
+import Bridge from './Bridge'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -119,6 +120,7 @@ export default function App() {
               <Route exact strict path="/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={Pool} />
               <Route exact strict path={pitSettings?.path} component={Pit} />
+              <Route exact strict path="/bridge" component={Bridge} />
               <Route exact strict path="/farm" component={Earn} />
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />
               <Route exact path="/add" component={AddLiquidity} />

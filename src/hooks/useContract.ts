@@ -1,7 +1,6 @@
 import { Contract } from '@ethersproject/contracts'
-import { abi as GOVERNANCE_ABI } from '@uniswap/governance/build/GovernorAlpha.json'
 import { abi as UNI_ABI } from '@uniswap/governance/build/Uni.json'
-import { abi as GOVERNANCE_TOKEN_ABI } from '@venomswap/contracts/build/GovernanceToken.json'
+// import { abi as GOVERNANCE_TOKEN_ABI } from '@venomswap/contracts/build/GovernanceToken.json'
 import { abi as STAKING_REWARDS_ABI } from '@uniswap/liquidity-staker/build/StakingRewards.json'
 import MASTER_BREEDER_ABI from 'constants/abis/masterchef.json'
 import PIT_ABI from 'constants/abis/gov-token.json'
@@ -24,6 +23,7 @@ import {
   ARGENT_WALLET_DETECTOR_ABI,
   ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS
 } from '../constants/abis/argent-wallet-detector'
+import GOVERNANCE_ABI from '../constants/abis/iza.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
@@ -128,7 +128,7 @@ export function useUniContract(): Contract | null {
 }
 
 export function useGovTokenContract(): Contract | null {
-  return useContract(useGovernanceToken()?.address, GOVERNANCE_TOKEN_ABI, true)
+  return useContract(useGovernanceToken()?.address, GOVERNANCE_ABI, true)
 }
 
 export function usePitContract(withSignerIfPossible?: boolean): Contract | null {

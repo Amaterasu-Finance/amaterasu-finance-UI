@@ -36,7 +36,7 @@ const StyledNavLink = styled(NavLink).attrs({
   font-size: 20px;
 
   &.${activeClassName} {
-    border-radius: 12px;
+    border-radius: 8px;
     font-weight: 500;
     color: ${({ theme }) => theme.text1};
   }
@@ -59,7 +59,7 @@ const StyledArrowLeft = styled(ArrowLeft)`
 export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
   const { t } = useTranslation()
   return (
-    <Tabs style={{ marginBottom: '20px', display: 'none' }}>
+    <Tabs style={{ marginBottom: '10px', display: 'none' }}>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
         {t('swap')}
       </StyledNavLink>

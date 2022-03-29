@@ -3,10 +3,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonConfirmed } from '../../components/Button'
-import Card, { GreyCard } from '../../components/Card'
+import Card, { BlueCard, GreyCard } from '../../components/Card'
 import Column, { AutoColumn } from '../../components/Column'
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
@@ -19,7 +19,7 @@ import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../
 import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
-import SwapHeader from '../../components/swap/SwapHeader'
+// import SwapHeader from '../../components/swap/SwapHeader'
 
 import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { getTradeVersion } from '../../data/V1'
@@ -42,15 +42,71 @@ import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } 
 import { LinkStyledButton, TYPE } from '../../theme'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
-import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
-// import { isTradeBetter } from 'utils/trades'
+import useAntiWhalePerc from '../../hooks/useAntiWhalePerc'
+import AntiWhaleImg from 'assets/images/antiwhale.png'
+import Settings from '../../components/Settings'
+
+const PageWrapper = styled(AutoColumn)`
+  max-width: 720px;
+  width: 100%;
+  position: relative;
+  background: ${({ theme }) => theme.bg1};
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
+  border-radius: 8px;
+`
+// const CustomCard = styled(DataCard)`
+//   position: relative;
+//   max-width: 300px;
+//   width: 100%;
+//   background-color: ${({ theme }) => transparentize(0.5, theme.primaryText1)};
+//   border: 1px solid ${({ theme }) => theme.bg4};
+//   overflow: hidden;
+//   padding: 1rem;
+//   z-index: 1;
+//   margin-top: 15px;
+//   margin-bottom: 25px;
+// `
+
+const StyledBalanceMax = styled.button`
+  height: 25px;
+  width: 22%;
+  background-color: transparent;
+  border: 1px solid ${({ theme }) => theme.customCardGradientEnd};
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: ${({ theme }) => theme.customCardGradientEnd};
+  :hover {
+    border: 1px solid ${({ theme }) => theme.customCardGradientStart};
+    color: ${({ theme }) => theme.customCardGradientStart};
+  }
+  :focus {
+    border: 1px solid ${({ theme }) => theme.customCardGradientStart};
+    color: ${({ theme }) => theme.customCardGradientStart};
+  }
+`
+
+const InputRow = styled.div<{ selected: boolean }>`
+  ${({ theme }) => theme.flexRowNoWrap}
+  justify: center;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0.15rem 0.15rem 0.15rem 0.15rem;
+  margin-bottom: 0.25rem;
+`
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
+  const showAntiWhaleHeader = true
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -162,6 +218,9 @@ export default function Swap() {
   )
   const noRoute = !route
 
+  const antiWhale = useAntiWhalePerc()
+  const isIza = currencies[Field.INPUT]?.symbol == 'IZA' || currencies[Field.OUTPUT]?.symbol == 'IZA'
+
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
 
@@ -176,7 +235,7 @@ export default function Swap() {
   }, [approval, approvalSubmitted])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient)
@@ -273,7 +332,26 @@ export default function Swap() {
     [onCurrencySelection]
   )
 
-  const handleMaxInput = useCallback(() => {
+  const handleInput25 = useCallback(() => {
+    maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.divide('4').toFixed(10))
+  }, [maxAmountInput, onUserInput])
+
+  const handleInput50 = useCallback(() => {
+    maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.divide('2').toFixed(10))
+  }, [maxAmountInput, onUserInput])
+
+  const handleInput75 = useCallback(() => {
+    maxAmountInput &&
+      onUserInput(
+        Field.INPUT,
+        maxAmountInput
+          .multiply('3')
+          .divide('4')
+          .toFixed(10)
+      )
+  }, [maxAmountInput, onUserInput])
+
+  const handleInputMax = useCallback(() => {
     maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.toExact())
   }, [maxAmountInput, onUserInput])
 
@@ -291,8 +369,30 @@ export default function Swap() {
         onConfirm={handleConfirmTokenWarning}
       />
       <SwapPoolTabs active={'swap'} />
-      <AppBody>
-        <SwapHeader />
+
+      {showAntiWhaleHeader && isIza && antiWhale && antiWhale.maxTransferAmountPerc < 5 && (
+        <BlueCard maxWidth={'300px'} marginBottom={'10px'}>
+          <TYPE.mediumHeader textAlign={'center'} fontWeight={800}>
+            <img src={AntiWhaleImg} alt={'antiwhale'} style={{ height: '50px', width: '50px' }} /> Anti-Whale is active
+          </TYPE.mediumHeader>
+          <RowBetween />
+          {/*<TYPE.mediumHeader textAlign={'center'} fontWeight={800}>*/}
+          {/*  Anti-Whale is active*/}
+          {/*</TYPE.mediumHeader>*/}
+          <RowBetween />
+          <TYPE.body textAlign={'center'} fontWeight={400}>
+            Max trade is {antiWhale.maxTransferAmount.toFixed(0)} IZA ({antiWhale.maxTransferAmountPerc}% of supply)
+          </TYPE.body>
+        </BlueCard>
+      )}
+      <PageWrapper>
+        <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+          <TYPE.black color={'#212429'}>...</TYPE.black>
+          <TYPE.black fontWeight={500} fontSize={'20px'}>
+            Swap
+          </TYPE.black>
+          <Settings />
+        </RowBetween>
         <Wrapper id="swap-page">
           <ConfirmSwapModal
             isOpen={showConfirm}
@@ -312,10 +412,10 @@ export default function Swap() {
             <CurrencyInputPanel
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
-              showMaxButton={!atMaxAmountInput}
+              showMaxButton={false}
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
-              onMax={handleMaxInput}
+              onMax={handleInputMax}
               onCurrencySelect={handleInputSelect}
               otherCurrency={currencies[Field.OUTPUT]}
               id="swap-currency-input"
@@ -365,7 +465,7 @@ export default function Swap() {
             ) : null}
 
             {showWrap ? null : (
-              <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
+              <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'8px'}>
                 <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
                   {Boolean(trade) && (
                     <RowBetween align="center">
@@ -393,6 +493,18 @@ export default function Swap() {
               </Card>
             )}
           </AutoColumn>
+          <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
+            <InputRow selected={false}>
+              {account && currencies[Field.INPUT] && (
+                <>
+                  <StyledBalanceMax onClick={handleInput25}>25%</StyledBalanceMax>
+                  <StyledBalanceMax onClick={handleInput50}>50%</StyledBalanceMax>
+                  <StyledBalanceMax onClick={handleInput75}>75%</StyledBalanceMax>
+                  <StyledBalanceMax onClick={handleInputMax}>MAX</StyledBalanceMax>
+                </>
+              )}
+            </InputRow>
+          </AutoRow>
           <BottomGrouping>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true}>
@@ -498,7 +610,7 @@ export default function Swap() {
             ) : null}
           </BottomGrouping>
         </Wrapper>
-      </AppBody>
+      </PageWrapper>
       {!swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
       ) : (

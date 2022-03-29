@@ -35,6 +35,7 @@ export default function AwaitingRewards() {
   }, [rewardsStartTime, currentTimestamp])
 
   const secondsToRewards = !rewardsStarted ? blocksLeftUntilRewards : 0
+  const startTime = rewardsStartTime && new Date(rewardsStartTime.toNumber() * 1000).toString()
   let startingAt = secondsToRewards
   const days = (startingAt - (startingAt % DAY)) / DAY
   startingAt -= days * DAY
@@ -53,12 +54,12 @@ export default function AwaitingRewards() {
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '8px' }}>
                 💡
               </span>
-              <b>{govToken?.symbol}</b> rewards haven&apos;t started yet - they will be activated at block{' '}
-              <b>{rewardsStartTime?.toLocaleString()}</b>. There are <b>{blocksLeftUntilRewards}</b> time left until the
-              rewards start.
+              <b>{govToken?.symbol}</b> rewards haven&apos;t started yet
+              <br />
+              They will be activated at {startTime}
               <br />
               <br />
-              Expected start:{' '}
+              Countdown:{' '}
               <b>
                 {days ? `${days} ${days === 1 ? 'day' : 'days'}, ` : ''}
                 {hours ? `${hours} ${hours === 1 ? 'hour' : 'hours'}, ` : ''}
@@ -70,8 +71,7 @@ export default function AwaitingRewards() {
               from now.
               <br />
               <br />
-              You can deposit your LP tokens now if you want to, and you&apos;ll start earning rewards at time{' '}
-              <b>{rewardsStartTime?.toLocaleString()}</b> and thereafter.
+              You can deposit your LP tokens now, and you&apos;ll start earning rewards right when they start.
             </TYPE.link>
           </AutoColumn>
         </BlueCard>
