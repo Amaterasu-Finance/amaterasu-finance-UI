@@ -44,13 +44,13 @@ switch (BLOCKCHAIN) {
     supportedChainIds = [1313161554, 1313161555]
     break
   case Blockchain.AURORA_TESTNET:
-    supportedChainIds = [1313161554, 1313161555]
+    supportedChainIds = [1313161555]
     break
   case Blockchain.MTV:
     supportedChainIds = [62621]
     break
   default:
-    supportedChainIds = [1, 3, 4, 5, 42]
+    supportedChainIds = [1313161554, 1313161555]
     break
 }
 

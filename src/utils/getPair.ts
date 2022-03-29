@@ -8,6 +8,7 @@ export default function getPair(
   reserve1: BigNumber
 ): Pair | undefined {
   if (tokenA && tokenB && reserve0 && reserve1) {
+    if (tokenA.chainId !== tokenB.chainId) return undefined
     const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
     return token0 && token1
       ? new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString()))
