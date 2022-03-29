@@ -262,7 +262,7 @@ export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
   let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency)
   if (inputCurrency === outputCurrency) {
     if (inputCurrency.toUpperCase() === BASE_CURRENCY.symbol) {
-      outputCurrency = GOVERNANCE_TOKEN[ChainId.AURORA_TESTNET].address
+      outputCurrency = GOVERNANCE_TOKEN[ChainId.AURORA_MAINNET].address
     } else if (typeof parsedQs.outputCurrency === 'string') {
       inputCurrency = ''
     } else {
