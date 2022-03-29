@@ -30,6 +30,7 @@ export const PIT_POOLS: {
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/WETH') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/AURORA') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'WETH/AURORA') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/AURORA') }
   ]
