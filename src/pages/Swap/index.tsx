@@ -371,7 +371,7 @@ export default function Swap() {
       <SwapPoolTabs active={'swap'} />
 
       {showAntiWhaleHeader && isIza && antiWhale && antiWhale.maxTransferAmountPerc < 5 && (
-        <BlueCard maxWidth={'300px'} marginBottom={'10px'}>
+        <BlueCard maxWidth={'400px'} marginBottom={'10px'}>
           <TYPE.mediumHeader textAlign={'center'} fontWeight={800}>
             <img src={AntiWhaleImg} alt={'antiwhale'} style={{ height: '50px', width: '50px' }} /> Anti-Whale is active
           </TYPE.mediumHeader>

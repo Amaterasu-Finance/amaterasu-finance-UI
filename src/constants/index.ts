@@ -15,13 +15,13 @@ export const SOCKS_TESTNET_ADDRESS = '0x65770b5283117639760beA3F867b69b3697a91dd
 
 export const ROUTER_ADDRESSES: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0xfee8B01BdB8354ac730D4b28F500e70384158b10',
-  [ChainId.AURORA_MAINNET]: '0x3CBF7762b140246e150855aE138a14E0c34C532a',
+  [ChainId.AURORA_MAINNET]: '0x3d99B2F578d94f61adcD899DE55F2991522cefE1',
   [ChainId.AURORA_TESTNET]: '0x3CBF7762b140246e150855aE138a14E0c34C532a'
 }
 
 export const PAYOUT_ADDRESSES: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0x41705A23De7517D931D1967c13B5696a71279ff1',
-  [ChainId.AURORA_MAINNET]: '0x725508696DE9C3b976429e7081e65686E409815F',
+  [ChainId.AURORA_MAINNET]: '0x84521183A3Be71e4A4C2dF5630982142fb47625E',
   [ChainId.AURORA_TESTNET]: '0x725508696DE9C3b976429e7081e65686E409815F'
 }
 
@@ -35,7 +35,7 @@ export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
   ),
   [ChainId.AURORA_MAINNET]: new Token(
     ChainId.AURORA_MAINNET,
-    '0x34696b6cE48051048f07f4cAfa39e3381242c3eD',
+    '0x0017Be3E7e36ABF49FE67a78D08bf465bB755120',
     18,
     'IZA',
     'IZA Token'
@@ -51,13 +51,13 @@ export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
 
 export const MASTER_BREEDER: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0x701294Ca6FAb80319abD74F3790D17F7F9c45FA1',
-  [ChainId.AURORA_MAINNET]: '0x6A4EA1056146Cd284B19Cd0FEE80Df3Dc80b9A90',
+  [ChainId.AURORA_MAINNET]: '0xAE20c9F0c4a7E0098D322F690DFea6534E105614',
   [ChainId.AURORA_TESTNET]: '0x6A4EA1056146Cd284B19Cd0FEE80Df3Dc80b9A90'
 }
 
 export const PIT_BREEDER: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0x02Dd0Aba3734B270436753550d9365ac85BA7f14',
-  [ChainId.AURORA_MAINNET]: '0x701294Ca6FAb80319abD74F3790D17F7F9c45FA1',
+  [ChainId.AURORA_MAINNET]: '0x2f4e4F2f514F15230BE9fFb2F56285A6aeaD47F1',
   [ChainId.AURORA_TESTNET]: '0x701294Ca6FAb80319abD74F3790D17F7F9c45FA1'
 }
 
@@ -71,7 +71,7 @@ export const PIT: { [chainId in ChainId]: Token } = {
   ),
   [ChainId.AURORA_MAINNET]: new Token(
     ChainId.AURORA_MAINNET,
-    '0x873b899AfbE96c5AFA575dcd6d3D9f7845Fd47DB',
+    '0x00a761b10B4Ff8Fc205E685484a1da60451857e1',
     18,
     'xIZA',
     'Staked IZA'
@@ -125,11 +125,10 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET]]
 }
 
-export const IZA = getTokenWithDefault(ChainId.AURORA_TESTNET, 'IZA')
-export const AURORA = getTokenWithDefault(ChainId.AURORA_TESTNET, 'AURORA')
-export const NEAR = getTokenWithDefault(ChainId.AURORA_TESTNET, 'NEAR')
-export const ETH = getTokenWithDefault(ChainId.AURORA_TESTNET, 'ETH')
-export const USDC = getTokenWithDefault(ChainId.AURORA_TESTNET, 'USDC')
+export const IZA = getTokenWithDefault(ChainId.AURORA_MAINNET, 'IZA')
+export const AURORA = getTokenWithDefault(ChainId.AURORA_MAINNET, 'AURORA')
+export const NEAR = getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')
+export const USDC = getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC')
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
@@ -147,8 +146,8 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, USDC],
-  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, USDC, NEAR, ETH],
-  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, USDC, NEAR, ETH]
+  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, USDC, NEAR],
+  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, USDC, NEAR]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend

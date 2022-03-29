@@ -1,5 +1,5 @@
 import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@amaterasu-fi/sdk'
+// import { ChainId } from '@amaterasu-fi/sdk'
 import { TokenList } from '@uniswap/token-lists'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
@@ -16,12 +16,10 @@ export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean
 
   const ensResolver = useCallback(
     (ensName: string) => {
-      if (!library || chainId !== ChainId.AURORA_TESTNET) {
-        if (NETWORK_CHAIN_ID === ChainId.AURORA_TESTNET) {
-          const networkLibrary = getNetworkLibrary()
-          if (networkLibrary) {
-            return resolveENSContentHash(ensName, networkLibrary)
-          }
+      if (!library || chainId !== NETWORK_CHAIN_ID) {
+        const networkLibrary = getNetworkLibrary()
+        if (networkLibrary) {
+          return resolveENSContentHash(ensName, networkLibrary)
         }
         throw new Error('Could not construct mainnet ENS resolver')
       }

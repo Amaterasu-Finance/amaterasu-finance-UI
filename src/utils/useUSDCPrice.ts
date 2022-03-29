@@ -1,4 +1,4 @@
-import { ChainId, Currency, currencyEquals, JSBI, Price, WETH } from '@amaterasu-fi/sdk'
+import { Currency, currencyEquals, JSBI, Price, WETH } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { USDC } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
@@ -18,8 +18,8 @@ export default function useUSDCPrice(currency?: Currency): Price | undefined {
         chainId && wrapped && currencyEquals(WETH[chainId], wrapped) ? undefined : currency,
         chainId ? WETH[chainId] : undefined
       ],
-      [wrapped?.equals(USDC) ? undefined : wrapped, chainId === ChainId.MTV_MAINNET ? USDC : USDC],
-      [chainId ? WETH[chainId] : undefined, chainId === ChainId.MTV_MAINNET ? USDC : USDC]
+      [wrapped?.equals(USDC) ? undefined : wrapped, USDC],
+      [chainId ? WETH[chainId] : undefined, USDC]
     ],
     [chainId, currency, wrapped]
   )
