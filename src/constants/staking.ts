@@ -5,6 +5,8 @@ export interface StakingRewardsInfo {
   pid: number
   active: boolean
   tokens: [Token, Token]
+  rewarderAddress?: string
+  rewarderToken?: Token
 }
 
 export const STAKING_REWARDS_INFO: {

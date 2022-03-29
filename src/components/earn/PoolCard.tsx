@@ -117,12 +117,14 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
             </b>
           </TYPE.white>
         </RowBetween>
-        <RowBetween>
-          <TYPE.white> Deposit Fee </TYPE.white>
-          <TYPE.white>
-            {typeof stakingInfo.depositFee === 'number' ? `${stakingInfo.depositFee.toFixed(1)}%` : '-'}
-          </TYPE.white>
-        </RowBetween>
+        {stakingInfo.depositFee && stakingInfo.depositFee > 0 && (
+          <RowBetween>
+            <TYPE.white> Deposit Fee </TYPE.white>
+            <TYPE.white>
+              {typeof stakingInfo.depositFee === 'number' ? `${stakingInfo.depositFee.toFixed(1)}%` : '-'}
+            </TYPE.white>
+          </RowBetween>
+        )}
         <RowBetween>
           <TYPE.white> Total deposited </TYPE.white>
           <TYPE.white fontWeight={500}>
@@ -138,9 +140,9 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
           <TYPE.white>
             {stakingInfo
               ? stakingInfo.active
-                ? `${stakingInfo.poolRewardsPerBlock.toSignificant(4, { groupSeparator: ',' })} 
-                ${govToken?.symbol} / second`
-                : `0 ${govToken?.symbol} / second`
+                ? `${stakingInfo.poolRewardsPerBlock.multiply('86400').toSignificant(4, { groupSeparator: ',' })} 
+                ${govToken?.symbol} / day`
+                : `0 ${govToken?.symbol} / day`
               : '-'}
           </TYPE.white>
         </RowBetween>

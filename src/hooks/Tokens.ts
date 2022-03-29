@@ -13,6 +13,7 @@ import { filterTokens } from '../components/SearchModal/filtering'
 import { arrayify } from 'ethers/lib/utils'
 
 import { BASE_CURRENCY } from '../connectors'
+import useGovernanceToken from './useGovernanceToken'
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -90,6 +91,11 @@ export function useIsTokenActive(token: Token | undefined | null): boolean {
   }
 
   return !!activeTokens[token.address]
+}
+
+export function useIsScamToken(token: Token | undefined | null): boolean {
+  const govToken = useGovernanceToken()
+  return token?.symbol === 'IZA' && token?.address !== govToken?.address
 }
 
 // used to detect extra search results
