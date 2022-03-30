@@ -19,13 +19,15 @@ import useWithdrawalFeeTimer from '../../hooks/useWithdrawalFeeTimer'
 import WithdrawFeeTimer from '../../components/Pit/WithdrawFeeTimer'
 import { Text } from 'rebass'
 import { MouseoverTooltip } from '../../components/Tooltip'
-import useBUSDPrice from '../../hooks/useBUSDPrice'
 import Loader from '../../components/Loader'
 import { StakingTabCard } from './StakingTabCard'
 import { Avatar, Card, Col, Row, Statistic } from 'antd'
 import IzaLogo from '../../assets/images/iza-blue.png'
 import xIzaLogo from '../../assets/images/iza-purple.png'
-import AmaLogo from '../../assets/svg/amaterasu.svg'
+// import AmaLogo from '../../assets/svg/amaterasu.svg'
+// import useBUSDPrice from '../../hooks/useBUSDPrice'
+import useAuroraPrice from '../../hooks/useAuroraPrice'
+import { TYPE } from '../../theme'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
@@ -65,7 +67,7 @@ export default function Pit({
     'balanceOf',
     GOVERNANCE_TOKEN_INTERFACE
   )
-  const govTokenPrice = useBUSDPrice(govToken)
+  const govTokenPrice = useAuroraPrice(govToken)
 
   const big18 = 1000000000000000000
   const withdrawalFeePeriod = '7200' // 2 hours
@@ -159,19 +161,24 @@ export default function Pit({
       </CustomCard>
       <Row wrap={false} gutter={12} justify={'space-around'} style={{ position: 'relative' }}>
         <Col sm={8} md={12} className={'gutter-row'}>
-          <Card style={{ borderRadius: '8px', background: '#212429' }}>
+          <Card style={{ borderRadius: '8px', background: '#212429', height: '130px' }}>
             <Statistic
               title="TVL"
-              value={pitTVL.toLocaleString()}
-              precision={2}
+              value={pitTokenBalance ? (parseFloat(pitTokenBalance) / big18).toLocaleString() : ''}
+              precision={0}
               valueStyle={{ borderRadius: '8px' }}
-              prefix={<Avatar size={'default'} src={AmaLogo} />}
-              suffix=""
+              prefix={<Avatar size={'default'} src={IzaLogo} />}
+              suffix={govToken?.symbol}
             />
+            {pitTokenBalance && govTokenPrice && (
+              <TYPE.italic>
+                ≈$ <b>${pitTVL.toLocaleString()}</b>
+              </TYPE.italic>
+            )}
           </Card>
         </Col>
         <Col sm={8} md={12} className={'gutter-row'}>
-          <Card style={{ borderRadius: '8px', background: '#212429' }}>
+          <Card style={{ borderRadius: '8px', background: '#212429', height: '130px' }}>
             <Statistic
               title="IZA Balance"
               value={govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'}
@@ -180,10 +187,17 @@ export default function Pit({
               prefix={<Avatar size={'default'} src={IzaLogo} />}
               suffix=""
             />
+            {account && govTokenBalance && govTokenPrice && (
+              <RowBetween>
+                <TYPE.italic>
+                  ≈$ <b>{govTokenBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
+                </TYPE.italic>
+              </RowBetween>
+            )}
           </Card>
         </Col>
         <Col sm={8} md={12} className={'gutter-row'}>
-          <Card style={{ borderRadius: '8px', background: '#212429' }}>
+          <Card style={{ borderRadius: '8px', background: '#212429', height: '130px' }}>
             <Statistic
               title={`x${govToken?.symbol} Balance`}
               value={adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })}
@@ -191,6 +205,13 @@ export default function Pit({
               style={{ borderRadius: '8px', alignItems: 'center' }}
               prefix={<Avatar size={'default'} src={xIzaLogo} />}
             />
+            {account && adjustedPitBalance && govTokenPrice && (
+              <RowBetween>
+                <TYPE.italic>
+                  ≈$ <b>{adjustedPitBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
+                </TYPE.italic>
+              </RowBetween>
+            )}
           </Card>
         </Col>
       </Row>
