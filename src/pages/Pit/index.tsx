@@ -3,13 +3,10 @@ import { TokenAmount } from '@amaterasu-fi/sdk'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { RouteComponentProps } from 'react-router-dom'
-// import { TYPE } from '../../theme'
 import { AutoRow, RowBetween } from '../../components/Row'
 import { DataCard, CardSection } from '../../components/earn/styled'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
-// import { CountUp } from 'use-count-up'
-// import usePrevious from '../../hooks/usePrevious'
 import { PIT, ZERO_ADDRESS } from '../../constants'
 import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken'
 import { PIT_INTERFACE } from '../../constants/abis/pit'
@@ -34,19 +31,6 @@ const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
   width: 100%;
 `
-
-const TopSection = styled(AutoColumn)`
-  max-width: 720px;
-  width: 100%;
-`
-
-// const StyledBottomCard = styled(DataCard)<{ dim: any }>`
-//   opacity: ${({ dim }) => (dim ? 0.4 : 1)};
-//   margin-top: -40px;
-//   padding: 0 1.25rem 1rem 1.25rem;
-//   padding-top: 32px;
-//   z-index: 1;
-// `
 
 const CustomCard = styled(DataCard)`
   background: linear-gradient(
@@ -95,176 +79,122 @@ export default function Pit({
 
   const adjustedPitBalance = govTokenPitTokenRatio ? pitBalance?.multiply(govTokenPitTokenRatio) : undefined
   const pitTVL = (parseFloat(pitTokenBalance) * (govTokenPrice ? parseFloat(govTokenPrice?.toFixed(3)) : 1)) / big18
-  // const userLiquidityStaked = pitBalance
-  // const userLiquidityUnstaked = govTokenBalance
   const lastDepositedTime = userInfo.result?.lastDepositedTime
-
   const { secondsRemaining } = useWithdrawalFeeTimer(parseInt(lastDepositedTime, 10), parseInt(withdrawalFeePeriod, 10))
-
-  // const countUpAmount = pitBalance?.toFixed(6) ?? '0'
-  // const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 
   return (
     <PageWrapper gap="lg" justify="center">
-      <TopSection gap="lg" justify="center">
-        <CustomCard>
-          <CardSection gap="md">
-            <AutoRow>
-              <Text>DEX Fee Sharing Vault</Text>
-            </AutoRow>
-            <AutoRow justify="space-between">
-              <AutoColumn>
-                <Text fontWeight={300} fontSize={13}>
-                  TVL
+      <CustomCard>
+        <CardSection gap="md">
+          <AutoRow>
+            <Text>DEX Fee Sharing Vault</Text>
+          </AutoRow>
+          <AutoRow justify="space-between">
+            <AutoColumn>
+              <Text fontWeight={300} fontSize={13}>
+                TVL
+              </Text>
+              {pitTokenBalance && govTokenPrice ? (
+                <Text fontWeight={500} fontSize={18}>
+                  ${pitTVL.toLocaleString()}
                 </Text>
-                {pitTokenBalance && govTokenPrice ? (
-                  <Text fontWeight={500} fontSize={18}>
-                    ${pitTVL.toLocaleString()}
-                  </Text>
-                ) : (
-                  <Loader />
-                )}
-              </AutoColumn>
-              <AutoColumn>
-                <Text fontWeight={300} fontSize={13}>
-                  Ratio
+              ) : (
+                <Loader />
+              )}
+            </AutoColumn>
+            <AutoColumn>
+              <Text fontWeight={300} fontSize={13}>
+                Ratio
+              </Text>
+              {govTokenPitTokenRatio ? (
+                <Text fontWeight={500} fontSize={18}>
+                  {govTokenPitTokenRatio.toFixed(5)}
                 </Text>
-                {govTokenPitTokenRatio ? (
-                  <Text fontWeight={500} fontSize={18}>
-                    {govTokenPitTokenRatio.toFixed(5)}
-                  </Text>
-                ) : (
-                  <Loader />
-                )}
-              </AutoColumn>
-              <AutoColumn>
-                <Text fontWeight={300} fontSize={13}>
-                  Daily
+              ) : (
+                <Loader />
+              )}
+            </AutoColumn>
+            <AutoColumn>
+              <Text fontWeight={300} fontSize={13}>
+                Daily
+              </Text>
+              {apy && pitTokenBalance ? (
+                <Text fontWeight={500} fontSize={18}>
+                  {apy.apyDay?.toFixed(4)}%
                 </Text>
-                {apy && pitTokenBalance ? (
-                  <Text fontWeight={500} fontSize={18}>
-                    {apy.apyDay?.toFixed(4)}%
-                  </Text>
-                ) : (
-                  <Loader />
-                )}
-              </AutoColumn>
-              <AutoColumn>
-                <Text fontWeight={300} fontSize={13}>
-                  Yearly
+              ) : (
+                <Loader />
+              )}
+            </AutoColumn>
+            <AutoColumn>
+              <Text fontWeight={300} fontSize={13}>
+                Yearly
+              </Text>
+              {apy && pitTokenBalance ? (
+                <Text fontWeight={500} fontSize={18}>
+                  {apy.apy > 1e10 ? '∞' : apy.apy?.toLocaleString()}%
                 </Text>
-                {apy && pitTokenBalance ? (
-                  <Text fontWeight={500} fontSize={18}>
-                    {apy.apy > 1e10 ? '∞' : apy.apy?.toLocaleString()}%
-                  </Text>
-                ) : (
-                  <Loader />
-                )}
-                <RowBetween />
-              </AutoColumn>
-              <AutoColumn>
-                <MouseoverTooltip
-                  text={
-                    'xIZA has a 0.2% unstaking fee if withdrawn within 2h. All fees are distributed to xIZA holders.'
-                  }
-                >
-                  <Text fontWeight={300} fontSize={13}>
-                    Withdraw Fee Until
-                  </Text>
-                </MouseoverTooltip>
-                {secondsRemaining ? (
-                  <WithdrawFeeTimer secondsRemaining={secondsRemaining} />
-                ) : (
-                  <DurationText>Unlocked</DurationText>
-                )}
-                <RowBetween />
-              </AutoColumn>
-            </AutoRow>
-          </CardSection>
-        </CustomCard>
-        {/*<StyledBottomCard dim={false}>*/}
-        {/*  <AutoColumn gap="sm">*/}
-        {/*    <RowBetween>*/}
-        {/*      <div>*/}
-        {/*        <TYPE.black>x{govToken?.symbol} Balance</TYPE.black>*/}
-        {/*      </div>*/}
-        {/*    </RowBetween>*/}
-        {/*    <RowBetween style={{ alignItems: 'baseline' }}>*/}
-        {/*      <TYPE.largeHeader fontSize={36}>*/}
-        {/*        <CountUp*/}
-        {/*          key={countUpAmount}*/}
-        {/*          isCounting*/}
-        {/*          decimalPlaces={3}*/}
-        {/*          start={parseFloat(countUpAmountPrevious)}*/}
-        {/*          end={parseFloat(countUpAmount)}*/}
-        {/*          thousandsSeparator={','}*/}
-        {/*          duration={1}*/}
-        {/*        />*/}
-        {/*      </TYPE.largeHeader>*/}
-        {/*    </RowBetween>*/}
-        {/*    {account && adjustedPitBalance && adjustedPitBalance.greaterThan('0') && (*/}
-        {/*      <RowBetween>*/}
-        {/*        <TYPE.italic15>*/}
-        {/*          ≈{' '}*/}
-        {/*          <b>*/}
-        {/*            {adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })} {govToken?.symbol}*/}
-        {/*          </b>*/}
-        {/*        </TYPE.italic15>*/}
-        {/*      </RowBetween>*/}
-        {/*    )}*/}
-        {/*    {account && adjustedPitBalance && govTokenPrice && adjustedPitBalance.greaterThan('0') && (*/}
-        {/*      <RowBetween>*/}
-        {/*        <TYPE.italic15>*/}
-        {/*          ≈{' $'}*/}
-        {/*          <b>*/}
-        {/*            {govTokenPrice*/}
-        {/*              ? adjustedPitBalance?.multiply(govTokenPrice?.adjusted).toFixed(2, { groupSeparator: ',' })*/}
-        {/*              : '0'}{' '}*/}
-        {/*          </b>*/}
-        {/*        </TYPE.italic15>*/}
-        {/*      </RowBetween>*/}
-        {/*    )}*/}
-        {/*  </AutoColumn>*/}
-        {/*</StyledBottomCard>*/}
-        <Row wrap={false} gutter={12} justify={'space-around'}>
-          <Col span={12} className={'gutter-row'}>
-            <Card style={{ borderRadius: '8px', background: '#212429' }}>
-              <Statistic
-                title="TVL"
-                value={pitTVL.toLocaleString()}
-                precision={2}
-                valueStyle={{ borderRadius: '8px' }}
-                prefix={<Avatar size={'default'} src={AmaLogo} />}
-                suffix=""
-              />
-            </Card>
-          </Col>
-          <Col span={12} className={'gutter-row'}>
-            <Card style={{ borderRadius: '8px', background: '#212429' }}>
-              <Statistic
-                title="IZA Balance"
-                value={govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'}
-                precision={2}
-                style={{ borderRadius: '8px' }}
-                prefix={<Avatar size={'default'} src={IzaLogo} />}
-                suffix=""
-              />
-            </Card>
-          </Col>
-          <Col span={12} className={'gutter-row'}>
-            <Card style={{ borderRadius: '8px', background: '#212429' }}>
-              <Statistic
-                title={`x${govToken?.symbol} Balance`}
-                value={adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })}
-                precision={2}
-                style={{ borderRadius: '8px', alignItems: 'center' }}
-                prefix={<Avatar size={'default'} src={xIzaLogo} />}
-              />
-            </Card>
-          </Col>
-        </Row>
-        {account && govToken && <StakingTabCard />}
-      </TopSection>
+              ) : (
+                <Loader />
+              )}
+              <RowBetween />
+            </AutoColumn>
+            <AutoColumn>
+              <MouseoverTooltip
+                text={'xIZA has a 0.2% unstaking fee if withdrawn within 2h. All fees are distributed to xIZA holders.'}
+              >
+                <Text fontWeight={300} fontSize={13}>
+                  Withdraw Fee Until
+                </Text>
+              </MouseoverTooltip>
+              {secondsRemaining ? (
+                <WithdrawFeeTimer secondsRemaining={secondsRemaining} />
+              ) : (
+                <DurationText>Unlocked</DurationText>
+              )}
+              <RowBetween />
+            </AutoColumn>
+          </AutoRow>
+        </CardSection>
+      </CustomCard>
+      <Row wrap={false} gutter={12} justify={'space-around'} style={{ position: 'relative' }}>
+        <Col sm={8} md={12} className={'gutter-row'}>
+          <Card style={{ borderRadius: '8px', background: '#212429' }}>
+            <Statistic
+              title="TVL"
+              value={pitTVL.toLocaleString()}
+              precision={2}
+              valueStyle={{ borderRadius: '8px' }}
+              prefix={<Avatar size={'default'} src={AmaLogo} />}
+              suffix=""
+            />
+          </Card>
+        </Col>
+        <Col sm={8} md={12} className={'gutter-row'}>
+          <Card style={{ borderRadius: '8px', background: '#212429' }}>
+            <Statistic
+              title="IZA Balance"
+              value={govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'}
+              precision={2}
+              style={{ borderRadius: '8px' }}
+              prefix={<Avatar size={'default'} src={IzaLogo} />}
+              suffix=""
+            />
+          </Card>
+        </Col>
+        <Col sm={8} md={12} className={'gutter-row'}>
+          <Card style={{ borderRadius: '8px', background: '#212429' }}>
+            <Statistic
+              title={`x${govToken?.symbol} Balance`}
+              value={adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })}
+              precision={2}
+              style={{ borderRadius: '8px', alignItems: 'center' }}
+              prefix={<Avatar size={'default'} src={xIzaLogo} />}
+            />
+          </Card>
+        </Col>
+      </Row>
+      <StakingTabCard />
     </PageWrapper>
   )
 }
