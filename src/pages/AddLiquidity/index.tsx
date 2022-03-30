@@ -6,7 +6,7 @@ import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
-import { ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
 import { BlueCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
@@ -32,7 +32,6 @@ import { TYPE } from '../../theme'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
-import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
 import { currencyId } from '../../utils/currencyId'
@@ -41,8 +40,17 @@ import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 
 import { BASE_CURRENCY } from '../../connectors'
-
 import { useRouterContractAddress } from '../../utils'
+
+const PageWrapper = styled(AutoColumn)`
+  max-width: 720px;
+  width: 100%;
+  position: relative;
+  background: ${({ theme }) => theme.bg1};
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.01);
+  border-radius: 8px;
+`
 
 export default function AddLiquidity({
   match: {
@@ -319,7 +327,7 @@ export default function AddLiquidity({
 
   return (
     <>
-      <AppBody>
+      <PageWrapper>
         <AddRemoveTabs creating={isCreate} adding={true} />
         <Wrapper>
           <TransactionConfirmationModal
@@ -473,7 +481,7 @@ export default function AddLiquidity({
             )}
           </AutoColumn>
         </Wrapper>
-      </AppBody>
+      </PageWrapper>
       {!addIsUnsupported ? (
         pair && !noLiquidity && pairState !== PairState.INVALID ? (
           <AutoColumn style={{ minWidth: '20rem', width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
