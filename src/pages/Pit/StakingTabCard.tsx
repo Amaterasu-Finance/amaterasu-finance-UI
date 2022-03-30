@@ -30,7 +30,7 @@ export const StakingTabCard = () => {
         style={{ width: '100%', borderRadius: '8px', background: '#212429' }}
         tabList={tabList}
         activeTabKey={activeTabKey}
-        // tabBarExtraContent={<a href="#">More</a>}
+        tabBarExtraContent={<a href="#">Get IZA</a>}
         onTabChange={(key: any) => {
           onTabChange(key)
         }}

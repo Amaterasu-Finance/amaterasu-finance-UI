@@ -24,6 +24,7 @@ import { StakingTabCard } from './StakingTabCard'
 import { Avatar, Card, Col, Row, Statistic } from 'antd'
 import IzaLogo from '../../assets/images/iza-blue.png'
 import xIzaLogo from '../../assets/images/iza-purple.png'
+import VaultLogo from '../../assets/images/vault-png-transparent-image.png'
 // import AmaLogo from '../../assets/svg/amaterasu.svg'
 // import useBUSDPrice from '../../hooks/useBUSDPrice'
 import useAuroraPrice from '../../hooks/useAuroraPrice'
@@ -89,27 +90,17 @@ export default function Pit({
       <CustomCard>
         <CardSection gap="md">
           <AutoRow>
-            <Text>DEX Fee Sharing Vault</Text>
+            <Text fontSize={18} fontWeight={700}>
+              DEX Fee Sharing Vault
+            </Text>
           </AutoRow>
           <AutoRow justify="space-between">
             <AutoColumn>
-              <Text fontWeight={300} fontSize={13}>
-                TVL
-              </Text>
-              {pitTokenBalance && govTokenPrice ? (
-                <Text fontWeight={500} fontSize={18}>
-                  ${pitTVL.toLocaleString()}
-                </Text>
-              ) : (
-                <Loader />
-              )}
-            </AutoColumn>
-            <AutoColumn>
-              <Text fontWeight={300} fontSize={13}>
+              <Text fontWeight={500} fontSize={13}>
                 Ratio
               </Text>
               {govTokenPitTokenRatio ? (
-                <Text fontWeight={500} fontSize={18}>
+                <Text fontWeight={400} fontSize={18}>
                   {govTokenPitTokenRatio.toFixed(5)}
                 </Text>
               ) : (
@@ -117,11 +108,11 @@ export default function Pit({
               )}
             </AutoColumn>
             <AutoColumn>
-              <Text fontWeight={300} fontSize={13}>
+              <Text fontWeight={500} fontSize={13}>
                 Daily
               </Text>
               {apy && pitTokenBalance ? (
-                <Text fontWeight={500} fontSize={18}>
+                <Text fontWeight={400} fontSize={18}>
                   {apy.apyDay?.toFixed(4)}%
                 </Text>
               ) : (
@@ -129,11 +120,11 @@ export default function Pit({
               )}
             </AutoColumn>
             <AutoColumn>
-              <Text fontWeight={300} fontSize={13}>
+              <Text fontWeight={500} fontSize={13}>
                 Yearly
               </Text>
               {apy && pitTokenBalance ? (
-                <Text fontWeight={500} fontSize={18}>
+                <Text fontWeight={400} fontSize={18}>
                   {apy.apy > 1e10 ? '∞' : apy.apy?.toLocaleString()}%
                 </Text>
               ) : (
@@ -145,7 +136,7 @@ export default function Pit({
               <MouseoverTooltip
                 text={'xIZA has a 0.2% unstaking fee if withdrawn within 2h. All fees are distributed to xIZA holders.'}
               >
-                <Text fontWeight={300} fontSize={13}>
+                <Text fontWeight={500} fontSize={13}>
                   Withdraw Fee Until
                 </Text>
               </MouseoverTooltip>
@@ -159,58 +150,65 @@ export default function Pit({
           </AutoRow>
         </CardSection>
       </CustomCard>
-      <Row wrap={false} gutter={12} justify={'space-around'} style={{ position: 'relative' }}>
+      <Row wrap={false} gutter={31} justify={'center'}>
         <Col sm={8} md={12} className={'gutter-row'}>
-          <Card style={{ borderRadius: '8px', background: '#212429', height: '130px' }}>
+          <Card
+            size={'small'}
+            style={{ borderRadius: '8px', background: '#212429' }}
+            title="Value Locked"
+            headStyle={{ fontWeight: '700', textAlign: 'center' }}
+          >
             <Statistic
-              title="TVL"
               value={pitTokenBalance ? (parseFloat(pitTokenBalance) / big18).toLocaleString() : ''}
               precision={0}
-              valueStyle={{ borderRadius: '8px' }}
-              prefix={<Avatar size={'default'} src={IzaLogo} />}
+              valueStyle={{ textAlign: 'center' }}
+              prefix={<Avatar size={'large'} src={VaultLogo} />}
               suffix={govToken?.symbol}
             />
             {pitTokenBalance && govTokenPrice && (
-              <TYPE.italic>
-                ≈$ <b>${pitTVL.toLocaleString()}</b>
+              <TYPE.italic textAlign={'center'}>
+                ≈$<b>{pitTVL?.toFixed(2)}</b>
               </TYPE.italic>
             )}
           </Card>
         </Col>
         <Col sm={8} md={12} className={'gutter-row'}>
-          <Card style={{ borderRadius: '8px', background: '#212429', height: '130px' }}>
+          <Card
+            size={'small'}
+            style={{ borderRadius: '8px', background: '#212429' }}
+            title="IZA Balance"
+            headStyle={{ fontWeight: '700', textAlign: 'center' }}
+          >
             <Statistic
-              title="IZA Balance"
               value={govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'}
               precision={2}
-              style={{ borderRadius: '8px' }}
-              prefix={<Avatar size={'default'} src={IzaLogo} />}
-              suffix=""
+              valueStyle={{ textAlign: 'center' }}
+              prefix={<Avatar size={'large'} src={IzaLogo} />}
             />
             {account && govTokenBalance && govTokenPrice && (
-              <RowBetween>
-                <TYPE.italic>
-                  ≈$ <b>{govTokenBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
-                </TYPE.italic>
-              </RowBetween>
+              <TYPE.italic textAlign={'center'}>
+                ≈$<b>{govTokenBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
+              </TYPE.italic>
             )}
           </Card>
         </Col>
         <Col sm={8} md={12} className={'gutter-row'}>
-          <Card style={{ borderRadius: '8px', background: '#212429', height: '130px' }}>
+          <Card
+            size={'small'}
+            style={{ borderRadius: '8px', background: '#212429' }}
+            title={`x${govToken?.symbol} Balance`}
+            headStyle={{ fontWeight: '700', textAlign: 'center' }}
+          >
             <Statistic
-              title={`x${govToken?.symbol} Balance`}
               value={adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })}
               precision={2}
-              style={{ borderRadius: '8px', alignItems: 'center' }}
-              prefix={<Avatar size={'default'} src={xIzaLogo} />}
+              valueStyle={{ textAlign: 'center' }}
+              prefix={<Avatar size={'large'} src={xIzaLogo} />}
             />
             {account && adjustedPitBalance && govTokenPrice && (
-              <RowBetween>
-                <TYPE.italic>
-                  ≈$ <b>{adjustedPitBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
-                </TYPE.italic>
-              </RowBetween>
+              <TYPE.italic textAlign={'center'}>
+                ≈$<b>{adjustedPitBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
+              </TYPE.italic>
             )}
           </Card>
         </Col>
