@@ -17,7 +17,6 @@ import {
   RedirectOldAddLiquidityPathStructure,
   RedirectToAddLiquidity
 } from './AddLiquidity/redirects'
-import 'antd/dist/antd.dark.css'
 import Admin from './Admin'
 import Pit from './Pit'
 import MigrateV1 from './MigrateV1'
