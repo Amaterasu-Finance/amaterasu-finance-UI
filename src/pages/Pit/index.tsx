@@ -112,20 +112,14 @@ export default function Pit({
     'balanceOf',
     PIT_INTERFACE
   )
-  // const govTokenPrice = useAuroraPrice(govToken)
 
   const big18 = 1000000000000000000
   const withdrawalFeePeriod = '7200' // 2 hours
-  // const pit = chainId ? PIT[chainId] : undefined
   const pitContract = usePitContract()
-  // const pitBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, pit, 'balanceOf', PIT_INTERFACE)
   const pitTokenBalance = useSingleCallResult(pitContract, 'balanceOfThis')?.result?.[0]
   const userInfo = useSingleCallResult(pitContract, 'userInfo', [account ? account : ZERO_ADDRESS])
   const govTokenPitTokenRatio = usePitRatio()
   const apy = useXFoxApy()
-
-  // const adjustedPitBalance = govTokenPitTokenRatio ? pitBalance?.multiply(govTokenPitTokenRatio) : undefined
-  // const pitTVL = (parseFloat(pitTokenBalance) * (govTokenPrice ? parseFloat(govTokenPrice?.toFixed(3)) : 1)) / big18
   const lastDepositedTime = userInfo.result?.lastDepositedTime
   const { secondsRemaining } = useWithdrawalFeeTimer(parseInt(lastDepositedTime, 10), parseInt(withdrawalFeePeriod, 10))
 
@@ -157,7 +151,7 @@ export default function Pit({
               </Text>
               {apy && pitTokenBalance ? (
                 <Text fontWeight={400} fontSize={18}>
-                  {apy.apyDay?.toFixed(4)}%
+                  {apy.apyDay?.toFixed(2)}%
                 </Text>
               ) : (
                 <Loader />
@@ -209,7 +203,7 @@ export default function Pit({
               <Row justify={'center'} align={'center'}>
                 <Avatar size={25} src={xIzaLogo} style={{ marginRight: '4px' }} />
                 <TYPE.black fontWeight={400} fontSize={16}>
-                  {userLiquidityStaked?.toFixed(3, { groupSeparator: ',' })}
+                  {userLiquidityStaked?.toFixed(2, { groupSeparator: ',' })}
                 </TYPE.black>
               </Row>
             </StyledStatDataCard>
