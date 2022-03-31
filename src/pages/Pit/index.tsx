@@ -3,11 +3,11 @@ import { TokenAmount } from '@amaterasu-fi/sdk'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { RouteComponentProps } from 'react-router-dom'
-import { AutoRow, RowBetween } from '../../components/Row'
+import Row, { AutoRow, RowBetween } from '../../components/Row'
 import { DataCard, CardSection } from '../../components/earn/styled'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
-import { PIT, ZERO_ADDRESS } from '../../constants'
+import { ZERO_ADDRESS } from '../../constants'
 import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken'
 import { PIT_INTERFACE } from '../../constants/abis/pit'
 import useGovernanceToken from 'hooks/useGovernanceToken'
@@ -21,19 +21,28 @@ import { Text } from 'rebass'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import Loader from '../../components/Loader'
 import { StakingTabCard } from './StakingTabCard'
-import { Avatar, Card, Statistic } from 'antd'
+import { Avatar } from 'antd'
 import IzaLogo from '../../assets/images/iza-blue.png'
 import xIzaLogo from '../../assets/images/iza-purple.png'
 import VaultLogo from '../../assets/images/vault-png-transparent-image.png'
+
 // import AmaLogo from '../../assets/svg/amaterasu.svg'
 // import useBUSDPrice from '../../hooks/useBUSDPrice'
-import useAuroraPrice from '../../hooks/useAuroraPrice'
+// import useAuroraPrice from '../../hooks/useAuroraPrice'
 import { TYPE } from '../../theme'
 import usePitToken from '../../hooks/usePitToken'
+import { LightGreyCard } from '../../components/Card'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
   width: 100%;
+`
+
+const DataRow = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+   flex-direction: column;
+   margin: 15px;
+ `};
 `
 
 const CustomCard = styled(DataCard)`
@@ -55,12 +64,39 @@ const DurationText = styled(Text)`
   width: 75%;
 `
 
+const StyledStatCard = styled(LightGreyCard)`
+  padding: 0;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 110px;
+  `};
+`
+
+const StyledStatDataCard = ({ children, label }: any) => {
+  return (
+    <StyledStatCard>
+      <CardSection>
+        <AutoColumn gap="md">
+          <AutoRow justify="center">
+            <TYPE.black fontWeight={600} fontSize={16}>
+              {label}
+            </TYPE.black>
+          </AutoRow>
+          {children}
+        </AutoColumn>
+      </CardSection>
+    </StyledStatCard>
+  )
+}
+
 export default function Pit({
   match: {
     params: { currencyIdA, currencyIdB }
   }
 }: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>) {
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
   const govToken = useGovernanceToken()
   const govTokenBalance: TokenAmount | undefined = useTokenBalance(
@@ -76,20 +112,14 @@ export default function Pit({
     'balanceOf',
     PIT_INTERFACE
   )
-  const govTokenPrice = useAuroraPrice(govToken)
 
   const big18 = 1000000000000000000
   const withdrawalFeePeriod = '7200' // 2 hours
-  const pit = chainId ? PIT[chainId] : undefined
   const pitContract = usePitContract()
-  const pitBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, pit, 'balanceOf', PIT_INTERFACE)
   const pitTokenBalance = useSingleCallResult(pitContract, 'balanceOfThis')?.result?.[0]
   const userInfo = useSingleCallResult(pitContract, 'userInfo', [account ? account : ZERO_ADDRESS])
   const govTokenPitTokenRatio = usePitRatio()
   const apy = useXFoxApy()
-
-  const adjustedPitBalance = govTokenPitTokenRatio ? pitBalance?.multiply(govTokenPitTokenRatio) : undefined
-  const pitTVL = (parseFloat(pitTokenBalance) * (govTokenPrice ? parseFloat(govTokenPrice?.toFixed(3)) : 1)) / big18
   const lastDepositedTime = userInfo.result?.lastDepositedTime
   const { secondsRemaining } = useWithdrawalFeeTimer(parseInt(lastDepositedTime, 10), parseInt(withdrawalFeePeriod, 10))
 
@@ -121,7 +151,7 @@ export default function Pit({
               </Text>
               {apy && pitTokenBalance ? (
                 <Text fontWeight={400} fontSize={18}>
-                  {apy.apyDay?.toFixed(4)}%
+                  {apy.apyDay?.toFixed(2)}%
                 </Text>
               ) : (
                 <Loader />
@@ -159,63 +189,33 @@ export default function Pit({
         </CardSection>
       </CustomCard>
       <AutoRow justify={'space-between'}>
-        <AutoColumn justify={'center'} className={'gutter-row'}>
-          <Card
-            style={{ borderRadius: '8px', background: '#212429' }}
-            title="Value Locked"
-            headStyle={{ fontWeight: '700', textAlign: 'center' }}
-          >
-            <Statistic
-              value={pitTokenBalance ? (parseFloat(pitTokenBalance) / big18).toLocaleString() : ''}
-              precision={0}
-              valueStyle={{ textAlign: 'center', fontSize: '20px', margin: '0 24px 0 24px' }}
-              prefix={<Avatar size={'large'} src={VaultLogo} />}
-              suffix={govToken?.symbol}
-            />
-            {pitTokenBalance && govTokenPrice && (
-              <TYPE.italic textAlign={'center'}>
-                ≈$<b>{pitTVL?.toFixed(2)}</b>
-              </TYPE.italic>
-            )}
-          </Card>
-        </AutoColumn>
-        <AutoColumn justify={'center'} className={'gutter-row'}>
-          <Card
-            style={{ borderRadius: '8px', background: '#212429' }}
-            title="IZA Balance"
-            headStyle={{ fontWeight: '700', textAlign: 'center' }}
-          >
-            <Statistic
-              value={govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'}
-              precision={2}
-              valueStyle={{ textAlign: 'center', fontSize: '20px', margin: '0 24px 0 24px' }}
-              prefix={<Avatar size={'large'} src={IzaLogo} />}
-            />
-            {account && govTokenBalance && govTokenPrice && (
-              <TYPE.italic textAlign={'center'}>
-                ≈$<b>{govTokenBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
-              </TYPE.italic>
-            )}
-          </Card>
-        </AutoColumn>
-        <AutoColumn justify={'center'} className={'gutter-row'}>
-          <Card
-            style={{ borderRadius: '8px', background: '#212429' }}
-            title={`x${govToken?.symbol} Balance`}
-            headStyle={{ fontWeight: '700', textAlign: 'center' }}
-          >
-            <Statistic
-              value={userLiquidityStaked?.toFixed(3, { groupSeparator: ',' })}
-              precision={2}
-              valueStyle={{ textAlign: 'center', fontSize: '20px', margin: '0 24px 0 24px' }}
-              prefix={<Avatar size={'large'} src={xIzaLogo} />}
-            />
-            {account && adjustedPitBalance && govTokenPrice && (
-              <TYPE.italic textAlign={'center'}>
-                ≈$<b>{adjustedPitBalance.multiply(govTokenPrice.adjusted)?.toFixed(2, { groupSeparator: ',' })}</b>
-              </TYPE.italic>
-            )}
-          </Card>
+        <AutoColumn gap="lg" style={{ width: '100%', maxWidth: '720px' }}>
+          <DataRow style={{ gap: '10px', margin: 0 }}>
+            <StyledStatDataCard label="Total IZA Staked">
+              <Row justify={'center'} align={'center'}>
+                <Avatar size={25} src={VaultLogo} style={{ marginRight: '4px' }} />
+                <TYPE.black fontWeight={400} fontSize={16}>
+                  {pitTokenBalance ? (parseFloat(pitTokenBalance) / big18).toLocaleString() : ''}
+                </TYPE.black>
+              </Row>
+            </StyledStatDataCard>
+            <StyledStatDataCard label="Balance xTRI">
+              <Row justify={'center'} align={'center'}>
+                <Avatar size={25} src={xIzaLogo} style={{ marginRight: '4px' }} />
+                <TYPE.black fontWeight={400} fontSize={16}>
+                  {userLiquidityStaked?.toFixed(2, { groupSeparator: ',' })}
+                </TYPE.black>
+              </Row>
+            </StyledStatDataCard>
+            <StyledStatDataCard label="Unstaked IZA">
+              <Row justify={'center'} align={'center'}>
+                <Avatar size={25} src={IzaLogo} style={{ marginRight: '4px' }} />
+                <TYPE.black fontWeight={400} fontSize={16}>
+                  {govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'}
+                </TYPE.black>
+              </Row>
+            </StyledStatDataCard>
+          </DataRow>
         </AutoColumn>
       </AutoRow>
       <StakingTabCard />
