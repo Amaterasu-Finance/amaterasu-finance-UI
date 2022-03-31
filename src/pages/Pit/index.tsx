@@ -29,6 +29,7 @@ import VaultLogo from '../../assets/images/vault-png-transparent-image.png'
 // import useBUSDPrice from '../../hooks/useBUSDPrice'
 import useAuroraPrice from '../../hooks/useAuroraPrice'
 import { TYPE } from '../../theme'
+import usePitToken from '../../hooks/usePitToken'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
@@ -67,6 +68,13 @@ export default function Pit({
     govToken,
     'balanceOf',
     GOVERNANCE_TOKEN_INTERFACE
+  )
+  const pitToken = usePitToken()
+  const userLiquidityStaked: TokenAmount | undefined = useTokenBalance(
+    account ?? undefined,
+    pitToken,
+    'balanceOf',
+    PIT_INTERFACE
   )
   const govTokenPrice = useAuroraPrice(govToken)
 
@@ -197,7 +205,7 @@ export default function Pit({
             headStyle={{ fontWeight: '700', textAlign: 'center' }}
           >
             <Statistic
-              value={adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })}
+              value={userLiquidityStaked?.toFixed(3, { groupSeparator: ',' })}
               precision={2}
               valueStyle={{ textAlign: 'center', fontSize: '20px', margin: '0 24px 0 24px' }}
               prefix={<Avatar size={'large'} src={xIzaLogo} />}
