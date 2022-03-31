@@ -140,7 +140,8 @@ const LogoImage = styled('img')`
     height: 72px;
 `};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
+    width: 306px;
+    height: 72px;
   `}
 `
 
