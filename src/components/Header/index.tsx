@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { MouseoverTooltip } from '../Tooltip'
 import styled from 'styled-components'
 import HeaderLogo from 'assets/images/Amaterasu_Sun_Logo-Header_02_Mirrored.png'
+import MobileLogo from 'assets/svg/amaterasu.svg'
 import DarkIcon from 'assets/images/token-list/iza-blue.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalance, useETHBalances } from '../../state/wallet/hooks'
@@ -141,6 +142,17 @@ const LogoImage = styled('img')`
 `};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
+  `}
+`
+
+const MobileImage = styled('img')`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: block;
+    width: 72px;
+    height: 72px;
+    padding: 0.25rem;
+    cursor: pointer;
   `}
 `
 
@@ -343,6 +355,7 @@ export default function Header() {
         <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
           <GovTokenBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
         </Modal>
+        <MobileImage src={MobileLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
         <LogoImage src={HeaderLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
