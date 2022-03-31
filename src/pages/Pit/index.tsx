@@ -21,7 +21,7 @@ import { Text } from 'rebass'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import Loader from '../../components/Loader'
 import { StakingTabCard } from './StakingTabCard'
-import { Avatar, Card, Col, Row, Statistic } from 'antd'
+import { Avatar, Card, Statistic } from 'antd'
 import IzaLogo from '../../assets/images/iza-blue.png'
 import xIzaLogo from '../../assets/images/iza-purple.png'
 import VaultLogo from '../../assets/images/vault-png-transparent-image.png'
@@ -150,10 +150,9 @@ export default function Pit({
           </AutoRow>
         </CardSection>
       </CustomCard>
-      <Row wrap={false} gutter={31} justify={'center'}>
-        <Col sm={8} md={12} className={'gutter-row'}>
+      <AutoRow justify={'space-between'}>
+        <AutoColumn justify={'center'} className={'gutter-row'}>
           <Card
-            size={'small'}
             style={{ borderRadius: '8px', background: '#212429' }}
             title="Value Locked"
             headStyle={{ fontWeight: '700', textAlign: 'center' }}
@@ -161,7 +160,7 @@ export default function Pit({
             <Statistic
               value={pitTokenBalance ? (parseFloat(pitTokenBalance) / big18).toLocaleString() : ''}
               precision={0}
-              valueStyle={{ textAlign: 'center' }}
+              valueStyle={{ textAlign: 'center', fontSize: '20px', margin: '0 24px 0 24px' }}
               prefix={<Avatar size={'large'} src={VaultLogo} />}
               suffix={govToken?.symbol}
             />
@@ -171,10 +170,9 @@ export default function Pit({
               </TYPE.italic>
             )}
           </Card>
-        </Col>
-        <Col sm={8} md={12} className={'gutter-row'}>
+        </AutoColumn>
+        <AutoColumn justify={'center'} className={'gutter-row'}>
           <Card
-            size={'small'}
             style={{ borderRadius: '8px', background: '#212429' }}
             title="IZA Balance"
             headStyle={{ fontWeight: '700', textAlign: 'center' }}
@@ -182,7 +180,7 @@ export default function Pit({
             <Statistic
               value={govTokenBalance ? govTokenBalance.toFixed(2, { groupSeparator: ',' }) : '0'}
               precision={2}
-              valueStyle={{ textAlign: 'center' }}
+              valueStyle={{ textAlign: 'center', fontSize: '20px', margin: '0 24px 0 24px' }}
               prefix={<Avatar size={'large'} src={IzaLogo} />}
             />
             {account && govTokenBalance && govTokenPrice && (
@@ -191,10 +189,9 @@ export default function Pit({
               </TYPE.italic>
             )}
           </Card>
-        </Col>
-        <Col sm={8} md={12} className={'gutter-row'}>
+        </AutoColumn>
+        <AutoColumn justify={'center'} className={'gutter-row'}>
           <Card
-            size={'small'}
             style={{ borderRadius: '8px', background: '#212429' }}
             title={`x${govToken?.symbol} Balance`}
             headStyle={{ fontWeight: '700', textAlign: 'center' }}
@@ -202,7 +199,7 @@ export default function Pit({
             <Statistic
               value={adjustedPitBalance?.toFixed(3, { groupSeparator: ',' })}
               precision={2}
-              valueStyle={{ textAlign: 'center' }}
+              valueStyle={{ textAlign: 'center', fontSize: '20px', margin: '0 24px 0 24px' }}
               prefix={<Avatar size={'large'} src={xIzaLogo} />}
             />
             {account && adjustedPitBalance && govTokenPrice && (
@@ -211,8 +208,8 @@ export default function Pit({
               </TYPE.italic>
             )}
           </Card>
-        </Col>
-      </Row>
+        </AutoColumn>
+      </AutoRow>
       <StakingTabCard />
     </PageWrapper>
   )
