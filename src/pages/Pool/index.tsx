@@ -31,12 +31,11 @@ const PageWrapper = styled(AutoColumn)`
 `
 
 const VoteCard = styled(DataCard)`
-  border: 1px solid
-    linear-gradient(
-      60deg,
-      ${({ theme }) => theme.customCardGradientStart} 25%,
-      ${({ theme }) => theme.customCardGradientEnd} 100%
-    );
+  background: linear-gradient(
+    60deg,
+    ${({ theme }) => theme.customCardGradientStart} 25%,
+    ${({ theme }) => theme.customCardGradientEnd} 100%
+  );
 
   overflow: hidden;
 `
