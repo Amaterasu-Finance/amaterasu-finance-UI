@@ -199,7 +199,7 @@ export default function Pit({
                 </TYPE.black>
               </Row>
             </StyledStatDataCard>
-            <StyledStatDataCard label="Balance xTRI">
+            <StyledStatDataCard label="Balance xIZA">
               <Row justify={'center'} align={'center'}>
                 <Avatar size={25} src={xIzaLogo} style={{ marginRight: '4px' }} />
                 <TYPE.black fontWeight={400} fontSize={16}>
