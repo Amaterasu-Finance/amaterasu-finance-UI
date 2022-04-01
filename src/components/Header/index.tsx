@@ -35,7 +35,7 @@ import {
   FireOutlined,
   LoginOutlined
 } from '@ant-design/icons'
-// import useBUSDPrice from '../../hooks/useBUSDPrice'
+import { isMobile } from 'react-device-detect'
 import useAuroraPrice from '../../hooks/useAuroraPrice'
 
 const HeaderFrame = styled.div`
@@ -141,8 +141,7 @@ const LogoImage = styled('img')`
     height: 72px;
 `};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    width: 306px;
-    height: 72px;
+    display: none;
   `}
 `
 
@@ -357,7 +356,7 @@ export default function Header() {
           <GovTokenBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
         </Modal>
         <MobileImage src={MobileLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
-        <LogoImage src={HeaderLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />
+        {!isMobile && <LogoImage src={HeaderLogo} onClick={() => setShowUniBalanceModal(true)} alt="logo" />}
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             <SwapOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
