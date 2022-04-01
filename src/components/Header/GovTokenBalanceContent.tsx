@@ -67,8 +67,8 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
   )
   const totalSupply: TokenAmount | undefined = useGovTokenSupply()
   const govTokenPrice = useBUSDPrice(govToken)
-  const circulatingMarketCap = govTokenPrice ? totalSupply?.multiply(govTokenPrice.raw) : undefined
-  const totalMarketCap = govTokenPrice ? totalSupply?.multiply(govTokenPrice.raw) : undefined
+  const circulatingMarketCap = govTokenPrice ? totalSupply?.multiply(govTokenPrice.adjusted) : undefined
+  const totalMarketCap = govTokenPrice ? totalSupply?.multiply(govTokenPrice.adjusted) : undefined
   const govStaked = xGovTokenRatio ? xGovTokenBalance?.multiply(xGovTokenRatio) : xGovTokenBalance
   const total = govStaked ? govStaked?.add(govTokenBalance ? govTokenBalance : '0') : govTokenBalance
 
@@ -91,7 +91,7 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
                   <MouseoverTooltip
                     text={
                       govTokenPrice && total
-                        ? `USD: $${total.multiply(govTokenPrice?.raw).toSignificant(6, { groupSeparator: ',' })}`
+                        ? `USD: $${total.multiply(govTokenPrice?.adjusted).toSignificant(6, { groupSeparator: ',' })}`
                         : ''
                     }
                   >
@@ -107,7 +107,7 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
                       text={
                         govTokenPrice && govTokenBalance && govTokenBalance.greaterThan('0')
                           ? `USD: $${govTokenBalance
-                              .multiply(govTokenPrice?.raw)
+                              .multiply(govTokenPrice?.adjusted)
                               .toSignificant(6, { groupSeparator: ',' })}`
                           : ''
                       }
@@ -124,7 +124,7 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
                       text={
                         govTokenPrice && xGovTokenBalance && xGovTokenRatio
                           ? `USD: $${xGovTokenBalance
-                              .multiply(govTokenPrice?.raw)
+                              .multiply(govTokenPrice?.adjusted)
                               .multiply(xGovTokenRatio)
                               .toSignificant(6, { groupSeparator: ',' })}`
                           : ''
