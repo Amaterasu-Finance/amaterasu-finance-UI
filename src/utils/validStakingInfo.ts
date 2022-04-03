@@ -42,7 +42,7 @@ export default function validStakingInfo(
     !rewardPerBlock.error &&
     !rewardPerBlock.loading &&
     rewardPerBlock?.result?.[0] !== undefined &&
-    totalAllocPoint &&
+    totalAllocPoint !== undefined &&
     !totalAllocPoint.error &&
     !totalAllocPoint.loading &&
     totalAllocPoint?.result?.[0] !== undefined

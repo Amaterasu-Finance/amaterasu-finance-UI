@@ -147,7 +147,7 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
         const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
         const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])
         const depositFee = poolInfoResult && poolInfoResult[4] / 100
-        const active = poolInfoResult && JSBI.GT(JSBI.BigInt(allocPoint), 0) ? true : false
+        const active = poolInfoResult && JSBI.GE(JSBI.BigInt(allocPoint), 0) ? true : false
         const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)
 
         const poolShare = new Fraction(allocPoint, totalAllocPointResult)
