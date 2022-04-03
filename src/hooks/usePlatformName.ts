@@ -5,10 +5,10 @@ export default function usePlatformName(): string {
   const blockchain = useBlockchain()
   switch (blockchain) {
     case Blockchain.MTV:
-      return 'Amaterasu'
+      return 'Amaterasu Finance'
     case Blockchain.ETHEREUM:
-      return 'Amaterasu'
+      return 'Amaterasu Finance'
     default:
-      return 'Amaterasu'
+      return 'Amaterasu Finance'
   }
 }
