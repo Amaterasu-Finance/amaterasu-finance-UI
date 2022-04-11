@@ -8,6 +8,6 @@ export default function getBlockchainBlockTime(blockchain: Blockchain): number {
     case Blockchain.MTV:
       return 4
     default:
-      return 4
+      return 2
   }
 }

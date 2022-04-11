@@ -12,7 +12,7 @@ export default function getLibrary(provider: any): Web3Provider {
       library.pollingInterval = 500
       break
     default:
-      library.pollingInterval = 2000
+      library.pollingInterval = 100
       break
   }
   return library
