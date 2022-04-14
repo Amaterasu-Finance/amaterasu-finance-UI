@@ -49,6 +49,12 @@ export const GOVERNANCE_TOKEN: { [chainId in ChainId]: Token } = {
   )
 }
 
+export const VAULT_CHEF: { [chainId in ChainId]: string } = {
+  [ChainId.MTV_MAINNET]: '0xBe2b7645F7A5A0B11E79a0FE9C7de0e7Fac38eE3',
+  [ChainId.AURORA_MAINNET]: '0xBe2b7645F7A5A0B11E79a0FE9C7de0e7Fac38eE3',
+  [ChainId.AURORA_TESTNET]: '0xBe2b7645F7A5A0B11E79a0FE9C7de0e7Fac38eE3'
+}
+
 export const MASTER_BREEDER: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0x701294Ca6FAb80319abD74F3790D17F7F9c45FA1',
   [ChainId.AURORA_MAINNET]: '0xAE20c9F0c4a7E0098D322F690DFea6534E105614',
