@@ -5,7 +5,7 @@ import { JSBI } from '@amaterasu-fi/sdk'
 export default function useEligiblePitPools(
   stakingPools: any,
   balanceResults: CallState[],
-  minimumAmountWei = '10000000'
+  minimumAmountWei = '10000000000'
 ): string[][] {
   return useMemo<string[][]>(() => {
     const claimFrom: string[] = []

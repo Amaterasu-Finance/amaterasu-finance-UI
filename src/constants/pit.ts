@@ -22,16 +22,13 @@ export const PIT_POOLS: {
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/AURORA') }
   ],
   [ChainId.AURORA_MAINNET]: [
-    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/WETH') },
-    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/UST') },
-    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/USDT') },
-    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'WETH/ONE') },
-    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ONE') },
+    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/xIZA') } // xIZA won't ever work
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'AURORA/USDC') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/WETH') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR') },
-    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/AURORA') },
-    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'WETH/AURORA') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ONE') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/SHITZU') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/AURORA') }
   ]
 }

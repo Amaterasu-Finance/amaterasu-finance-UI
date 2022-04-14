@@ -15,6 +15,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../../components/ModalViews'
 import { TokenAmount } from '@amaterasu-fi/sdk'
+import ClaimModal from '../../components/Pit/ClaimModal'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
@@ -81,6 +82,7 @@ export default function Admin({
   const [hash, setHash] = useState<string | undefined>()
   const [attempting, setAttempting] = useState(false)
   const [failed, setFailed] = useState<boolean>(false)
+  const [showClaimModal, setShowClaimModal] = useState(false)
 
   const payoutContract = usePayoutContract()
   const govToken = useGovernanceToken()
@@ -134,6 +136,7 @@ export default function Admin({
   return (
     <PageWrapper gap="lg" justify="center">
       <TopSection gap="lg" justify="center">
+        <ClaimModal isOpen={showClaimModal} onDismiss={() => setShowClaimModal(false)} />
         <BottomSection gap="lg" justify="center">
           <StyledBottomCard dim={false}>
             <CardBGImage />
@@ -167,11 +170,16 @@ export default function Admin({
         )}
 
         {account && userAllocResult ? (
-          <DataRow style={{ marginBottom: '0rem' }}>
-            <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={onClaimRewards}>
-              Distribute Rewards
-            </ButtonPit>
-          </DataRow>
+          <>
+            <DataRow style={{ marginBottom: '0rem' }}>
+              <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={onClaimRewards}>
+                Distribute Rewards
+              </ButtonPit>
+            </DataRow>
+            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal(true)}>
+              Distribute DEX Fees
+            </ButtonPrimary>
+          </>
         ) : (
           <div />
         )}
