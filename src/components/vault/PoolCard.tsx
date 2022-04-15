@@ -143,6 +143,13 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
               : 'TBD'}
           </TYPE.white>
         </RowBetween>
+        <RowBetween>
+          <TYPE.white>
+            <b> Reward Breakdown:</b>
+            1% Automation Fee - {stakingInfo.buybackRate}% Buyback Fee - {stakingInfo.xIzaRate}% xIZA Rewards -{' '}
+            {stakingInfo.compoundRate}% LP Rewards
+          </TYPE.white>
+        </RowBetween>
         {stakingInfo.withdrawFee && stakingInfo.withdrawFee > 0 ? (
           <RowBetween>
             <TYPE.white> Withdraw Fee </TYPE.white>

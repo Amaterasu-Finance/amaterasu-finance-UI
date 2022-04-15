@@ -25,6 +25,7 @@ const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 const STRAT_INTERFACE = new Interface(stratABI)
 
+const DEFAULT_CONTROLLER_FEE = 1.0
 const DEFAULT_BUYBACK_RATE = 3.0
 const DEFAULT_XIZA_RATE = 20.0
 const DEFAULT_XTOKEN_RATE = 0.0
@@ -41,6 +42,7 @@ export interface VaultsInfo {
   buybackRate?: number // buy+burn IZA %, default = 3%
   xIzaRate?: number // xIZA % of rewards, default = 20%
   xTokenRate?: number // xToken %, default = 0%
+  compoundRate?: number // xToken %, default = 0%
   withdrawFee?: number // withdraw fee, default = 0.1%
   // baseToken used for TVL & APR calculations
   baseToken: Token | undefined
@@ -138,6 +140,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
       const xTokenRate = vaultInfo[index].xTokenRate ?? DEFAULT_XTOKEN_RATE
       const withdrawFee = vaultInfo[index].withdrawFee ?? DEFAULT_WITHDRAW_FEE
       const poolInfo = poolInfos[index]
+      const compoundRate = 100 - DEFAULT_CONTROLLER_FEE - buybackRate - xIzaRate - xTokenRate
 
       // amount uint256, rewardDebt uint256, rewardDebtAtBlock uint256, lastWithdrawBlock uint256, firstDepositBlock uint256, blockdelta uint256, lastDepositBlock uint256
       const userInfo = userInfos[index]
@@ -238,6 +241,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           xIzaRate: xIzaRate,
           xTokenRate: xTokenRate,
           withdrawFee: withdrawFee,
+          compoundRate: compoundRate,
           allocPoint: allocPoint,
           tokens: tokens,
           baseToken: lp.baseToken,
