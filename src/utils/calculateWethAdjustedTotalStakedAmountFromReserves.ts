@@ -1,7 +1,7 @@
-import { Token, TokenAmount, Fraction, ChainId, JSBI } from '@amaterasu-fi/sdk'
-import { wrappedCurrency } from './wrappedCurrency'
-import calculateTotalStakedAmount from './calculateTotalStakedAmount'
-import getPair from './getPair'
+import { Token, TokenAmount, Fraction, ChainId } from '@amaterasu-fi/sdk'
+// import { wrappedCurrency } from './wrappedCurrency'
+import calculateTotalStakedAmountFromReserves from './calculateTotalStakedAmountFromReserves'
+// import getPair from './getPair'
 import { Result } from 'state/multicall/hooks'
 
 function pairCurrencyAmountInWeth(
@@ -18,17 +18,16 @@ function pairCurrencyAmountInWeth(
       return tokens?.govToken?.price
         ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.govToken?.price)
         : valueOfTotalStakedAmountInPairCurrency
-    case tokens?.USDC?.token?.symbol?.toUpperCase():
-      const mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18 - baseToken.decimals))
+    case tokens?.USDC?.token?.symbol?.toUpperCase() || tokens?.BUSD?.token?.symbol?.toUpperCase():
       return tokens?.USDC?.price
-        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.USDC?.price).divide(mult)
+        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.USDC?.price)
         : valueOfTotalStakedAmountInPairCurrency
     default:
       return valueOfTotalStakedAmountInPairCurrency
   }
 }
 
-export default function calculateWethAdjustedTotalStakedAmount(
+export default function calculateWethAdjustedTotalStakedAmountFromReserves(
   chainId: ChainId,
   baseToken: Token | undefined,
   tokenData: Record<string, any>,
@@ -42,20 +41,22 @@ export default function calculateWethAdjustedTotalStakedAmount(
   const reserve0 = lpTokenReserves?.reserve0
   const reserve1 = lpTokenReserves?.reserve1
 
-  const stakingTokenPair = getPair(
-    wrappedCurrency(tokens[0], chainId),
-    wrappedCurrency(tokens[1], chainId),
-    reserve0,
-    reserve1
-  )
-  if (!stakingTokenPair) return undefined
-  const valueOfTotalStakedAmountInPairCurrency = calculateTotalStakedAmount(
+  const baseReserve = baseToken && (baseToken === tokens[0] ? reserve0 : baseToken === tokens[1] ? reserve1 : undefined)
+  !baseReserve &&
+    console.error(
+      'didnt find baseReserve for base =',
+      baseToken.symbol,
+      ', tokens =',
+      tokens[0].symbol,
+      tokens[1].symbol
+    )
+
+  const valueOfTotalStakedAmountInPairCurrency = calculateTotalStakedAmountFromReserves(
     baseToken,
-    stakingTokenPair,
+    baseReserve,
     totalStakedAmount,
     totalLpTokenSupply
   )
-  // console.log('valueOfTotalStakedAmount', baseToken.symbol, valueOfTotalStakedAmountInPairCurrency.toSignificant(2))
   if (!valueOfTotalStakedAmountInPairCurrency) return undefined
   return pairCurrencyAmountInWeth(baseToken, tokenData, valueOfTotalStakedAmountInPairCurrency)
 }
