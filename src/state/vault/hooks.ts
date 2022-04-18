@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, TokenAmount, Fraction } from '@amaterasu-fi/sdk'
+import { CurrencyAmount, JSBI, Token, TokenAmount, Fraction, Price } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import { useSingleContractMultipleData } from '../multicall/hooks'
@@ -24,6 +24,9 @@ import calculateApy from '../../utils/calculateApy'
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 const STRAT_INTERFACE = new Interface(stratABI)
+
+// const BLOCKS_PER_YEAR_11 = 28669090 // blocks per year @ 1.1s
+// const BLOCKS_PER_YEAR_10 = 31449600 // blocks per year @ 1.0s
 
 const DEFAULT_CONTROLLER_FEE = 1.0
 const DEFAULT_BUYBACK_RATE = 3.0
@@ -70,10 +73,16 @@ export interface VaultsInfo {
   earnedAmountxToken: TokenAmount
   // value of total staked amount, measured in a USD stable coin (busd, usdt, usdc or a mix thereof)
   valueOfTotalStakedAmountInUsd: Fraction | undefined
+  // price per LP token
+  pricePerLpToken: Fraction | undefined
   // pool APR
   apr: Fraction | undefined
   // pool APY
-  apy: Fraction | undefined
+  apy: number | undefined
+}
+
+export function getRewardTokenPrice(baseToken: Token | undefined, tokenData: Record<string, any>): Price | undefined {
+  return baseToken && baseToken?.symbol && tokenData?.[baseToken?.symbol].price
 }
 
 // gets the staking info from the network for the active chain id
@@ -91,7 +100,8 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const govTokenWETHPrice = tokensWithPrices?.govToken?.price
   const xToken = usePitToken()
 
-  const blocksPerYear = JSBI.BigInt(28669090) // blocks per year @ 1.1s/block
+  // const blocksPerYear = JSBI.BigInt(28669090) // blocks per year @ 1.1s/block
+  const blocksPerYear = JSBI.BigInt(31449600) // blocks per year @ 1.0s/block
 
   const pids = useMemo(() => vaultInfo.map(({ pid }) => pid), [vaultInfo])
   const farmPids = useMemo(() => vaultInfo.map(({ farmPid }) => farmPid), [vaultInfo])
@@ -128,6 +138,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   ])
 
   return useMemo(() => {
+    // console.log(new Date().toLocaleString(), 'fetchVaults memo')
     if (!chainId || !weth || !govToken || !xToken) return []
 
     return pids.reduce<VaultsInfo[]>((memo, pid, index) => {
@@ -166,7 +177,6 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           totalAllocPoint
         )
       ) {
-        // poolInfo: lpToken address, allocPoint uint256, lastRewardBlock uint256, accGovTokenPerShare uint256, depositFee
         const poolInfoResult = poolInfo.result
         const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
         const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])
@@ -191,30 +201,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         const totalPendingxIza = new TokenAmount(xToken, calculatedxIzaRewards)
         const totalPendingxToken = new TokenAmount(lp.protocol.xToken ?? xToken, calculatedxTokenRewards)
 
-        // TODO - get valueOfLpToken to get user amount staked
-        const totalStakedAmountWETH = calculateWethAdjustedTotalStakedAmount(
-          chainId,
-          lp.baseToken,
-          tokensWithPrices,
-          tokens,
-          totalLpTokenSupply,
-          vaultStakedAmount,
-          lpTokenReserve?.result
-        )
-        const totalStakedAmountBUSD =
-          wethBusdPrice && totalStakedAmountWETH && totalStakedAmountWETH.multiply(wethBusdPrice.adjusted)
-
-        const userAmountStakedWETH = calculateWethAdjustedTotalStakedAmount(
-          chainId,
-          lp.baseToken,
-          tokensWithPrices,
-          tokens,
-          totalLpTokenSupply,
-          stakedAmount,
-          lpTokenReserve?.result
-        )
-        const userAmountStakedUsd =
-          wethBusdPrice && userAmountStakedWETH && userAmountStakedWETH.multiply(wethBusdPrice.adjusted)
+        const rewardTokenPrice = getRewardTokenPrice(lp.protocol.nativeToken, tokensWithPrices)
 
         const totalFarmStakedAmountWETH = calculateWethAdjustedTotalStakedAmount(
           chainId,
@@ -225,10 +212,25 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           farmStakedAmount,
           lpTokenReserve?.result
         )
+        const pricePerLpToken =
+          totalFarmStakedAmountWETH &&
+          wethBusdPrice &&
+          totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted).divide(farmStakedAmount)
 
-        const apr = totalFarmStakedAmountWETH
-          ? calculateApr(govTokenWETHPrice, baseBlockRewards, blocksPerYear, poolShare, totalFarmStakedAmountWETH)
-          : undefined
+        const userAmountStakedUsd = pricePerLpToken && pricePerLpToken.multiply(stakedAmount)
+
+        const apr =
+          rewardTokenPrice && totalFarmStakedAmountWETH && wethBusdPrice
+            ? calculateApr(
+                rewardTokenPrice,
+                baseBlockRewards,
+                blocksPerYear,
+                poolShare,
+                totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted)
+              )
+            : undefined
+
+        const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
 
         const apy = apr && calculateApy(apr)
 
@@ -256,6 +258,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           earnedAmountxIza: totalPendingxIza,
           earnedAmountxToken: totalPendingxToken,
           valueOfTotalStakedAmountInUsd: totalStakedAmountBUSD,
+          pricePerLpToken: pricePerLpToken,
           apr: apr,
           apy: apy,
           active: active
@@ -274,6 +277,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     xToken,
     govTokenWETHPrice,
     wethBusdPrice,
+    blocksPerYear,
     pids,
     chefData,
     poolInfos,
@@ -282,8 +286,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     lpTokenTotalSupplies,
     lpTokenReserves,
     vaultBalances,
-    lpTokenBalances,
-    blocksPerYear
+    lpTokenBalances
   ])
 }
 

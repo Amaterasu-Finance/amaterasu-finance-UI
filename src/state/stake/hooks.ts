@@ -142,7 +142,6 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
           totalAllocPoint
         )
       ) {
-        // poolInfo: lpToken address, allocPoint uint256, lastRewardBlock uint256, accGovTokenPerShare uint256, depositFee
         const poolInfoResult = poolInfo.result
         const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
         const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])

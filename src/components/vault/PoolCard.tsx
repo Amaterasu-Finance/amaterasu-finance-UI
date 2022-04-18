@@ -21,6 +21,10 @@ import usePitToken from '../../hooks/usePitToken'
 import xIzaLogo from '../../assets/images/iza-purple.png'
 import { Avatar } from 'antd'
 import Logo from '../Logo'
+import ModifiedUnstakingModal from './ModifiedUnstakingModal'
+import StakingModal from './StakingModal'
+import { useTokenBalance } from '../../state/wallet/hooks'
+import { useActiveWeb3React } from '../../hooks'
 
 const StatContainer = styled.div`
   display: flex;
@@ -87,14 +91,20 @@ const TopSection = styled.div`
 // `
 
 export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: VaultsInfo; isArchived: boolean }) {
-  // const govToken = useGovernanceToken()
+  const { account } = useActiveWeb3React()
   const xToken = usePitToken()
   // const govTokenPrice = useBUSDPrice(govToken)
   // const pitRatio = usePitRatio()
 
-  const [showClaimRewardModal, setShowClaimRewardModal] = useState(false) // TODO - update this
+  const [showDepositModal, setShowDepositModal] = useState(false)
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false)
+  const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
 
   const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
+  const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
+  const userLiquidityUnstakedUsd = userLiquidityUnstaked && stakingInfo.pricePerLpToken?.multiply(userLiquidityUnstaked)
+  console.log('userLiquidityUnstaked', userLiquidityUnstaked, userLiquidityUnstaked?.toSignificant(8))
+  console.log('userLiquidityUnstakedUsd', userLiquidityUnstakedUsd, userLiquidityUnstakedUsd?.toSignificant(8))
 
   // get the color of the token
   const token0 = stakingInfo.tokens[0]
@@ -123,18 +133,39 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
       </TopSection>
 
       <StatContainer>
-        <ClaimRewardModal
-          isOpen={showClaimRewardModal}
-          onDismiss={() => setShowClaimRewardModal(false)}
-          stakingInfo={stakingInfo}
-          autostake={true}
-        />
+        {stakingInfo && (
+          <>
+            <StakingModal
+              isOpen={showDepositModal}
+              onDismiss={() => setShowDepositModal(false)}
+              stakingInfo={stakingInfo}
+              userLiquidityUnstaked={userLiquidityUnstaked}
+            />
+            <ModifiedUnstakingModal
+              isOpen={showWithdrawModal}
+              onDismiss={() => setShowWithdrawModal(false)}
+              stakingInfo={stakingInfo}
+            />
+            <ClaimRewardModal
+              isOpen={showClaimRewardModal}
+              onDismiss={() => setShowClaimRewardModal(false)}
+              stakingInfo={stakingInfo}
+              autostake={true}
+            />
+          </>
+        )}
         <RowBetween>
-          <TYPE.white> APY/APR*</TYPE.white>
+          <TYPE.white>
+            {' '}
+            <b>APY</b> / APR*
+          </TYPE.white>
           <TYPE.white fontWeight={500}>
             <b>
-              {stakingInfo.apy && stakingInfo.apy.greaterThan('0')
-                ? `${stakingInfo.apy.multiply('100').toSignificant(3, { groupSeparator: ',' })}%`
+              {stakingInfo.apy && stakingInfo.apy > 0
+                ? `${(stakingInfo.apy * 100).toLocaleString('en', {
+                    maximumSignificantDigits: 4,
+                    minimumSignificantDigits: 3
+                  })}%`
                 : 'TBD'}
             </b>
             {' / '}
@@ -174,8 +205,23 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
 
       {isStaking && (
         <>
-          <Break />
           <StatContainer>
+            <Break />
+            <RowBetween>
+              <TYPE.black color={'white'} fontWeight={500}>
+                <span>Your Wallet Balance</span>
+              </TYPE.black>
+
+              <TYPE.white fontWeight={500}>
+                <b>
+                  {userLiquidityUnstakedUsd && userLiquidityUnstaked
+                    ? `$${userLiquidityUnstakedUsd.toSignificant(4, {
+                        groupSeparator: ','
+                      })} (${userLiquidityUnstaked.toSignificant(4, { groupSeparator: ',' })} LP Tokens)`
+                    : '-'}
+                </b>
+              </TYPE.white>
+            </RowBetween>
             <RowBetween>
               <TYPE.black color={'white'} fontWeight={500}>
                 <span>Your Total Staked</span>
@@ -184,14 +230,14 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
               <TYPE.white fontWeight={500}>
                 <b>
                   {stakingInfo && stakingInfo.stakedAmountUsd
-                    ? `$${stakingInfo.stakedAmountUsd.toSignificant(5, { groupSeparator: ',' })}`
+                    ? `$${stakingInfo.stakedAmountUsd.toSignificant(4, { groupSeparator: ',' })}`
                     : '-'}
                 </b>
               </TYPE.white>
             </RowBetween>
             <RowBetween>
               <TYPE.black color={'white'} fontWeight={500}>
-                <span>Your Total Rewards</span>
+                <span>Your Pending Rewards</span>
               </TYPE.black>
               <TYPE.black style={{ textAlign: 'right' }} color={'white'} fontWeight={500}>
                 <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
@@ -204,41 +250,37 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
                   : '-'}
               </TYPE.black>
             </RowBetween>
-            <RowBetween>
-              {stakingInfo && stakingInfo.earnedAmountxIza.greaterThan('0') && (
-                <ButtonPrimary
-                  padding="8px"
-                  borderRadius="8px"
-                  width="170px"
-                  onClick={() => setShowClaimRewardModal(true)}
-                >
-                  Deposit
-                </ButtonPrimary>
-              )}
-              {stakingInfo && stakingInfo.earnedAmountxIza.greaterThan('0') && (
-                <ButtonPrimary
-                  padding="8px"
-                  borderRadius="8px"
-                  width="170px"
-                  onClick={() => setShowClaimRewardModal(true)}
-                >
-                  Withdraw
-                </ButtonPrimary>
-              )}
-              {stakingInfo && stakingInfo.earnedAmountxIza.greaterThan('0') && (
-                <ButtonPrimary
-                  padding="8px"
-                  borderRadius="8px"
-                  width="170px"
-                  onClick={() => setShowClaimRewardModal(true)}
-                >
-                  Claim Rewards
-                </ButtonPrimary>
-              )}
-            </RowBetween>
           </StatContainer>
         </>
       )}
+      <>
+        <StatContainer>
+          <Break />
+          <RowBetween>
+            <ButtonPrimary padding="8px" borderRadius="8px" width="170px" onClick={() => setShowDepositModal(true)}>
+              Deposit
+            </ButtonPrimary>
+            <ButtonPrimary
+              padding="8px"
+              disabled={!(stakingInfo && stakingInfo.stakedAmount.greaterThan('0'))}
+              borderRadius="8px"
+              width="170px"
+              onClick={() => setShowWithdrawModal(true)}
+            >
+              Withdraw
+            </ButtonPrimary>
+            <ButtonPrimary
+              padding="8px"
+              disabled={!(stakingInfo && stakingInfo.earnedAmountxIza.greaterThan('0'))}
+              borderRadius="8px"
+              width="170px"
+              onClick={() => setShowClaimRewardModal(true)}
+            >
+              Claim Rewards
+            </ButtonPrimary>
+          </RowBetween>
+        </StatContainer>
+      </>
     </Wrapper>
   )
 }

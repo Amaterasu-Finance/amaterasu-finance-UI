@@ -2,8 +2,8 @@ import React from 'react'
 // import { JSBI, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
-import { STAKING_REWARDS_INFO } from '../../constants/staking'
-// import { useVaultsInfo } from '../../state/vault/hooks'
+import { VAULT_INFO } from '../../constants/vaults'
+import { useVaultsInfo } from '../../state/vault/hooks'
 import { TYPE, StyledInternalLink } from '../../theme'
 import PoolCard from '../../components/vault/PoolCard'
 import { CustomButtonWhite } from '../../components/Button'
@@ -12,11 +12,12 @@ import { RowBetween } from '../../components/Row'
 import { CardSection, ExtraDataCard } from '../../components/vault/styled'
 import Loader from '../../components/Loader'
 import { useActiveWeb3React } from '../../hooks'
-import useCalculateStakingInfoMembers from '../../hooks/useCalculateStakingInfoMembers'
-import useTotalCombinedTVL from '../../hooks/useTotalCombinedTVL'
+// import useCalculateStakingInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
 import { OutlineCard } from '../../components/Card'
 import useFilterVaultInfos from '../../hooks/useFilterVaultInfos'
-import CombinedTVL from '../../components/CombinedTVL'
+import useTotalVaultTVL from '../../hooks/useTotalVaultTVL'
+import useCalculateVaultInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
+// import { CombinedTVLFromTvl } from '../../components/CombinedTVL'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
@@ -46,21 +47,21 @@ flex-direction: column;
 export default function Vault() {
   const { chainId, account } = useActiveWeb3React()
 
-  const TVLs = useTotalCombinedTVL()
-  const stakingInfos = TVLs.vaultInfos
+  // const TVLs = useTotalCombinedTVL()
+  // const stakingInfos = TVLs.vaultInfos
+  const vaultInfos = useVaultsInfo()
+  const totalTvl = useTotalVaultTVL(vaultInfos)
   /**
    * only show staking cards with balance
    * @todo only account for this if rewards are inactive
    */
-  const stakingRewardsExist = Boolean(typeof chainId === 'number' && (STAKING_REWARDS_INFO[chainId]?.length ?? 0) > 0)
+  const stakingRewardsExist = Boolean(typeof chainId === 'number' && (VAULT_INFO[chainId]?.length ?? 0) > 0)
 
-  const activeVaultInfos = useFilterVaultInfos(stakingInfos)
-  const inactiveVaultInfos = useFilterVaultInfos(stakingInfos, false)
-  const stakingInfoStats = useCalculateStakingInfoMembers(chainId)
+  const activeVaultInfos = useFilterVaultInfos(vaultInfos)
+  const inactiveVaultInfos = useFilterVaultInfos(vaultInfos, false)
+  const stakingInfoStats = useCalculateVaultInfoMembers(chainId)
   const hasArchivedStakingPools =
     (stakingInfoStats?.inactive && stakingInfoStats?.inactive > 0) || inactiveVaultInfos?.length > 0
-
-  // const stakingInfosWithRewards = useFilterStakingInfos(activeStakingInfos, true, true)
 
   return (
     <PageWrapper gap="lg" justify="center">
@@ -72,12 +73,12 @@ export default function Vault() {
                 <TYPE.largeHeader>Vaults</TYPE.largeHeader>
               </RowBetween>
               <RowBetween>
-                {TVLs?.totalCombinedTVL?.greaterThan('0') && (
+                {totalTvl?.greaterThan('0') && (
                   <TYPE.black style={{ marginTop: '0.5rem' }}>
                     <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
                       🏆
                     </span>
-                    <CombinedTVL />
+                    <>TVL: ${totalTvl.toSignificant(6, { groupSeparator: ',' })}</>
                   </TYPE.black>
                 )}
               </RowBetween>
@@ -103,11 +104,11 @@ export default function Vault() {
         <AwaitingRewards />
 
         <PoolSection>
-          {account && stakingRewardsExist && stakingInfos?.length === 0 ? (
+          {account && stakingRewardsExist && vaultInfos?.length === 0 ? (
             <Loader style={{ margin: 'auto' }} />
           ) : account && !stakingRewardsExist ? (
             <OutlineCard>No active pools</OutlineCard>
-          ) : account && stakingInfos?.length !== 0 && !activeVaultInfos ? (
+          ) : account && vaultInfos?.length !== 0 && !activeVaultInfos ? (
             <OutlineCard>No active pools</OutlineCard>
           ) : !account ? (
             <OutlineCard>Please connect your wallet to see available pools</OutlineCard>

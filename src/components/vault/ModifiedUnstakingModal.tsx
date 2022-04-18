@@ -19,7 +19,7 @@ import { LoadingView, SubmittedView } from '../ModalViews'
 // import { BlueCard } from '../Card'
 // import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
-import { useMasterBreederContract } from '../../hooks/useContract'
+import { useVaultChefContract } from '../../hooks/useContract'
 // import useCalculateWithdrawalFee from '../../hooks/useCalculateWithdrawalFee'
 // import useBlockchain from '../../hooks/useBlockchain'
 
@@ -57,9 +57,6 @@ interface StakingModalProps {
 }
 
 export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }: StakingModalProps) {
-  // const { account } = useActiveWeb3React()
-  // const blockchain = useBlockchain()
-
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
   const { parsedAmount, error } = useDerivedUnstakeInfo(typedValue, stakingInfo.stakedAmount)
@@ -77,19 +74,23 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
   }, [onDismiss])
 
   // const platformName = usePlatformName()
-  const masterBreeder = useMasterBreederContract() // TODO - Fix calls to vault chef
+  const vaultChef = useVaultChefContract()
 
   // pair contract for this token to be staked
   const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
 
   async function onWithdraw() {
-    if (masterBreeder && stakingInfo?.stakedAmount) {
+    if (vaultChef && stakingInfo?.stakedAmount) {
       setAttempting(true)
 
       const formattedAmount = `0x${parsedAmount?.raw.toString(16)}`
-      const estimatedGas = await masterBreeder.estimateGas.withdraw(stakingInfo.pid, formattedAmount)
+      console.log('vaultChef', vaultChef)
+      console.log('stakingInfo.pid', stakingInfo.pid)
+      console.log('formattedAmount', formattedAmount)
 
-      await masterBreeder
+      const estimatedGas = await vaultChef.estimateGas.withdraw(stakingInfo.pid.toString(), formattedAmount)
+
+      await vaultChef
         .withdraw(stakingInfo.pid, formattedAmount, {
           gasLimit: calculateGasMargin(estimatedGas)
         })

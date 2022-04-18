@@ -7,6 +7,11 @@
   resolved "https://registry.yarnpkg.com/@amaterasu-fi/default-token-list/-/default-token-list-2.2.3.tgz#0e00b3f06cdccea269ed7a8e185c306e386b1112"
   integrity sha512-xmGLSx3dMxvr8B9p2Lct88GbeVlBQ/5rU8lzhbF9vr4JmSJs7ycwVWOq7H6uLJC1WlUGAN8qgY2o9j6WPwEamQ==
 
+"@amaterasu-fi/default-token-list@^2.2.4":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/@amaterasu-fi/default-token-list/-/default-token-list-2.2.4.tgz#69b2f18fffb381573b13610abb94877edfb23584"
+  integrity sha512-NtQUE3Mcl+JPAGWZ/nzFRTj5L0HYr4u99XR2sAltOllXlnOzpHvbuh1wE07V5jfFrrO9dyBdtSLUXN9mZRXIgw==
+
 "@amaterasu-fi/sdk@^2.2.3":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@amaterasu-fi/sdk/-/sdk-2.2.3.tgz#51b2cf4bcefed0ad2aaacb2271ae760415039f69"

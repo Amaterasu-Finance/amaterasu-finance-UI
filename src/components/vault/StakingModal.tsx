@@ -11,14 +11,13 @@ import CurrencyInputPanel from '../CurrencyInputPanel'
 import { TokenAmount, Pair } from '@amaterasu-fi/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
-import { usePairContract } from '../../hooks/useContract'
+import { usePairContract, useVaultChefContract } from '../../hooks/useContract'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 // import { StakingInfo, useDerivedStakeInfo } from '../../state/stake/hooks'
 //import { wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
-import { useMasterBreederContract } from '../../hooks/useContract'
 // import { ZERO_ADDRESS } from '../../constants'
 import { BlueCard } from '../Card'
 import { ColumnCenter } from '../Column'
@@ -47,7 +46,7 @@ interface StakingModalProps {
 }
 
 export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiquidityUnstaked }: StakingModalProps) {
-  const { account, library } = useActiveWeb3React()
+  const { library } = useActiveWeb3React()
 
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
@@ -75,7 +74,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
     onDismiss()
   }, [onDismiss])
 
-  const masterBreeder = useMasterBreederContract() // TODO - Fix calls to vault chef
+  const vaultChef = useVaultChefContract()
   const withdrawFee = stakingInfo.withdrawFee
 
   // pair contract for this token to be staked
@@ -85,18 +84,18 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   // approval data for stake
   const deadline = useTransactionDeadline()
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)
-  const [approval, approveCallback] = useApproveCallback(parsedAmount, masterBreeder?.address)
+  const [approval, approveCallback] = useApproveCallback(parsedAmount, vaultChef?.address)
 
   async function onStake() {
     setAttempting(true)
-    if (masterBreeder && parsedAmount && deadline) {
+    if (vaultChef && parsedAmount && deadline) {
       if (approval === ApprovalState.APPROVED) {
         const formattedAmount = `0x${parsedAmount.raw.toString(16)}`
 
-        const estimatedGas = await masterBreeder.estimateGas.deposit(stakingInfo.pid, formattedAmount, account)
+        const estimatedGas = await vaultChef.estimateGas.deposit(stakingInfo.pid, formattedAmount)
 
-        await masterBreeder
-          .deposit(stakingInfo.pid, formattedAmount, account, {
+        await vaultChef
+          .deposit(stakingInfo.pid, formattedAmount, {
             gasLimit: calculateGasMargin(estimatedGas)
           })
           .then((response: TransactionResponse) => {
@@ -155,7 +154,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                 <BlueCard>
                   <AutoColumn gap="10px">
                     <TYPE.link fontWeight={400} color={'primaryText1'} textAlign="center">
-                      📢 <b>Notice:</b> This pool has a <b>{withdrawFee.toFixed(1)}%</b> withdraw fee
+                      📢 <b>Notice:</b> This vault has a <b>{withdrawFee.toFixed(1)}%</b> withdraw fee
                       <br />
                       <br />
                       Withdraw fees are used to buy and burn <b>$IZA!</b>
