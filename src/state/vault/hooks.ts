@@ -20,6 +20,7 @@ import { LiqPool } from '../../constants/lps'
 import usePitToken from '../../hooks/usePitToken'
 import { ProtocolName, PROTOCOLS_MAINNET } from '../../constants/protocol'
 import calculateApy from '../../utils/calculateApy'
+import { useXFoxApr } from '../../hooks/usexFoxApy'
 
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -85,12 +86,21 @@ export function getRewardTokenPrice(baseToken: Token | undefined, tokenData: Rec
   return baseToken && baseToken?.symbol && tokenData?.[baseToken?.symbol].price
 }
 
+export function getIzaApy20Perc(baseApr: Fraction, basexIzaApr: Fraction): number | undefined {
+  const ratio =
+    0.0179 +
+    0.00214 * Number(baseApr.toSignificant(10)) * 100 +
+    0.0000172 * Math.pow(Number(baseApr.toSignificant(10)) * 100, 2)
+  return ratio * Number(basexIzaApr.toSignificant(10))
+}
+
 // gets the staking info from the network for the active chain id
 export function useVaultsInfo(active: boolean | undefined = undefined, pid?: number | null): VaultsInfo[] {
   const { chainId, account } = useActiveWeb3React()
   const vaultChefContract = useVaultChefContract()
 
   const vaultInfo = useFilterVaultRewardsInfo(chainId, active, pid)
+  const xIzaApr = useXFoxApr()
 
   const tokensWithPrices = useTokensWithWethPrices()
 
@@ -232,7 +242,14 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
         const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
 
+        // TODO - add these to object and show on front-end
         const apy = apr && calculateApy(apr)
+        const apyLp = apr && calculateApy(apr?.multiply(JSBI.BigInt(compoundRate)).divide('100'))
+        const apyIza = apr && xIzaApr && getIzaApy20Perc(apr, xIzaApr)
+        const apyCombined = apyLp && apyIza && apyLp + apyIza
+        console.log('apyLp', apyLp)
+        console.log('apyIza', apyIza)
+        console.log('combined new APY', apyCombined)
 
         const stakingInfo = {
           pid: pid,
@@ -275,6 +292,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     weth,
     govToken,
     xToken,
+    xIzaApr,
     govTokenWETHPrice,
     wethBusdPrice,
     blocksPerYear,
