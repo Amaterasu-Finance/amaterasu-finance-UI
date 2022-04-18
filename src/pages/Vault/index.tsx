@@ -70,7 +70,12 @@ export default function Vault() {
                 <TYPE.largeHeader>Vaults</TYPE.largeHeader>
               </RowBetween>
               <RowBetween>
-                <CombinedTVL />
+                <TYPE.black style={{ marginTop: '0.5rem' }}>
+                  <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
+                    🏆
+                  </span>
+                  <CombinedTVL />
+                </TYPE.black>
               </RowBetween>
               {hasArchivedStakingPools && (
                 <RowBetween>
