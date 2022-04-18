@@ -15,9 +15,9 @@ import { useActiveWeb3React } from '../../hooks'
 // import useCalculateStakingInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
 import { OutlineCard } from '../../components/Card'
 import useFilterVaultInfos from '../../hooks/useFilterVaultInfos'
-import useTotalVaultTVL from '../../hooks/useTotalVaultTVL'
+// import useTotalVaultTVL from '../../hooks/useTotalVaultTVL'
 import useCalculateVaultInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
-// import { CombinedTVLFromTvl } from '../../components/CombinedTVL'
+import CombinedTVL from '../../components/CombinedTVL'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
@@ -47,10 +47,7 @@ flex-direction: column;
 export default function Vault() {
   const { chainId, account } = useActiveWeb3React()
 
-  // const TVLs = useTotalCombinedTVL()
-  // const stakingInfos = TVLs.vaultInfos
   const vaultInfos = useVaultsInfo()
-  const totalTvl = useTotalVaultTVL(vaultInfos)
   /**
    * only show staking cards with balance
    * @todo only account for this if rewards are inactive
@@ -73,14 +70,7 @@ export default function Vault() {
                 <TYPE.largeHeader>Vaults</TYPE.largeHeader>
               </RowBetween>
               <RowBetween>
-                {totalTvl?.greaterThan('0') && (
-                  <TYPE.black style={{ marginTop: '0.5rem' }}>
-                    <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
-                      🏆
-                    </span>
-                    <>TVL: ${totalTvl.toSignificant(6, { groupSeparator: ',' })}</>
-                  </TYPE.black>
-                )}
+                <CombinedTVL />
               </RowBetween>
               {hasArchivedStakingPools && (
                 <RowBetween>

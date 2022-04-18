@@ -103,8 +103,6 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
   const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   const userLiquidityUnstakedUsd = userLiquidityUnstaked && stakingInfo.pricePerLpToken?.multiply(userLiquidityUnstaked)
-  console.log('userLiquidityUnstaked', userLiquidityUnstaked, userLiquidityUnstaked?.toSignificant(8))
-  console.log('userLiquidityUnstakedUsd', userLiquidityUnstakedUsd, userLiquidityUnstakedUsd?.toSignificant(8))
 
   // get the color of the token
   const token0 = stakingInfo.tokens[0]
@@ -229,8 +227,10 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
 
               <TYPE.white fontWeight={500}>
                 <b>
-                  {stakingInfo && stakingInfo.stakedAmountUsd
-                    ? `$${stakingInfo.stakedAmountUsd.toSignificant(4, { groupSeparator: ',' })}`
+                  {stakingInfo && stakingInfo.stakedAmountUsd && stakingInfo.stakedAmount
+                    ? `$${stakingInfo.stakedAmountUsd.toSignificant(4, {
+                        groupSeparator: ','
+                      })}  (${stakingInfo.stakedAmount.toSignificant(4, { groupSeparator: ',' })} LP Tokens)`
                     : '-'}
                 </b>
               </TYPE.white>
