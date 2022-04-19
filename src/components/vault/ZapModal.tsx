@@ -278,8 +278,10 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
       {attempting && !hash && !failed && (
         <LoadingView onDismiss={wrappedOnDismiss}>
           <AutoColumn gap="12px" justify={'center'}>
-            <TYPE.largeHeader>Depositing Liquidity</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>{parsedAmount?.toSignificant(4)} IZA-LP</TYPE.body>
+            <TYPE.largeHeader>Zapping Into Vault</TYPE.largeHeader>
+            <TYPE.body fontSize={20}>
+              {parsedAmount?.toSignificant(4)} {currency && currency.symbol}
+            </TYPE.body>
           </AutoColumn>
         </LoadingView>
       )}
@@ -287,7 +289,9 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
         <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
           <AutoColumn gap="12px" justify={'center'}>
             <TYPE.largeHeader>Transaction Submitted</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>Deposited {parsedAmount?.toSignificant(4)} IZA-LP</TYPE.body>
+            <TYPE.body fontSize={20}>
+              Zapped {parsedAmount?.toSignificant(4)} {currency && currency.symbol}
+            </TYPE.body>
           </AutoColumn>
         </SubmittedView>
       )}
