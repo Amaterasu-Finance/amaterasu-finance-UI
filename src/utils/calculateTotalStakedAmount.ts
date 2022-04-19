@@ -11,12 +11,12 @@ export default function calculateTotalStakedAmount(
   // const mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18 - baseToken.decimals))
   return new TokenAmount(
     baseToken,
-    JSBI.divide(
-      JSBI.multiply(
-        JSBI.multiply(totalStakedAmount.raw, stakingTokenPair.reserveOf(baseToken).raw),
-        JSBI.BigInt(2) // this is b/c the value of LP shares are ~double the value of the WETH they entitle owner to
+    JSBI.multiply(
+      JSBI.divide(
+        JSBI.multiply(stakingTokenPair.reserveOf(baseToken).raw, totalStakedAmount.raw), // this is b/c the value of LP shares are ~double the value of the WETH they entitle owner to
+        totalLpTokenSupply.raw
       ),
-      totalLpTokenSupply.raw
+      JSBI.BigInt(2)
     )
   )
 }

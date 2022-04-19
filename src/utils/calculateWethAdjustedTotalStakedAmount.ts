@@ -11,15 +11,26 @@ function pairCurrencyAmountInWeth(
 ): TokenAmount | Fraction | undefined {
   if (!baseToken) return valueOfTotalStakedAmountInPairCurrency
 
+  let mult
   switch (baseToken.symbol?.toUpperCase()) {
     case tokens?.WETH?.token?.symbol?.toUpperCase():
       return valueOfTotalStakedAmountInPairCurrency
+    case tokens?.NEAR?.token?.symbol?.toUpperCase():
+      mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(baseToken.decimals - 18))
+      return tokens?.NEAR?.price
+        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.NEAR?.price).multiply(mult)
+        : valueOfTotalStakedAmountInPairCurrency
     case tokens?.govToken?.token?.symbol?.toUpperCase():
       return tokens?.govToken?.price
         ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.govToken?.price)
         : valueOfTotalStakedAmountInPairCurrency
     case tokens?.USDC?.token?.symbol?.toUpperCase():
-      const mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18 - baseToken.decimals))
+      mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18 - baseToken.decimals))
+      return tokens?.USDC?.price
+        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.USDC?.price).divide(mult)
+        : valueOfTotalStakedAmountInPairCurrency
+    case tokens?.USDT?.token?.symbol?.toUpperCase():
+      mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18 - baseToken.decimals))
       return tokens?.USDC?.price
         ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.USDC?.price).divide(mult)
         : valueOfTotalStakedAmountInPairCurrency
@@ -55,7 +66,6 @@ export default function calculateWethAdjustedTotalStakedAmount(
     totalStakedAmount,
     totalLpTokenSupply
   )
-  // console.log('valueOfTotalStakedAmount', baseToken.symbol, valueOfTotalStakedAmountInPairCurrency.toSignificant(2))
   if (!valueOfTotalStakedAmountInPairCurrency) return undefined
   return pairCurrencyAmountInWeth(baseToken, tokenData, valueOfTotalStakedAmountInPairCurrency)
 }

@@ -19,6 +19,7 @@ export default function useTokensWithWethPrices(): Record<string, any> {
   const govTokenWETHPrice = useTokenWethPrice(govToken)
 
   const USDC: Token | undefined = getToken(chainId, 'USDC')
+  const USDT: Token | undefined = getToken(chainId, 'USDT')
   const USDCWETHPrice = useTokenWethPrice(USDC)
 
   const NEAR: Token | undefined = getToken(chainId, 'NEAR')
@@ -33,6 +34,7 @@ export default function useTokensWithWethPrices(): Record<string, any> {
       govToken: { token: govToken, price: govTokenWETHPrice },
       NEAR: { token: NEAR, price: NEARWETHPrice },
       TRI: { token: TRI, price: triPrice },
+      USDT: { token: USDT, price: USDCWETHPrice },
       USDC: { token: USDC, price: USDCWETHPrice }
     }
   }, [chainId, blockchain, weth, govToken, govTokenWETHPrice, NEAR, NEARWETHPrice, USDC, USDCWETHPrice])

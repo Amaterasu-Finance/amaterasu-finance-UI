@@ -2,22 +2,17 @@
 # yarn lockfile v1
 
 
-"@amaterasu-fi/default-token-list@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@amaterasu-fi/default-token-list/-/default-token-list-2.2.3.tgz#0e00b3f06cdccea269ed7a8e185c306e386b1112"
-  integrity sha512-xmGLSx3dMxvr8B9p2Lct88GbeVlBQ/5rU8lzhbF9vr4JmSJs7ycwVWOq7H6uLJC1WlUGAN8qgY2o9j6WPwEamQ==
-
 "@amaterasu-fi/default-token-list@^2.2.4":
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@amaterasu-fi/default-token-list/-/default-token-list-2.2.4.tgz#69b2f18fffb381573b13610abb94877edfb23584"
   integrity sha512-NtQUE3Mcl+JPAGWZ/nzFRTj5L0HYr4u99XR2sAltOllXlnOzpHvbuh1wE07V5jfFrrO9dyBdtSLUXN9mZRXIgw==
 
-"@amaterasu-fi/sdk@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@amaterasu-fi/sdk/-/sdk-2.2.3.tgz#51b2cf4bcefed0ad2aaacb2271ae760415039f69"
-  integrity sha512-PsVTL7/TfSu04QHWwczAhy0GO9GFRIVpLb83QBCLJuzpE/pjOWynWGqVOi8ym2luBBQ1csIAcsWbZdjaGHpNGA==
+"@amaterasu-fi/sdk@^2.2.4":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/@amaterasu-fi/sdk/-/sdk-2.2.4.tgz#557d7cb2298e57324bc7d88f0a3b919792c6bbc2"
+  integrity sha512-q952KWLwAI4tW+kA73rHvcwneKN6UQXhueoaqskTvt78jzSiEqLqtZ2xdJ1wa8kz9Cq7ZlhC3UUXhma+yfWIrA==
   dependencies:
-    "@amaterasu-fi/default-token-list" "^2.2.3"
+    "@amaterasu-fi/default-token-list" "^2.2.4"
     "@foxswap/core" "^1.0.1"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"

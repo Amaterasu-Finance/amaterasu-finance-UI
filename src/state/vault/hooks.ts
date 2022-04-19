@@ -244,12 +244,12 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
         // TODO - add these to object and show on front-end
         const apy = apr && calculateApy(apr)
-        const apyLp = apr && calculateApy(apr?.multiply(JSBI.BigInt(compoundRate)).divide('100'))
-        const apyIza = apr && xIzaApr && getIzaApy20Perc(apr, xIzaApr)
-        const apyCombined = apyLp && apyIza && apyLp + apyIza
-        console.log('apyLp', apyLp)
-        console.log('apyIza', apyIza)
-        console.log('combined new APY', apyCombined)
+        // const apyLp = apr && calculateApy(apr?.multiply(JSBI.BigInt(compoundRate)).divide('100'))
+        // const apyIza = apr && xIzaApr && getIzaApy20Perc(apr, xIzaApr)
+        // const apyCombined = apyLp && apyIza && apyLp + apyIza
+        // console.log('apyLp', apyLp)
+        // console.log('apyIza', apyIza)
+        // console.log('combined new APY', apyCombined)
 
         const stakingInfo = {
           pid: pid,
