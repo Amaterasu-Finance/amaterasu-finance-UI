@@ -18,7 +18,8 @@ import {
   PIT,
   PIT_BREEDER,
   SOCKS_TESTNET_ADDRESS,
-  VAULT_CHEF
+  VAULT_CHEF,
+  ZAPPER
 } from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
@@ -33,6 +34,7 @@ import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
 import UNISOCKS_ABI from '../constants/abis/unisocks.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import VAULT_CHEF_ABI from '../constants/abis/vaultchef.json'
+import ZAPPER_ABI from '../constants/abis/zapper.json'
 import GENERIC_CHEF_ABI from '../constants/abis/masterchefGeneric.json'
 import PAYOUT_ABI from '../constants/abis/payouts.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
@@ -163,6 +165,12 @@ export function useVaultChefContract(withSignerIfPossible?: boolean): Contract |
   const { chainId } = useActiveWeb3React()
   const address = chainId && VAULT_CHEF[chainId]
   return useContract(address, VAULT_CHEF_ABI, withSignerIfPossible)
+}
+
+export function useZapperContract(withSignerIfPossible?: boolean): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  const address = chainId && ZAPPER[chainId]
+  return useContract(address, ZAPPER_ABI, withSignerIfPossible)
 }
 
 export function useMasterchefContract(address: string, withSignerIfPossible?: boolean): Contract | null {

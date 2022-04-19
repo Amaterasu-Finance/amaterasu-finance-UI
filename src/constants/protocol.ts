@@ -3,7 +3,8 @@ import getTokenWithDefault from '../utils/getTokenWithDefault'
 
 export enum ProtocolName {
   TRISOLARIS = 'Trisolaris',
-  WANNASWAP = 'WannaSwap'
+  WANNASWAP = 'WannaSwap',
+  AMATERASU = 'Amaterasu'
 }
 
 export interface Protocol {
@@ -23,8 +24,19 @@ export interface Protocol {
 export const PROTOCOLS_MAINNET: {
   [protocolName in ProtocolName]: Protocol
 } = {
+  [ProtocolName.AMATERASU]: {
+    name: ProtocolName.AMATERASU,
+    nativeToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'IZA'),
+    xToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'xIZA'),
+    routerAddress: '0x3d99B2F578d94f61adcD899DE55F2991522cefE1',
+    masterchefV1: '0xAE20c9F0c4a7E0098D322F690DFea6534E105614',
+    perBlockFunctionSig: '0x5fa7b83f',
+    buyTokenUrl: 'https://app.amaterasu.finance/#/swap?outputCurrency=',
+    addLiquidityUrl: 'https://app.amaterasu.finance/#/add/',
+    logoFilename: 'images/protocols/amaterasu.svg'
+  },
   [ProtocolName.TRISOLARIS]: {
-    name: 'Trisolaris',
+    name: ProtocolName.TRISOLARIS,
     nativeToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'TRI'),
     xToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'xTRI'),
     routerAddress: '0x2CB45Edb4517d5947aFdE3BEAbF95A582506858B',
@@ -36,7 +48,7 @@ export const PROTOCOLS_MAINNET: {
     logoFilename: 'images/protocols/tri.svg'
   },
   [ProtocolName.WANNASWAP]: {
-    name: 'WannaSwap',
+    name: ProtocolName.WANNASWAP,
     nativeToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WANNA'),
     xToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WANNAx'),
     routerAddress: '0xa3a1eF5Ae6561572023363862e238aFA84C72ef5',

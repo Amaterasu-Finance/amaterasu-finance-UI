@@ -327,7 +327,7 @@ export function useTotalGovTokensEarned(): TokenAmount | undefined {
 export function useDerivedStakeInfo(
   typedValue: string,
   stakingToken: Token,
-  userLiquidityUnstaked: TokenAmount | undefined
+  userLiquidityUnstaked: TokenAmount | CurrencyAmount | undefined
 ): {
   parsedAmount?: CurrencyAmount
   error?: string

@@ -25,6 +25,7 @@ import ModifiedUnstakingModal from './ModifiedUnstakingModal'
 import StakingModal from './StakingModal'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
+import ZapModal from './ZapModal'
 
 const StatContainer = styled.div`
   display: flex;
@@ -96,6 +97,7 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
   // const govTokenPrice = useBUSDPrice(govToken)
   // const pitRatio = usePitRatio()
 
+  const [showZapModal, setShowZapModal] = useState(false)
   const [showDepositModal, setShowDepositModal] = useState(false)
   const [showWithdrawModal, setShowWithdrawModal] = useState(false)
   const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
@@ -133,6 +135,7 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
       <StatContainer>
         {stakingInfo && (
           <>
+            <ZapModal isOpen={showZapModal} onDismiss={() => setShowZapModal(false)} stakingInfo={stakingInfo} />
             <StakingModal
               isOpen={showDepositModal}
               onDismiss={() => setShowDepositModal(false)}
@@ -257,6 +260,9 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
         <StatContainer>
           <Break />
           <RowBetween>
+            <ButtonPrimary padding="8px" borderRadius="8px" width="170px" onClick={() => setShowZapModal(true)}>
+              Zap
+            </ButtonPrimary>
             <ButtonPrimary padding="8px" borderRadius="8px" width="170px" onClick={() => setShowDepositModal(true)}>
               Deposit
             </ButtonPrimary>
