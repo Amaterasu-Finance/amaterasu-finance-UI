@@ -4,7 +4,8 @@ import { VaultsInfo } from '../state/vault/hooks'
 export default function useFilterStakingInfos(
   stakingInfos: VaultsInfo[],
   isActive: boolean | undefined = undefined,
-  onlyStaked: boolean | undefined = undefined
+  onlyStaked: boolean | undefined = undefined,
+  sortByApy = true
 ): VaultsInfo[] {
   return useMemo(() => {
     if (isActive !== undefined) {
@@ -13,20 +14,29 @@ export default function useFilterStakingInfos(
 
     if (onlyStaked !== undefined) {
       return stakingInfos
-        .filter(s => s.earnedAmountxIza.greaterThan('0'))
+        .filter(s => s.stakedAmount.greaterThan('0'))
         .sort((a, b) => {
-          if (a.earnedAmountxIza === undefined || b.earnedAmountxIza === undefined) {
+          if (a.stakedAmount === undefined || b.stakedAmount === undefined) {
             return 0
           }
-          return b.earnedAmountxIza.greaterThan(a.earnedAmountxIza) ? 1 : -1
+          return b.stakedAmount.greaterThan(a.stakedAmount) ? 1 : -1
         })
     }
 
-    return stakingInfos.sort((a, b) => {
-      if (a.apr === undefined || b.apr === undefined) {
-        return 0
-      }
-      return b.apr.greaterThan(a.apr) ? 1 : -1
-    })
+    if (sortByApy) {
+      return stakingInfos.sort((a, b) => {
+        if (a.apy === undefined || b.apy === undefined) {
+          return 0
+        }
+        return b.apy > a.apy ? 1 : -1
+      })
+    } else {
+      return stakingInfos.sort((a, b) => {
+        if (a.valueOfTotalStakedAmountInUsd === undefined || b.valueOfTotalStakedAmountInUsd === undefined) {
+          return 0
+        }
+        return b.valueOfTotalStakedAmountInUsd.greaterThan(a.valueOfTotalStakedAmountInUsd) ? 1 : -1
+      })
+    }
   }, [stakingInfos, isActive, onlyStaked])
 }

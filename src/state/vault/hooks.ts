@@ -18,8 +18,8 @@ import validStakingInfo from '../../utils/validStakingInfo'
 // import determineBaseToken from '../../utils/determineBaseToken'
 import { LiqPool } from '../../constants/lps'
 import usePitToken from '../../hooks/usePitToken'
-import { ProtocolName, PROTOCOLS_MAINNET } from '../../constants/protocol'
-import calculateApy from '../../utils/calculateApy'
+import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from '../../constants/protocol'
+import calculateApy, { calculateDailyApy } from '../../utils/calculateApy'
 import { useXFoxApr } from '../../hooks/usexFoxApy'
 
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
@@ -29,6 +29,7 @@ const STRAT_INTERFACE = new Interface(stratABI)
 // const BLOCKS_PER_YEAR_11 = 28669090 // blocks per year @ 1.1s
 // const BLOCKS_PER_YEAR_10 = 31449600 // blocks per year @ 1.0s
 
+const MIN_STAKED_AMOUNT = JSBI.BigInt(44)
 const DEFAULT_CONTROLLER_FEE = 1.0
 const DEFAULT_BUYBACK_RATE = 3.0
 const DEFAULT_XIZA_RATE = 20.0
@@ -42,6 +43,7 @@ export interface VaultsInfo {
   active: boolean
   tokens: [Token, Token]
   lp: LiqPool
+  protocol: Protocol
   masterchef?: string // masterchef address for rewards info
   buybackRate?: number // buy+burn IZA %, default = 3%
   xIzaRate?: number // xIZA % of rewards, default = 20%
@@ -67,6 +69,8 @@ export interface VaultsInfo {
   // the amount of token currently staked, or undefined if no account
   stakedAmount: TokenAmount
   // the amount of token currently staked, or undefined if no account
+  userStakedAtLastAction: TokenAmount
+  // the amount of token currently staked, or undefined if no account
   stakedAmountUsd: Fraction | undefined
   // the amount of reward token earned by the active account, or undefined if no account
   earnedAmountxIza: TokenAmount
@@ -80,6 +84,14 @@ export interface VaultsInfo {
   apr: Fraction | undefined
   // pool APY
   apy: number | undefined
+  // pool daily APY
+  apyDaily: number | undefined
+  // pool apy base token
+  apyBase: number | undefined
+  // pool apy xIZA
+  apyxIza: number | undefined
+  // pool apy xToken
+  apyxToken: number | undefined
 }
 
 export function getRewardTokenPrice(baseToken: Token | undefined, tokenData: Record<string, any>): Price | undefined {
@@ -125,6 +137,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
   const pendingRewards = useSingleContractMultipleData(vaultChefContract, 'pendingRewards', pidAccountMapping)
   const userInfos = useSingleContractMultipleData(vaultChefContract, 'stakedWantTokens', pidAccountMapping)
+  const userInfosList = useSingleContractMultipleData(vaultChefContract, 'userInfo', pidAccountMapping)
   const vaultBalances = useMultipleContractSingleData(stratAddresses, STRAT_INTERFACE, 'wantLockedTotal')
 
   const triMasterchefV1 = useMasterchefContract(PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].masterchefV1)
@@ -165,6 +178,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
       // amount uint256, rewardDebt uint256, rewardDebtAtBlock uint256, lastWithdrawBlock uint256, firstDepositBlock uint256, blockdelta uint256, lastDepositBlock uint256
       const userInfo = userInfos[index]
+      const userInfoList = userInfosList[index]
       const pendingReward = pendingRewards[index]
       const lpTokenTotalSupply = lpTokenTotalSupplies[index]
       const lpTokenReserve = lpTokenReserves[index]
@@ -203,8 +217,13 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         const calculatedxTokenRewards = JSBI.BigInt(pendingReward?.result?.[1] ?? 0)
 
         const liquidityToken = new Token(chainId, lp.address, 18, lp.name, lp.name)
-        const stakedAmount = new TokenAmount(liquidityToken, JSBI.BigInt(userInfo?.result?.[0] ?? 0))
-        const vaultStakedAmount = new TokenAmount(liquidityToken, JSBI.BigInt(vaultBalance.result?.[0] ?? 0))
+        const amountParsed = JSBI.BigInt(userInfo?.result?.[0] ?? 0)
+        const amountStaked = JSBI.greaterThan(amountParsed, MIN_STAKED_AMOUNT) ? amountParsed : JSBI.BigInt(0)
+        const stakedAmount = new TokenAmount(liquidityToken, amountStaked)
+        const amountVault = JSBI.BigInt(vaultBalance?.result?.[0] ?? 0)
+        const vaultAmount = JSBI.greaterThan(amountVault, MIN_STAKED_AMOUNT) ? amountVault : JSBI.BigInt(0)
+        const vaultStakedAmount = new TokenAmount(liquidityToken, vaultAmount)
+        const userStakedAtLastAction = new TokenAmount(liquidityToken, JSBI.BigInt(userInfoList?.result?.[3] ?? 0))
         const farmStakedAmount = new TokenAmount(liquidityToken, JSBI.BigInt(lpTokenBalance.result?.[0] ?? 0))
 
         const totalLpTokenSupply = new TokenAmount(liquidityToken, JSBI.BigInt(lpTokenTotalSupply.result?.[0] ?? 0))
@@ -242,11 +261,11 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
         const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
 
-        // TODO - add these to object and show on front-end
-        const apy = apr && calculateApy(apr)
-        // const apyLp = apr && calculateApy(apr?.multiply(JSBI.BigInt(compoundRate)).divide('100'))
-        // const apyIza = apr && xIzaApr && getIzaApy20Perc(apr, xIzaApr)
-        // const apyCombined = apyLp && apyIza && apyLp + apyIza
+        const apyDaily = apr && calculateDailyApy(apr)
+        const apyBase = apr && calculateApy(apr?.multiply(JSBI.BigInt(compoundRate)).divide('100'))
+        const apyIza = apr && xIzaApr && getIzaApy20Perc(apr, xIzaApr)
+        const apyxToken = 0
+        const apyCombined = apyBase && apyIza && apyBase + apyIza + apyxToken
         // console.log('apyLp', apyLp)
         // console.log('apyIza', apyIza)
         // console.log('combined new APY', apyCombined)
@@ -255,6 +274,8 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           pid: pid,
           farmPid: farmPid,
           lp: lp,
+          protocol: vaultInfo[index].protocol,
+          active: active,
           masterchef: masterchefAddress,
           buybackRate: buybackRate,
           xIzaRate: xIzaRate,
@@ -272,13 +293,17 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           totalStakedAmount: vaultStakedAmount,
           stakedAmount: stakedAmount,
           stakedAmountUsd: userAmountStakedUsd,
+          userStakedAtLastAction: userStakedAtLastAction,
           earnedAmountxIza: totalPendingxIza,
           earnedAmountxToken: totalPendingxToken,
           valueOfTotalStakedAmountInUsd: totalStakedAmountBUSD,
           pricePerLpToken: pricePerLpToken,
           apr: apr,
-          apy: apy,
-          active: active
+          apy: apyCombined,
+          apyDaily: apyDaily,
+          apyBase: apyBase,
+          apyxIza: apyIza,
+          apyxToken: apyxToken
         }
 
         memo.push(stakingInfo)
@@ -300,6 +325,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     chefData,
     poolInfos,
     userInfos,
+    userInfosList,
     pendingRewards,
     lpTokenTotalSupplies,
     lpTokenReserves,

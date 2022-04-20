@@ -13,14 +13,9 @@ import { useActiveWeb3React } from '../../hooks'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { usePairContract, useVaultChefContract } from '../../hooks/useContract'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
-// import { StakingInfo, useDerivedStakeInfo } from '../../state/stake/hooks'
-//import { wrappedCurrencyAmount } from '../../utils/wrappedCurrency'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { LoadingView, SubmittedView } from '../ModalViews'
-// import { ZERO_ADDRESS } from '../../constants'
-import { BlueCard } from '../Card'
-import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
 import { VaultsInfo, useDerivedStakeInfo } from '../../state/vault/hooks'
 
@@ -75,7 +70,6 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [onDismiss])
 
   const vaultChef = useVaultChefContract()
-  const withdrawFee = stakingInfo.withdrawFee
 
   // pair contract for this token to be staked
   const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
@@ -147,24 +141,6 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             <TYPE.mediumHeader>Deposit</TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
-
-          {withdrawFee && withdrawFee > 0 && (
-            <RowBetween>
-              <ColumnCenter>
-                <BlueCard>
-                  <AutoColumn gap="10px">
-                    <TYPE.link fontWeight={400} color={'primaryText1'} textAlign="center">
-                      📢 <b>Notice:</b> This vault has a <b>{withdrawFee.toFixed(1)}%</b> withdraw fee
-                      <br />
-                      <br />
-                      Withdraw fees are used to buy and burn <b>$IZA!</b>
-                    </TYPE.link>
-                  </AutoColumn>
-                </BlueCard>
-              </ColumnCenter>
-            </RowBetween>
-          )}
-
           <CurrencyInputPanel
             value={typedValue}
             onUserInput={onUserInput}

@@ -12,8 +12,9 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { calculateGasMargin } from '../../utils'
-import useGovernanceToken from '../../hooks/useGovernanceToken'
 import usePitToken from '../../hooks/usePitToken'
+import { Avatar } from 'antd'
+import xIzaLogo from '../../assets/images/iza-purple.png'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -27,10 +28,9 @@ interface StakingModalProps {
   autostake: boolean
 }
 
-export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autostake }: StakingModalProps) {
+export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo }: StakingModalProps) {
   const { account } = useActiveWeb3React()
 
-  const govToken = useGovernanceToken()
   const pitToken = usePitToken()
 
   // monitor call to help UI loading state
@@ -47,9 +47,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
   }
 
   const vaultChef = useVaultChefContract()
-  const summary = autostake
-    ? `Autostake ${govToken?.symbol} rewards into ${pitToken?.symbol}`
-    : `Claim accumulated ${govToken?.symbol} rewards`
+  const summary = `Claim accumulated ${pitToken?.symbol} rewards`
 
   async function onClaimReward() {
     if (vaultChef && stakingInfo?.stakedAmount) {
@@ -90,7 +88,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
       {!attempting && !hash && !failed && (
         <ContentWrapper gap="lg">
           <RowBetween>
-            <TYPE.mediumHeader>Claim {autostake && ' + AutoStake'}</TYPE.mediumHeader>
+            <TYPE.mediumHeader>Claim Rewards</TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
           {stakingInfo?.earnedAmountxIza && (
@@ -98,11 +96,19 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
               <TYPE.body fontWeight={600} fontSize={36}>
                 {stakingInfo?.earnedAmountxIza?.toSignificant(6)}
               </TYPE.body>
-              <TYPE.body>Unclaimed {govToken?.symbol}</TYPE.body>
+              <TYPE.body>
+                <span role="img" aria-label="wizard-icon" style={{ margin: '0.5rem' }}>
+                  <Avatar size={40} src={xIzaLogo} />
+                </span>
+                Unclaimed {pitToken?.symbol}
+                <span role="img" aria-label="wizard-icon" style={{ margin: '0.5rem' }}>
+                  <Avatar size={40} src={xIzaLogo} />
+                </span>
+              </TYPE.body>
             </AutoColumn>
           )}
           <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onClaimReward}>
-            {error ?? 'Claim'} {autostake && ' + AutoStake into xIZA'}
+            {error ?? 'Claim Rewards'}
           </ButtonError>
         </ContentWrapper>
       )}
@@ -110,7 +116,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
         <LoadingView onDismiss={wrappedOnDismiss}>
           <AutoColumn gap="12px" justify={'center'}>
             <TYPE.body fontSize={20}>
-              Claiming {stakingInfo?.earnedAmountxIza?.toSignificant(6)} {govToken?.symbol}
+              Claiming {stakingInfo?.earnedAmountxIza?.toSignificant(6)} {pitToken?.symbol}
             </TYPE.body>
           </AutoColumn>
         </LoadingView>
@@ -119,7 +125,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
         <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
           <AutoColumn gap="12px" justify={'center'}>
             <TYPE.largeHeader>Transaction Submitted</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>Claimed {govToken?.symbol}!</TYPE.body>
+            <TYPE.body fontSize={20}>Claimed {pitToken?.symbol}!</TYPE.body>
           </AutoColumn>
         </SubmittedView>
       )}
