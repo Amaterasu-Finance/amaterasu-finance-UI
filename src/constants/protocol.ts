@@ -33,7 +33,7 @@ export const PROTOCOLS_MAINNET: {
     perBlockFunctionSig: '0x5fa7b83f',
     buyTokenUrl: 'https://app.amaterasu.finance/#/swap?outputCurrency=',
     addLiquidityUrl: 'https://app.amaterasu.finance/#/add/',
-    logoFilename: 'images/protocols/amaterasu.svg'
+    logoFilename: 'images/protocols/amaterasu.png'
   },
   [ProtocolName.TRISOLARIS]: {
     name: ProtocolName.TRISOLARIS,

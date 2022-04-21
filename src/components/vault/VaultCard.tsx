@@ -26,6 +26,9 @@ import { LightGreyCard } from '../Card'
 import { CardSection } from './styled'
 import { AutoColumn } from '../Column'
 import { AutoRow } from '../Row'
+import usePitRatio from '../../hooks/usePitRatio'
+import useUSDCPrice from '../../utils/useUSDCPrice'
+import useGovernanceToken from '../../hooks/useGovernanceToken'
 
 const ToolTipContainer = styled.div`
   display: flex;
@@ -34,9 +37,6 @@ const ToolTipContainer = styled.div`
   gap: 2px;
   margin: 0;
   padding: 0;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  display: none;
-`};
 `
 
 const HeaderClickable = styled.div`
@@ -59,6 +59,13 @@ const StyledLogo = styled(Logo)<{ size: string }>`
 `
 
 const HidingCol = styled(Col)`
+  display: grid;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const HidingStatistic = styled(Statistic)`
   display: grid;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -119,8 +126,10 @@ const StyledVaultActionCard = ({ children, badgeValue }: any) => {
 export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: VaultsInfo; isArchived: boolean }) {
   const { account } = useActiveWeb3React()
   const xToken = usePitToken()
+  const govToken = useGovernanceToken()
+  const govTokenPrice = useUSDCPrice(govToken)
+  const pitRatio = usePitRatio()
 
-  const [isOpen, setIsOpen] = useState<boolean>(true)
   const [showZapModal, setShowZapModal] = useState(false)
   const [showDepositModal, setShowDepositModal] = useState(false)
   const [showWithdrawModal, setShowWithdrawModal] = useState(false)
@@ -129,26 +138,53 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
   const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   const userLiquidityUnstakedUsd = userLiquidityUnstaked && stakingInfo.pricePerLpToken?.multiply(userLiquidityUnstaked)
-  console.log(userLiquidityUnstakedUsd)
-  // get the color of the token
+  const defaultOpen = isStaking || Boolean(userLiquidityUnstaked && userLiquidityUnstaked?.greaterThan('0'))
+  const [isOpen, setIsOpen] = useState<boolean>(defaultOpen)
+
+  const pendingxIzaUsd =
+    govTokenPrice &&
+    pitRatio &&
+    stakingInfo.earnedAmountxIza &&
+    stakingInfo.earnedAmountxIza.multiply(pitRatio).multiply(govTokenPrice.adjusted)
+  // if less than $0.01, then just show `<$0.01`
+  const pendingxIzaUsdString =
+    pendingxIzaUsd &&
+    (pendingxIzaUsd.equalTo('0')
+      ? '$0'
+      : pendingxIzaUsd.multiply('100').lessThan('1')
+      ? '<$0.01'
+      : `$${pendingxIzaUsd.toFixed(2)}`)
+
+  const userRecentProfit = stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
+  const userRecentProfitUsd = stakingInfo.pricePerLpToken?.multiply(userRecentProfit)
+  // if less than $0.01, then just show `<$0.01`
+  const userRecentProfitUsdString =
+    userRecentProfitUsd &&
+    (userRecentProfitUsd.equalTo('0')
+      ? '$0'
+      : userRecentProfitUsd.multiply('100').lessThan('1')
+      ? '<$0.01'
+      : `$${userRecentProfitUsd.toFixed(2)}`)
+
   const token0 = stakingInfo.tokens[0]
   const token1 = stakingInfo.tokens[1]
   const currency0 = unwrappedToken(token0)
   const currency1 = unwrappedToken(token1)
+  // get the color of the token
   // const backgroundColor = useColor(stakingInfo?.baseToken)
 
   return (
     <Wrapper showBackground={isStaking}>
       <HeaderClickable onClick={() => setIsOpen(!isOpen)}>
-        <AutoRow justify={'space-between'} style={{ alignSelf: 'center' }}>
-          <AutoColumn className="gutter-row" style={{ alignItems: 'center' }}>
-            <AutoRow>
+        <AutoRow justify={'space-between'} style={{ alignSelf: 'center', margin: '0px', marginLeft: '20px' }}>
+          <AutoColumn className="gutter-row" style={{ alignItems: 'center', minWidth: '250px' }}>
+            <AutoRow style={{ margin: '0px' }}>
               <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={30} />
-              <TYPE.white fontWeight={600} fontSize={20} style={{ marginLeft: '10px' }}>
+              <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '10px' }}>
                 {currency0.symbol}-{currency1.symbol}
               </TYPE.white>
             </AutoRow>
-            <AutoRow style={{ marginTop: '10px' }}>
+            <AutoRow style={{ margin: '0px' }}>
               <TYPE.gray fontWeight={600} fontSize={14}>
                 Platform:{' '}
               </TYPE.gray>
@@ -175,7 +211,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
           </HidingCol>
-          <HidingCol>
+          <HidingCol style={{ marginTop: '0px' }}>
             <Statistic
               title="Daily"
               value={
@@ -189,7 +225,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
           </HidingCol>
-          <Col className="gutter-row">
+          <Col className="gutter-row" style={{ marginTop: '0px' }}>
             <Statistic
               title={
                 <CustomMouseoverTooltip
@@ -268,8 +304,8 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
           </Col>
-          <Col className="gutter-row" span={4}>
-            <Statistic
+          <HidingCol className="gutter-row" span={4}>
+            <HidingStatistic
               title={
                 <CustomMouseoverTooltip
                   element={
@@ -289,12 +325,14 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                     </ToolTipContainer>
                   }
                 >
-                  <TYPE.gray>
-                    xIZA Rate
-                    <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
-                      <QuestionCircleOutlined style={{ fontSize: '0.85rem', alignSelf: 'center' }} />
-                    </span>
-                  </TYPE.gray>
+                  <HidingCol style={{ marginTop: '0px' }}>
+                    <TYPE.gray>
+                      xIZA Rate
+                      <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
+                        <QuestionCircleOutlined style={{ fontSize: '0.85rem', alignSelf: 'center' }} />
+                      </span>
+                    </TYPE.gray>
+                  </HidingCol>
                 </CustomMouseoverTooltip>
               }
               value={
@@ -307,7 +345,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               }
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
-          </Col>
+          </HidingCol>
         </AutoRow>
       </HeaderClickable>
 
@@ -342,16 +380,16 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                 <StyledVaultActionCard
                   badgeValue={
                     userLiquidityUnstakedUsd
-                      ? `$${userLiquidityUnstakedUsd.toSignificant(44, { groupSeparator: ',' })}`
+                      ? `$${userLiquidityUnstakedUsd.toSignificant(5, { groupSeparator: ',' })}`
                       : undefined
                   }
                 >
-                  <AutoRow justify="center">
+                  <AutoRow justify="start" marginLeft="1.5rem">
                     <Statistic
                       title="Wallet Balance"
                       value={
                         userLiquidityUnstaked
-                          ? userLiquidityUnstaked.toSignificant(4, {
+                          ? userLiquidityUnstaked.toSignificant(5, {
                               groupSeparator: ','
                             })
                           : '-'
@@ -375,20 +413,46 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                 <StyledVaultActionCard
                   badgeValue={
                     stakingInfo.stakedAmountUsd
-                      ? `$${stakingInfo.stakedAmountUsd.toSignificant(4, { groupSeparator: ',' })}`
+                      ? `$${stakingInfo.stakedAmountUsd.toSignificant(5, { groupSeparator: ',' })}`
                       : undefined
                   }
                 >
-                  <AutoRow justify="center">
-                    <Statistic
-                      title="Staked Balance"
-                      value={
-                        stakingInfo.stakedAmount
-                          ? `${stakingInfo.stakedAmount.toSignificant(4, { groupSeparator: ',' })}`
-                          : '-'
+                  <AutoRow justify="start" marginLeft="1.5rem">
+                    <CustomMouseoverTooltip
+                      element={
+                        <ToolTipContainer style={{ minWidth: '150px' }}>
+                          <AutoRow>
+                            <TYPE.subHeader style={{ fontSize: '17px', fontWeight: '700' }}>
+                              Recent Profit*
+                            </TYPE.subHeader>
+                          </AutoRow>
+                          <Break />
+                          <AutoRow>
+                            <TYPE.subHeader style={{ fontSize: '14px' }}>
+                              {userRecentProfit.toSignificant(4)} ({userRecentProfitUsdString})
+                            </TYPE.subHeader>
+                          </AutoRow>
+                          <AutoRow>
+                            <TYPE.subHeader style={{ fontSize: '12px', fontWeight: '700' }}>
+                              {stakingInfo.lp.name} LP Tokens
+                            </TYPE.subHeader>
+                          </AutoRow>
+                          <AutoRow>
+                            <TYPE.small style={{ fontSize: '11px' }}>*Since last stake or unstake</TYPE.small>
+                          </AutoRow>
+                        </ToolTipContainer>
                       }
-                      valueStyle={{ fontSize: '17px', color: 'white' }}
-                    />
+                    >
+                      <Statistic
+                        title={'Staked Balance'}
+                        value={
+                          stakingInfo.stakedAmount
+                            ? `${stakingInfo.stakedAmount.toSignificant(5, { groupSeparator: ',' })}`
+                            : '-'
+                        }
+                        valueStyle={{ fontSize: '17px', color: 'white' }}
+                      />
+                    </CustomMouseoverTooltip>
                   </AutoRow>
                   <AutoRow style={{ justifyContent: 'center', marginTop: '20px' }}>
                     <ButtonPrimary
@@ -401,8 +465,8 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                     </ButtonPrimary>
                   </AutoRow>
                 </StyledVaultActionCard>
-                <StyledVaultActionCard badgeValue={undefined}>
-                  <AutoRow justify="center">
+                <StyledVaultActionCard badgeValue={pendingxIzaUsdString}>
+                  <AutoRow justify="start" marginLeft="1.5rem">
                     <Statistic
                       title="Pending Rewards"
                       suffix={
@@ -412,7 +476,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                       }
                       value={
                         stakingInfo
-                          ? `${stakingInfo.earnedAmountxIza.toSignificant(4, { groupSeparator: ',' })} ${
+                          ? `${stakingInfo.earnedAmountxIza.toSignificant(5, { groupSeparator: ',' })} ${
                               xToken?.symbol
                             }`
                           : '-'

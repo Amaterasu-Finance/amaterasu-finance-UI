@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Popover, { PopoverProps } from '../Popover'
 
 const TooltipContainer = styled.div`
-  min-width: 250px;
+  min-width: 200px;
   padding: 0.6rem 1rem;
   line-height: 150%;
   font-weight: 400;
