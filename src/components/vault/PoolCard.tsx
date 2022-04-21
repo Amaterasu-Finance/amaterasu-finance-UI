@@ -61,6 +61,12 @@ const StyledLogo = styled(Logo)<{ size: string }>`
   background-color: ${({ theme }) => theme.white};
 `
 
+const HidingCol = styled(Col)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
 const Wrapper = styled(Card)<{ showBackground: boolean }>`
   border-radius: 8px;
   width: 100%;
@@ -82,18 +88,7 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
   }
 `
 
-const StatContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 0rem;
-  margin-right: 0rem;
-  margin-left: 0rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  display: none;
-`};
-`
+// yarn star
 
 export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: VaultsInfo; isArchived: boolean }) {
   const { account } = useActiveWeb3React()
@@ -143,7 +138,7 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
               </TYPE.white>
             </Row>
           </Col>
-          <Col className="gutter-row" span={4}>
+          <HidingCol className="gutter-row" span={4}>
             <Statistic
               title={<TYPE.gray>TVL</TYPE.gray>}
               value={
@@ -153,8 +148,8 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
               }
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
-          </Col>
-          <Col className="gutter-row" span={4}>
+          </HidingCol>
+          <HidingCol className="gutter-row" span={4}>
             <Statistic
               title={<TYPE.gray>Daily</TYPE.gray>}
               value={
@@ -167,7 +162,7 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
               }
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
-          </Col>
+          </HidingCol>
           <Col className="gutter-row" span={4}>
             <Statistic
               title={
@@ -317,167 +312,195 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Vau
           )}
           <Row gutter={24} justify={'space-around'} style={{ display: 'flex', alignItems: 'center' }}>
             {/*<Col className="gutter-row" span={8}>*/}
-            <Card
-              style={{
-                justifyContent: 'center',
-                boxSizing: 'border-box',
-                height: '100%',
-                width: '29%',
-                borderRadius: '8px'
-              }}
-            >
-              <div style={{ height: '100%', width: '100%' }}>
+            <Col span={8}>
+              <Card
+                style={{
+                  justifyContent: 'center',
+                  boxSizing: 'border-box',
+                  height: '100%',
+                  width: '100%',
+                  borderRadius: '8px'
+                }}
+              >
+                <div style={{ height: '100%', width: '100%' }}>
+                  <Row>
+                    <Statistic
+                      title={<TYPE.gray>Wallet Balance</TYPE.gray>}
+                      value={
+                        userLiquidityUnstaked
+                          ? `${userLiquidityUnstaked.toSignificant(5, {
+                              groupSeparator: ','
+                            })}`
+                          : '-'
+                      }
+                      valueStyle={{ fontSize: '17px', color: 'white' }}
+                    />
+                  </Row>
+                  {userLiquidityUnstakedUsd && userLiquidityUnstakedUsd.greaterThan('0') && (
+                    <Row>
+                      <TYPE.gray>
+                        ~$
+                        {userLiquidityUnstakedUsd && userLiquidityUnstakedUsd.toSignificant(4, { groupSeparator: ',' })}
+                      </TYPE.gray>
+                    </Row>
+                  )}
+                  <Row style={{ alignContent: 'center', marginTop: '20px', width: '100%' }}>
+                    <ButtonPrimary
+                      padding="8px"
+                      borderRadius="8px"
+                      width="50%"
+                      onClick={() => setShowDepositModal(true)}
+                    >
+                      Deposit
+                    </ButtonPrimary>
+                    <ButtonPrimary padding="8px" borderRadius="8px" width="50%" onClick={() => setShowZapModal(true)}>
+                      Zap
+                    </ButtonPrimary>
+                  </Row>
+                </div>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  borderRadius: '8px'
+                }}
+              >
+                <Row gutter={24} justify="center">
+                  <Col span={12}>
+                    <Row>
+                      <Statistic
+                        title={<TYPE.gray>Staked Balance</TYPE.gray>}
+                        value={
+                          stakingInfo.stakedAmount
+                            ? `${stakingInfo.stakedAmount.toSignificant(4, { groupSeparator: ',' })}`
+                            : '-'
+                        }
+                        valueStyle={{ fontSize: '17px', color: 'white' }}
+                      />
+                    </Row>
+                    {stakingInfo.stakedAmountUsd && (
+                      <Row>
+                        <TYPE.gray>${stakingInfo.stakedAmountUsd.toSignificant(4, { groupSeparator: ',' })}</TYPE.gray>
+                      </Row>
+                    )}
+                  </Col>
+                  <Col span={12}>
+                    <Row>
+                      <Statistic
+                        title={<TYPE.gray>Recent Profit</TYPE.gray>}
+                        value={
+                          stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
+                            ? `${stakingInfo.stakedAmount
+                                .subtract(stakingInfo.userStakedAtLastAction)
+                                .toSignificant(4, { groupSeparator: ',' })}`
+                            : '-'
+                        }
+                        valueStyle={{ fontSize: '17px', color: 'white' }}
+                      />
+                    </Row>
+                    {stakingInfo.stakedAmountUsd && (
+                      <Row>
+                        <TYPE.gray>
+                          $
+                          {stakingInfo.stakedAmount
+                            .subtract(stakingInfo.userStakedAtLastAction)
+                            .toSignificant(4, { groupSeparator: ',' })}
+                        </TYPE.gray>
+                      </Row>
+                    )}
+                  </Col>
+                </Row>
+                {/*<StatContainer>*/}
+                {/*  <RowBetween>*/}
+                {/*    <TYPE.white> Staked Balance:</TYPE.white>*/}
+                {/*    <TYPE.white fontWeight={500}>*/}
+                {/*      {stakingInfo.stakedAmount*/}
+                {/*        ? `${stakingInfo.stakedAmount.toSignificant(4, { groupSeparator: ',' })}`*/}
+                {/*        : '-'}*/}
+                {/*      <TYPE.gray fontSize={10}>*/}
+                {/*        ~$*/}
+                {/*        {stakingInfo.stakedAmountUsd*/}
+                {/*          ? stakingInfo.stakedAmountUsd.toSignificant(4, { groupSeparator: ',' })*/}
+                {/*          : '-'}*/}
+                {/*      </TYPE.gray>*/}
+                {/*    </TYPE.white>*/}
+                {/*  </RowBetween>*/}
+                {/*  <RowBetween>*/}
+                {/*    <TYPE.white> Recent Profit:</TYPE.white>*/}
+                {/*    <TYPE.white fontWeight={500}>*/}
+                {/*      {stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)*/}
+                {/*        ? `${stakingInfo.stakedAmount*/}
+                {/*            .subtract(stakingInfo.userStakedAtLastAction)*/}
+                {/*            .toSignificant(4, { groupSeparator: ',' })}`*/}
+                {/*        : '-'}*/}
+                {/*      <TYPE.gray fontSize={10}>*/}
+                {/*        ~$*/}
+                {/*        {stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)*/}
+                {/*          ? `${stakingInfo.stakedAmount*/}
+                {/*              .subtract(stakingInfo.userStakedAtLastAction)*/}
+                {/*              .toSignificant(4, { groupSeparator: ',' })}`*/}
+                {/*          : '-'}*/}
+                {/*      </TYPE.gray>*/}
+                {/*    </TYPE.white>*/}
+                {/*  </RowBetween>*/}
+                {/*</StatContainer>*/}
+                <Row style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                  <ButtonPrimary
+                    padding="8px"
+                    disabled={!(stakingInfo && stakingInfo.stakedAmount.greaterThan('0'))}
+                    borderRadius="8px"
+                    width="170px"
+                    onClick={() => setShowWithdrawModal(true)}
+                  >
+                    Withdraw
+                  </ButtonPrimary>
+                </Row>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  boxSizing: 'border-box',
+                  height: '100%',
+                  width: '100%',
+                  borderRadius: '8px'
+                }}
+              >
                 <Row>
                   <Statistic
-                    title={<TYPE.gray>Wallet Balance</TYPE.gray>}
+                    title={<TYPE.gray>Pending Rewards</TYPE.gray>}
+                    suffix={
+                      <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
+                        <Avatar size={30} src={xIzaLogo} style={{ marginRight: '4px' }} />
+                      </span>
+                    }
                     value={
-                      userLiquidityUnstaked
-                        ? `${userLiquidityUnstaked.toSignificant(5, {
-                            groupSeparator: ','
-                          })}`
+                      stakingInfo
+                        ? `${stakingInfo.earnedAmountxIza.toSignificant(4, { groupSeparator: ',' })} ${xToken?.symbol}`
                         : '-'
                     }
                     valueStyle={{ fontSize: '17px', color: 'white' }}
+                    style={{ justifyContent: 'center' }}
                   />
                 </Row>
-                {userLiquidityUnstakedUsd && userLiquidityUnstakedUsd.greaterThan('0') && (
-                  <Row>
-                    <TYPE.gray>
-                      ~${userLiquidityUnstakedUsd && userLiquidityUnstakedUsd.toSignificant(4, { groupSeparator: ',' })}
-                    </TYPE.gray>
-                  </Row>
-                )}
-                <Row style={{ alignContent: 'center', marginTop: '20px', width: '100%' }}>
-                  <ButtonPrimary padding="8px" borderRadius="8px" width="50%" onClick={() => setShowDepositModal(true)}>
-                    Deposit
-                  </ButtonPrimary>
-                  <ButtonPrimary padding="8px" borderRadius="8px" width="50%" onClick={() => setShowZapModal(true)}>
-                    Zap
+                <Row style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                  <ButtonPrimary
+                    padding="8px"
+                    disabled={!(stakingInfo && stakingInfo.earnedAmountxIza.greaterThan('0'))}
+                    borderRadius="8px"
+                    width="170px"
+                    onClick={() => setShowClaimRewardModal(true)}
+                  >
+                    Claim Rewards
                   </ButtonPrimary>
                 </Row>
-              </div>
-            </Card>
-            {/*</Col>*/}
-            {/*<Col className="gutter-row" span={8} style={{ alignItems: 'center' }}>*/}
-            <Card
-              style={{
-                height: '100%',
-                width: '29%',
-                borderRadius: '8px'
-              }}
-            >
-              {/*<Row>*/}
-              {/*  <Statistic*/}
-              {/*    title={<TYPE.gray>Staked Balance</TYPE.gray>}*/}
-              {/*    value={*/}
-              {/*      stakingInfo.stakedAmount*/}
-              {/*        ? `${stakingInfo.stakedAmount.toSignificant(4, { groupSeparator: ',' })}`*/}
-              {/*        : '-'*/}
-              {/*    }*/}
-              {/*    valueStyle={{ fontSize: '17px', color: 'white' }}*/}
-              {/*  />*/}
-              {/*  <Statistic*/}
-              {/*    title={<TYPE.gray>Recent Profit</TYPE.gray>}*/}
-              {/*    value={*/}
-              {/*      stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)*/}
-              {/*        ? `${stakingInfo.stakedAmount*/}
-              {/*            .subtract(stakingInfo.userStakedAtLastAction)*/}
-              {/*            .toSignificant(4, { groupSeparator: ',' })}`*/}
-              {/*        : '-'*/}
-              {/*    }*/}
-              {/*    valueStyle={{ fontSize: '17px', color: 'white' }}*/}
-              {/*  />*/}
-              {/*</Row>*/}
-              {/*{stakingInfo.stakedAmountUsd && stakingInfo.stakedAmountUsd.greaterThan('0') && (*/}
-              {/*  <Row>*/}
-              {/*    <TYPE.gray>~${stakingInfo.stakedAmountUsd.toSignificant(4, { groupSeparator: ',' })}</TYPE.gray>*/}
-              {/*  </Row>*/}
-              {/*)}*/}
-              <StatContainer>
-                <RowBetween>
-                  <TYPE.white> Staked Balance:</TYPE.white>
-                  <TYPE.white fontWeight={500}>
-                    {stakingInfo.stakedAmount
-                      ? `${stakingInfo.stakedAmount.toSignificant(4, { groupSeparator: ',' })}`
-                      : '-'}
-                    <TYPE.gray fontSize={10}>
-                      ~$
-                      {stakingInfo.stakedAmountUsd
-                        ? stakingInfo.stakedAmountUsd.toSignificant(4, { groupSeparator: ',' })
-                        : '-'}
-                    </TYPE.gray>
-                  </TYPE.white>
-                </RowBetween>
-                <RowBetween>
-                  <TYPE.white> Recent Profit:</TYPE.white>
-                  <TYPE.white fontWeight={500}>
-                    {stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
-                      ? `${stakingInfo.stakedAmount
-                          .subtract(stakingInfo.userStakedAtLastAction)
-                          .toSignificant(4, { groupSeparator: ',' })}`
-                      : '-'}
-                    <TYPE.gray fontSize={10}>
-                      ~$
-                      {stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
-                        ? `${stakingInfo.stakedAmount
-                            .subtract(stakingInfo.userStakedAtLastAction)
-                            .toSignificant(4, { groupSeparator: ',' })}`
-                        : '-'}
-                    </TYPE.gray>
-                  </TYPE.white>
-                </RowBetween>
-              </StatContainer>
-              <Row style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                <ButtonPrimary
-                  padding="8px"
-                  disabled={!(stakingInfo && stakingInfo.stakedAmount.greaterThan('0'))}
-                  borderRadius="8px"
-                  width="170px"
-                  onClick={() => setShowWithdrawModal(true)}
-                >
-                  Withdraw
-                </ButtonPrimary>
-              </Row>
-            </Card>
-            <Card
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                boxSizing: 'border-box',
-                height: '100%',
-                width: '29%',
-                borderRadius: '8px'
-              }}
-            >
-              <Row>
-                <Statistic
-                  title={<TYPE.gray>Pending Rewards</TYPE.gray>}
-                  suffix={
-                    <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
-                      <Avatar size={30} src={xIzaLogo} style={{ marginRight: '4px' }} />
-                    </span>
-                  }
-                  value={
-                    stakingInfo
-                      ? `${stakingInfo.earnedAmountxIza.toSignificant(4, { groupSeparator: ',' })} ${xToken?.symbol}`
-                      : '-'
-                  }
-                  valueStyle={{ fontSize: '17px', color: 'white' }}
-                  style={{ justifyContent: 'center' }}
-                />
-              </Row>
-              <Row style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                <ButtonPrimary
-                  padding="8px"
-                  disabled={!(stakingInfo && stakingInfo.earnedAmountxIza.greaterThan('0'))}
-                  borderRadius="8px"
-                  width="170px"
-                  onClick={() => setShowClaimRewardModal(true)}
-                >
-                  Claim Rewards
-                </ButtonPrimary>
-              </Row>
-            </Card>
+              </Card>
+            </Col>
           </Row>
         </>
       )}
