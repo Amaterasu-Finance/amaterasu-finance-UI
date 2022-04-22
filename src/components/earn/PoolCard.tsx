@@ -1,42 +1,80 @@
 import React, { useState } from 'react'
-import { AutoColumn } from '../Column'
-import { RowBetween } from '../Row'
+// import { AutoColumn } from '../Column'
 import styled from 'styled-components'
-import { TYPE, StyledInternalLink } from '../../theme'
+import { TYPE } from '../../theme'
 import DoubleCurrencyLogo from '../DoubleLogo'
 // import { JSBI } from '@amaterasu-fi/sdk'
 import { ButtonPrimary } from '../Button'
 import { StakingInfo } from '../../state/stake/hooks'
-import { useColor } from '../../hooks/useColor'
-import { currencyId } from '../../utils/currencyId'
 import { Break } from './styled'
 import { unwrappedToken } from '../../utils/wrappedCurrency'
 import useBUSDPrice from '../../hooks/useBUSDPrice'
-//import useUSDCPrice from '../../utils/useUSDCPrice'
-//import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
 import ClaimRewardModal from './ClaimRewardModal'
+import { Avatar, Badge, Card, Col, Row, Statistic } from 'antd'
+import { AutoColumn } from '../Column'
+import { AutoRow, RowBetween } from '../Row'
+import ZapModal from './ZapModal'
+import StakingModal from './StakingModal'
+import ModifiedUnstakingModal from './ModifiedUnstakingModal'
+import { useTokenBalance } from '../../state/wallet/hooks'
+import { useActiveWeb3React } from '../../hooks'
+import izaLogo from '../../assets/images/iza-blue.png'
+import { GreyCard } from '../Card'
+import { CardSection } from '../vault/styled'
 
-const StatContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 1rem;
-  margin-right: 1rem;
-  margin-left: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  display: none;
-`};
+const HeaderClickable = styled.div`
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0;
+  margin: 0;
+  &:disabled {
+    cursor: auto;
+  }
+  > * {
+    user-select: none;
+  }
 `
 
-const Wrapper = styled(AutoColumn)<{ showBackground: boolean; bgColor: any }>`
+const ColumnWrapper = styled.div`
+  display: flex;
+  justify-content: start;
+  align-items: start;
+`
+
+const HidingCol = styled(Col)`
+  padding: 0;
+  margin: 0;
+  display: grid;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const HidingStatistic = styled(Statistic)`
+  margin: 0;
+  display: grid;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const DataRow = styled(RowBetween)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+   flex-direction: column;
+   margin: 1px;
+ `};
+`
+
+const Wrapper = styled(Card)<{ showBackground: boolean }>`
   border-radius: 8px;
   width: 100%;
   overflow: hidden;
+  align-items: start;
+  padding: 0;
+  z-index: 1;
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   position: relative;
-  opacity: ${({ showBackground }) => (showBackground ? '1' : '1')};
   background: ${({ theme }) => theme.bg1};
   ${({ showBackground }) =>
     showBackground &&
@@ -47,145 +85,248 @@ const Wrapper = styled(AutoColumn)<{ showBackground: boolean; bgColor: any }>`
   }
 `
 
-const TopSection = styled.div`
-  display: grid;
-  grid-template-columns: 48px 1fr 120px;
-  grid-gap: 0px;
-  align-items: center;
-  padding: 1rem;
-  z-index: 1;
+const StyledStatCard = styled(GreyCard)`
+  padding: 5px;
+  min-height: 160px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 48px 1fr 96px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 110px;
   `};
 `
 
-const BottomSection = styled.div<{ showBackground: boolean }>`
-  padding: 12px 16px;
-  opacity: ${({ showBackground }) => (showBackground ? '1' : '0.4')};
-  border-radius: 0 0 12px 12px;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: space-between;
-  z-index: 1;
-`
+const StyledVaultActionCard = ({ children, badgeValue }: any) => {
+  return (
+    <StyledStatCard>
+      <CardSection style={{ width: '100%' }}>
+        {badgeValue != undefined && (
+          <AutoColumn>
+            <Badge.Ribbon text={badgeValue} placement={'end'} color={'green'} />
+          </AutoColumn>
+        )}
+        {children}
+      </CardSection>
+    </StyledStatCard>
+  )
+}
 
 export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: StakingInfo; isArchived: boolean }) {
+  const { account } = useActiveWeb3React()
   const govToken = useGovernanceToken()
   const govTokenPrice = useBUSDPrice(govToken)
 
+  const [showZapModal, setShowZapModal] = useState(false)
+  const [showDepositModal, setShowDepositModal] = useState(false)
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false)
   const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
 
   const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
+  const [isOpen, setIsOpen] = useState<boolean>(isStaking)
+  const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
+  const userLiquidityUnstakedUsd = userLiquidityUnstaked && stakingInfo.pricePerLpToken?.multiply(userLiquidityUnstaked)
+  console.log('userLiquidityUnstakedUsd', userLiquidityUnstakedUsd?.toSignificant(5), userLiquidityUnstakedUsd)
+
+  const pendingIzaUsd =
+    govTokenPrice && stakingInfo.earnedAmount && stakingInfo.earnedAmount.multiply(govTokenPrice.adjusted)
+  // if less than $0.01, then just show `<$0.01`
+  const pendingIzaUsdString =
+    pendingIzaUsd &&
+    (pendingIzaUsd.equalTo('0')
+      ? '$0'
+      : pendingIzaUsd.multiply('100').lessThan('1')
+      ? '<$0.01'
+      : `$${pendingIzaUsd.toFixed(2)}`)
 
   // get the color of the token
   const token0 = stakingInfo.tokens[0]
   const token1 = stakingInfo.tokens[1]
   const currency0 = unwrappedToken(token0)
   const currency1 = unwrappedToken(token1)
-  const backgroundColor = useColor(stakingInfo?.baseToken)
 
   return (
-    <Wrapper showBackground={isStaking} bgColor={backgroundColor}>
-      <TopSection>
-        <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={40} />
-        <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '40px' }}>
-          {currency0.symbol}-{currency1.symbol}
-        </TYPE.white>
+    <Wrapper showBackground={false} bodyStyle={{ padding: '0.7rem' }}>
+      <HeaderClickable onClick={() => setIsOpen(!isOpen)} style={{ padding: '0px', margin: '0px' }}>
+        <AutoRow justify={'space-between'} margin={'0'}>
+          <AutoColumn className="gutter-row" style={{ minWidth: '250px' }}>
+            <AutoRow justify={'start'} margin={'0'} style={{ padding: '0', marginRight: '10px' }}>
+              <ColumnWrapper style={{ paddingLeft: '20px' }}>
+                <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={40} />
+                <TYPE.white fontWeight={600} fontSize={20} style={{ marginLeft: '10px' }}>
+                  {currency0.symbol}-{currency1.symbol}
+                </TYPE.white>
+              </ColumnWrapper>
+            </AutoRow>
 
-        <StyledInternalLink to={`/staking/${currencyId(currency0)}/${currencyId(currency1)}`} style={{ width: '100%' }}>
-          <ButtonPrimary padding="8px" borderRadius="8px">
-            {isStaking || isArchived ? 'Manage' : 'Deposit'}
-          </ButtonPrimary>
-        </StyledInternalLink>
-      </TopSection>
+            {/*<StyledInternalLink*/}
+            {/*  to={`/staking/${currencyId(currency0)}/${currencyId(currency1)}`}*/}
+            {/*  style={{ width: '100%' }}*/}
+            {/*>*/}
+            {/*  <ButtonPrimary padding="8px" borderRadius="8px">*/}
+            {/*    {isStaking || isArchived ? 'Manage' : 'Deposit'}*/}
+            {/*  </ButtonPrimary>*/}
+            {/*</StyledInternalLink>*/}
+          </AutoColumn>
+          <HidingCol>
+            <ColumnWrapper>
+              <HidingStatistic
+                title="TVL"
+                value={
+                  stakingInfo && stakingInfo.valueOfTotalStakedAmountInUsd
+                    ? `$${stakingInfo.valueOfTotalStakedAmountInUsd.toFixed(0, { groupSeparator: ',' })}`
+                    : '-'
+                }
+                valueStyle={{ fontSize: '17px', color: 'white', margin: '0' }}
+                style={{ margin: '0' }}
+              />
+            </ColumnWrapper>
+          </HidingCol>
+          <AutoColumn>
+            <Statistic
+              title="APR"
+              value={stakingInfo.apr ? `${stakingInfo.apr.multiply('100').toSignificant(4)}%` : 'TBD'}
+              valueStyle={{ fontSize: '17px', color: 'white' }}
+            />
+          </AutoColumn>
+          <HidingCol style={{ paddingRight: '50px' }}>
+            <HidingStatistic
+              title="Deposit Fee"
+              value={typeof stakingInfo.depositFee === 'number' ? `${stakingInfo.depositFee.toFixed(1)}%` : '-'}
+              valueStyle={{ fontSize: '17px', color: 'white' }}
+            />
+          </HidingCol>
+        </AutoRow>
+      </HeaderClickable>
 
-      <StatContainer>
-        <ClaimRewardModal
-          isOpen={showClaimRewardModal}
-          onDismiss={() => setShowClaimRewardModal(false)}
-          stakingInfo={stakingInfo}
-          autostake={true}
-        />
-        <RowBetween>
-          <TYPE.white> APR*</TYPE.white>
-          <TYPE.white fontWeight={500}>
-            <b>
-              {stakingInfo.apr && stakingInfo.apr.greaterThan('0')
-                ? `${stakingInfo.apr.multiply('100').toSignificant(4, { groupSeparator: ',' })}%`
-                : 'To be determined'}
-            </b>
-          </TYPE.white>
-        </RowBetween>
-        {stakingInfo.depositFee && stakingInfo.depositFee > 0 ? (
-          <RowBetween>
-            <TYPE.white> Deposit Fee </TYPE.white>
-            <TYPE.white>
-              {typeof stakingInfo.depositFee === 'number' ? `${stakingInfo.depositFee.toFixed(1)}%` : '-'}
-            </TYPE.white>
-          </RowBetween>
-        ) : (
-          <></>
-        )}
-        <RowBetween>
-          <TYPE.white> Total deposited </TYPE.white>
-          <TYPE.white fontWeight={500}>
-            <b>
-              {stakingInfo && stakingInfo.valueOfTotalStakedAmountInUsd
-                ? `$${stakingInfo.valueOfTotalStakedAmountInUsd.toFixed(0, { groupSeparator: ',' })}`
-                : '-'}
-            </b>
-          </TYPE.white>
-        </RowBetween>
-        <RowBetween>
-          <TYPE.white> Emission rate </TYPE.white>
-          <TYPE.white>
-            {stakingInfo
-              ? stakingInfo.active
-                ? `${stakingInfo.poolRewardsPerBlock.multiply('86400').toSignificant(4, { groupSeparator: ',' })} 
-                ${govToken?.symbol} / day`
-                : `0 ${govToken?.symbol} / day`
-              : '-'}
-          </TYPE.white>
-        </RowBetween>
-      </StatContainer>
-
-      {isStaking && (
+      {isOpen && (
         <>
-          <Break />
-          <BottomSection showBackground={true}>
-            <TYPE.black color={'white'} fontWeight={500}>
-              <span>Your Total Rewards</span>
-            </TYPE.black>
-            {stakingInfo && stakingInfo.earnedAmount.greaterThan('0') && (
-              <ButtonPrimary
-                padding="8px"
-                borderRadius="8px"
-                width="170px"
-                onClick={() => setShowClaimRewardModal(true)}
-              >
-                Claim + AutoStake
-              </ButtonPrimary>
-            )}
-
-            <TYPE.black style={{ textAlign: 'right' }} color={'white'} fontWeight={500}>
-              <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
-                🎁
-              </span>
-              {stakingInfo
-                ? stakingInfo.active
-                  ? `${stakingInfo.earnedAmount.toSignificant(4, { groupSeparator: ',' })} ${govToken?.symbol} / $${
-                      govTokenPrice
-                        ? stakingInfo.earnedAmount
-                            .multiply(govTokenPrice?.raw)
-                            .multiply('1000000000000')
-                            .toSignificant(4, { groupSeparator: ',' })
-                        : '0'
-                    }`
-                  : `0 ${govToken?.symbol}`
-                : '-'}
-            </TYPE.black>
-          </BottomSection>
+          <Break style={{ margin: '15px' }} />
+          {stakingInfo && (
+            <>
+              <ZapModal isOpen={showZapModal} onDismiss={() => setShowZapModal(false)} stakingInfo={stakingInfo} />
+              <StakingModal
+                isOpen={showDepositModal}
+                onDismiss={() => setShowDepositModal(false)}
+                stakingInfo={stakingInfo}
+                userLiquidityUnstaked={userLiquidityUnstaked}
+              />
+              <ModifiedUnstakingModal
+                isOpen={showWithdrawModal}
+                onDismiss={() => setShowWithdrawModal(false)}
+                stakingInfo={stakingInfo}
+              />
+              <ClaimRewardModal
+                isOpen={showClaimRewardModal}
+                onDismiss={() => setShowClaimRewardModal(false)}
+                stakingInfo={stakingInfo}
+                autostake={true}
+              />
+            </>
+          )}
+          <AutoRow justify={'space-between'}>
+            <AutoColumn gap="lg" style={{ width: '100%' }}>
+              <DataRow style={{ gap: '12px', margin: 0 }}>
+                <StyledVaultActionCard
+                  badgeValue={
+                    userLiquidityUnstakedUsd
+                      ? `$${userLiquidityUnstakedUsd.toSignificant(5, { groupSeparator: ',' })}`
+                      : undefined
+                  }
+                >
+                  <AutoRow justify="start" marginLeft="1.5rem">
+                    <Statistic
+                      title="Wallet Balance"
+                      value={
+                        userLiquidityUnstaked
+                          ? userLiquidityUnstaked.toSignificant(5, {
+                              groupSeparator: ','
+                            })
+                          : '-'
+                      }
+                      valueStyle={{ fontSize: '17px', color: 'white' }}
+                    />
+                  </AutoRow>
+                  <Row gutter={12} style={{ justifyContent: 'center', marginTop: '20px' }} justify={'space-around'}>
+                    <Col className="gutter-row" span={12}>
+                      <ButtonPrimary
+                        disabled={stakingInfo?.valueOfTotalStakedAmountInUsd?.lessThan('5000')}
+                        padding="8px"
+                        borderRadius="8px"
+                        onClick={() => setShowZapModal(true)}
+                      >
+                        Zap
+                      </ButtonPrimary>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                      <ButtonPrimary padding="8px" borderRadius="8px" onClick={() => setShowDepositModal(true)}>
+                        Deposit
+                      </ButtonPrimary>
+                    </Col>
+                  </Row>
+                </StyledVaultActionCard>
+                <StyledVaultActionCard
+                  badgeValue={
+                    stakingInfo.stakedAmount && stakingInfo.pricePerLpToken
+                      ? `$${stakingInfo.stakedAmount
+                          .multiply(stakingInfo.pricePerLpToken)
+                          .toSignificant(5, { groupSeparator: ',' })}`
+                      : undefined
+                  }
+                >
+                  <AutoRow justify="start" marginLeft="1.5rem">
+                    <Statistic
+                      title={'Staked Balance'}
+                      value={
+                        stakingInfo.stakedAmount
+                          ? `${stakingInfo.stakedAmount.toSignificant(5, { groupSeparator: ',' })}`
+                          : '-'
+                      }
+                      valueStyle={{ fontSize: '17px', color: 'white' }}
+                    />
+                  </AutoRow>
+                  <AutoRow style={{ justifyContent: 'center', marginTop: '20px' }}>
+                    <ButtonPrimary
+                      padding="8px"
+                      disabled={!(stakingInfo && stakingInfo.stakedAmount.greaterThan('0'))}
+                      borderRadius="8px"
+                      onClick={() => setShowWithdrawModal(true)}
+                    >
+                      Withdraw
+                    </ButtonPrimary>
+                  </AutoRow>
+                </StyledVaultActionCard>
+                <StyledVaultActionCard badgeValue={pendingIzaUsdString}>
+                  <AutoRow justify="start" marginLeft="1.5rem">
+                    <Statistic
+                      title="Pending Rewards"
+                      suffix={
+                        <span role="img" aria-label="wizard-icon">
+                          <Avatar size={30} src={izaLogo} style={{ marginRight: '4px' }} />
+                        </span>
+                      }
+                      value={
+                        stakingInfo
+                          ? `${stakingInfo.earnedAmount.toSignificant(5, { groupSeparator: ',' })} ${govToken?.symbol}`
+                          : '-'
+                      }
+                      valueStyle={{ fontSize: '17px', color: 'white' }}
+                      style={{ justifyContent: 'center' }}
+                    />
+                  </AutoRow>
+                  <AutoRow style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                    <ButtonPrimary
+                      padding="8px"
+                      disabled={!(stakingInfo && stakingInfo.earnedAmount.greaterThan('0'))}
+                      borderRadius="8px"
+                      onClick={() => setShowClaimRewardModal(true)}
+                    >
+                      Claim Rewards
+                    </ButtonPrimary>
+                  </AutoRow>
+                </StyledVaultActionCard>
+              </DataRow>
+            </AutoColumn>
+          </AutoRow>
         </>
       )}
     </Wrapper>

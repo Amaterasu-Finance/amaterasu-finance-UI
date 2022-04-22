@@ -11,13 +11,16 @@ import { abi as IUniswapV2PairABI } from '@foxswap/core/build/IUniswapV2Pair.jso
 import { useMemo } from 'react'
 import {
   BONDING_ADDRESS,
+  FARM_ZAPPER,
   GOVERNANCE_ADDRESS,
   MASTER_BREEDER,
   MERKLE_DISTRIBUTOR_ADDRESS,
   PAYOUT_ADDRESSES,
   PIT,
   PIT_BREEDER,
-  SOCKS_TESTNET_ADDRESS
+  SOCKS_TESTNET_ADDRESS,
+  VAULT_CHEF,
+  ZAPPER
 } from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
@@ -31,6 +34,9 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
 import UNISOCKS_ABI from '../constants/abis/unisocks.json'
 import WETH_ABI from '../constants/abis/weth.json'
+import VAULT_CHEF_ABI from '../constants/abis/vaultchef.json'
+import ZAPPER_ABI from '../constants/abis/zapper.json'
+import GENERIC_CHEF_ABI from '../constants/abis/masterchefGeneric.json'
 import PAYOUT_ABI from '../constants/abis/payouts.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
@@ -154,6 +160,29 @@ export function useMasterBreederContract(withSignerIfPossible?: boolean): Contra
   const { chainId } = useActiveWeb3React()
   const address = chainId && MASTER_BREEDER[chainId]
   return useContract(address, MASTER_BREEDER_ABI, withSignerIfPossible)
+}
+
+export function useVaultChefContract(withSignerIfPossible?: boolean): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  const address = chainId && VAULT_CHEF[chainId]
+  return useContract(address, VAULT_CHEF_ABI, withSignerIfPossible)
+}
+
+export function useZapperContract(withSignerIfPossible?: boolean): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  const address = chainId && ZAPPER[chainId]
+  return useContract(address, ZAPPER_ABI, withSignerIfPossible)
+}
+
+export function useFarmZapperContract(withSignerIfPossible?: boolean): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  const address = chainId && FARM_ZAPPER[chainId]
+  return useContract(address, ZAPPER_ABI, withSignerIfPossible)
+}
+
+export function useMasterchefContract(address: string, withSignerIfPossible?: boolean): Contract | null {
+  // const { chainId } = useActiveWeb3React()
+  return useContract(address, GENERIC_CHEF_ABI, withSignerIfPossible)
 }
 
 export function useBondingContract(): Contract | null {

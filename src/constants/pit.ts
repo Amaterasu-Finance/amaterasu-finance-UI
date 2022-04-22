@@ -23,7 +23,7 @@ export const PIT_POOLS: {
   ],
   [ChainId.AURORA_MAINNET]: [
     // { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/xIZA') } // xIZA won't ever work
-    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'AURORA/USDC') },
+    // { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'AURORA/USDC') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/WETH') },
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR') },

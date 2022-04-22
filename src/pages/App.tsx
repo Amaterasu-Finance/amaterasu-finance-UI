@@ -23,6 +23,7 @@ import MigrateV1 from './MigrateV1'
 import MigrateV1Exchange from './MigrateV1/MigrateV1Exchange'
 import RemoveV1Exchange from './MigrateV1/RemoveV1Exchange'
 import Pool from './Pool'
+import Vault from './Vault'
 import Earn from './Earn'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
@@ -41,8 +42,11 @@ import usePlatformName from '../hooks/usePlatformName'
 
 import { Blockchain } from '@amaterasu-fi/sdk'
 import useBlockchain from '../hooks/useBlockchain'
+import ManageVault from './Vault/Manage'
 import Manage from './Earn/Manage'
 import Bridge from './Bridge'
+import EarnArchived from './Earn/Archived'
+import VaultArchived from './Vault/Archived'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -121,6 +125,8 @@ export default function App() {
               <Route exact strict path={pitSettings?.path} component={Pit} />
               <Route exact strict path="/bridge" component={Bridge} />
               <Route exact strict path="/farm" component={Earn} />
+              <Route exact strict path="/vault" component={Vault} />
+              <Route exact strict path="/vaults" component={Vault} />
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />
               <Route exact path="/add" component={AddLiquidity} />
               <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
@@ -134,6 +140,9 @@ export default function App() {
               <Route exact strict path="/migrate/v1" component={MigrateV1} />
               <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} />
               <Route exact strict path="/staking/:currencyIdA/:currencyIdB" component={Manage} />
+              <Route exact strict path="/vaults/:pid" component={ManageVault} />
+              <Route exact strict path="/staking/archived" component={EarnArchived} />
+              <Route exact strict path="/vaults/archived" component={VaultArchived} />
               {blockchain === Blockchain.ETHEREUM && <Route exact strict path="/vote/:id" component={VotePage} />}
               <Route component={RedirectPathToSwapOnly} />
             </Switch>

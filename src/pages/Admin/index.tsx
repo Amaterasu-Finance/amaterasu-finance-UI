@@ -94,6 +94,7 @@ export default function Admin({
   const userAlloc = useSingleCallResult(payoutContract, 'userInfo', [account ?? undefined]).result
   const userAllocResult = userAlloc && parseFloat(userAlloc[0])
   const userPercent = userAllocResult && totalAlloc && (userAllocResult * 100) / parseFloat(totalAlloc[0])
+  const isAdmin = account === '0x54EfdaE67807cf4394020e48c7262bdbbdEbd9F2' || (userPercent && userPercent > 0)
 
   function wrappedOnDismiss() {
     setHash(undefined)
@@ -141,7 +142,7 @@ export default function Admin({
           <StyledBottomCard dim={false}>
             <CardBGImage />
             <CardNoise />
-            {userPercent && userPercent > 0 ? (
+            {isAdmin ? (
               <AutoColumn gap="sm">
                 <RowBetween style={{ alignItems: 'baseline' }}>
                   <TYPE.largeHeader fontSize={36}>
@@ -161,7 +162,7 @@ export default function Admin({
             )}
           </StyledBottomCard>
         </BottomSection>
-        {userPercent && userPercent > 0 ? (
+        {userPercent && isAdmin ? (
           <TYPE.body fontSize={18} textAlign={'center'}>
             Your allocation: {userPercent.toLocaleString('en-us', { maximumFractionDigits: 2 })}% of rewards
           </TYPE.body>
@@ -169,7 +170,7 @@ export default function Admin({
           <div />
         )}
 
-        {account && userAllocResult ? (
+        {account && isAdmin ? (
           <>
             <DataRow style={{ marginBottom: '0rem' }}>
               <ButtonPit padding="8px" borderRadius="8px" width="160px" onClick={onClaimRewards}>

@@ -4,6 +4,7 @@ import getPairTokensWithDefaults from '../utils/getPairTokensWithDefaults'
 export interface StakingRewardsInfo {
   pid: number
   active: boolean
+  name: string
   tokens: [Token, Token]
   rewarderAddress?: string
   rewarderToken?: Token
@@ -12,25 +13,47 @@ export interface StakingRewardsInfo {
 export const STAKING_REWARDS_INFO: {
   [chainId in ChainId]?: StakingRewardsInfo[]
 } = {
-  [ChainId.MTV_MAINNET]: [
-    { pid: 3, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'IZA/ONE') },
-    { pid: 2, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'IZA/BUSD') },
-    { pid: 1, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'IZA/WMTV') }
-    // { pid: 4, active: true, tokens: getPairTokensWithDefaults(ChainId.MTV_MAINNET, 'WMTV/BUSD') }
-  ],
+  [ChainId.MTV_MAINNET]: [],
   [ChainId.AURORA_TESTNET]: [
-    { pid: 4, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/AURORA') },
-    { pid: 3, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/NEAR') },
-    { pid: 2, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/WETH') },
-    { pid: 1, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/USDC') }
+    {
+      name: 'IZA/AURORA',
+      pid: 4,
+      active: true,
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/AURORA')
+    },
+    { name: 'IZA/ONE', pid: 3, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/NEAR') },
+    { name: 'IZA/WETH', pid: 2, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/WETH') },
+    { name: 'IZA/USDC', pid: 1, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_TESTNET, 'IZA/USDC') }
   ],
   [ChainId.AURORA_MAINNET]: [
-    { pid: 6, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/SHITZU') },
-    { pid: 5, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ONE') },
-    { pid: 3, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR') },
-    { pid: 1, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC') },
-    { pid: 2, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/WETH') },
-    { pid: 7, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/xIZA') },
-    { pid: 4, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/AURORA') }
+    {
+      name: 'IZA/SHITZU',
+      pid: 6,
+      active: true,
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/SHITZU')
+    },
+    {
+      name: 'IZA/stNEAR',
+      pid: 8,
+      active: true,
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/stNEAR')
+    },
+    {
+      name: 'IZA/atUST',
+      pid: 9,
+      active: true,
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/atUST')
+    },
+    { name: 'IZA/ONE', pid: 5, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ONE') },
+    { name: 'IZA/NEAR', pid: 3, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR') },
+    { name: 'IZA/USDC', pid: 1, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC') },
+    { name: 'IZA/WETH', pid: 2, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/WETH') },
+    { name: 'IZA/xIZA', pid: 7, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/xIZA') },
+    {
+      name: 'IZA/AURORA',
+      pid: 4,
+      active: true,
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/AURORA')
+    }
   ]
 }

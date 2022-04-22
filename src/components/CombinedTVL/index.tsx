@@ -1,17 +1,16 @@
 import React from 'react'
-import { useStakingInfo } from '../../state/stake/hooks'
+// import { useStakingInfo } from '../../state/stake/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import useTotalCombinedTVL from '../../hooks/useTotalCombinedTVL'
 import { CustomMouseoverTooltip } from '../Tooltip/custom'
 import { PIT_SETTINGS } from '../../constants'
-import useFilterStakingInfos from '../../hooks/useFilterStakingInfos'
+import { Break } from '../vault/styled'
+// import useFilterStakingInfos from '../../hooks/useFilterStakingInfos'
 
-export default function CombinedTVL({}) {
+export default function CombinedTVL() {
   const { chainId } = useActiveWeb3React()
   const pitSettings: Record<string, string> | undefined = chainId ? PIT_SETTINGS[chainId] : undefined
-  const isActive = true
-  const filteredStakingInfos = useFilterStakingInfos(useStakingInfo(isActive), isActive)
-  const TVLs = useTotalCombinedTVL(filteredStakingInfos)
+  const TVLs = useTotalCombinedTVL()
 
   return (
     <>
@@ -22,21 +21,28 @@ export default function CombinedTVL({}) {
               {TVLs.stakingPoolTVL?.greaterThan('0') && (
                 <>
                   <b>Farm:</b> $
-                  {TVLs.stakingPoolTVL.toSignificant(8, {
+                  {TVLs.stakingPoolTVL.toFixed(0, {
                     groupSeparator: ','
                   })}
                   <br />
                 </>
               )}
+              {TVLs.totalVaultTVL?.greaterThan('0') && (
+                <>
+                  <b>Vaults:</b> ${TVLs.totalVaultTVL.toFixed(0, { groupSeparator: ',' })}
+                  <br />
+                </>
+              )}
               {TVLs.totalPitTVL?.greaterThan('0') && (
                 <>
-                  <b>{pitSettings?.name}:</b> ${TVLs.totalPitTVL.toSignificant(8, { groupSeparator: ',' })}
+                  <b>{pitSettings?.name}:</b> ${TVLs.totalPitTVL.toFixed(0, { groupSeparator: ',' })}
                   <br />
                 </>
               )}
               {TVLs.totalCombinedTVL?.greaterThan('0') && (
                 <>
-                  <b>Total:</b> ${TVLs.totalCombinedTVL.toSignificant(8, { groupSeparator: ',' })}
+                  <Break />
+                  <b>Total:</b> ${TVLs.totalCombinedTVL.toFixed(0, { groupSeparator: ',' })}
                 </>
               )}
             </>

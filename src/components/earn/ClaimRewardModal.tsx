@@ -4,7 +4,7 @@ import { AutoColumn } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
 import { TYPE, CloseIcon } from '../../theme'
-import { ButtonError } from '../Button'
+import { ButtonConfirmed, ButtonError } from '../Button'
 import { StakingInfo } from '../../state/stake/hooks'
 import { useMasterBreederContract } from '../../hooks/useContract'
 import { SubmittedView, LoadingView } from '../ModalViews'
@@ -13,7 +13,6 @@ import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { calculateGasMargin } from '../../utils'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
-import usePitToken from '../../hooks/usePitToken'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -31,7 +30,6 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
   const { account } = useActiveWeb3React()
 
   const govToken = useGovernanceToken()
-  const pitToken = usePitToken()
 
   // monitor call to help UI loading state
   const addTransaction = useTransactionAdder()
@@ -47,18 +45,16 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
   }
 
   const masterBreeder = useMasterBreederContract()
-  const summary = autostake
-    ? `Autostake ${govToken?.symbol} rewards into ${pitToken?.symbol}`
-    : `Claim accumulated ${govToken?.symbol} rewards`
+  const summary = `Claim accumulated ${govToken?.symbol} rewards`
 
-  async function onClaimReward() {
+  async function onClaimReward(autostakeButton: boolean) {
     if (masterBreeder && stakingInfo?.stakedAmount) {
       setAttempting(true)
 
-      const estimatedGas = await masterBreeder.estimateGas.claimReward(stakingInfo.pid, autostake)
+      const estimatedGas = await masterBreeder.estimateGas.claimReward(stakingInfo.pid, autostakeButton)
 
       await masterBreeder
-        .claimReward(stakingInfo.pid, autostake, {
+        .claimReward(stakingInfo.pid, autostakeButton, {
           gasLimit: calculateGasMargin(estimatedGas)
         })
         .then((response: TransactionResponse) => {
@@ -90,7 +86,7 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
       {!attempting && !hash && !failed && (
         <ContentWrapper gap="lg">
           <RowBetween>
-            <TYPE.mediumHeader>Claim {autostake && ' + AutoStake'}</TYPE.mediumHeader>
+            <TYPE.mediumHeader>Claim Rewards</TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
           {stakingInfo?.earnedAmount && (
@@ -101,8 +97,15 @@ export default function ClaimRewardModal({ isOpen, onDismiss, stakingInfo, autos
               <TYPE.body>Unclaimed {govToken?.symbol}</TYPE.body>
             </AutoColumn>
           )}
-          <ButtonError disabled={!!error} error={!!error && !!stakingInfo?.stakedAmount} onClick={onClaimReward}>
-            {error ?? 'Claim'} {autostake && ' + AutoStake into xIZA'}
+          <ButtonConfirmed disabled={!!error} confirmed={true} onClick={() => onClaimReward(false)}>
+            {error ?? 'Claim Rewards'}
+          </ButtonConfirmed>
+          <ButtonError
+            disabled={!!error}
+            error={!!error && !!stakingInfo?.stakedAmount}
+            onClick={() => onClaimReward(true)}
+          >
+            {error ?? 'Claim + AutoStake into xIZA'}
           </ButtonError>
         </ContentWrapper>
       )}

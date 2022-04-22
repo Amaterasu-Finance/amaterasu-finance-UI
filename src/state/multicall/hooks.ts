@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useBlockNumber } from '../application/hooks'
+import { abi as IUniswapV2PairABI } from '@foxswap/core/build/IUniswapV2Pair.json'
 import { AppDispatch, AppState } from '../index'
 import {
   addMulticallListeners,
@@ -14,6 +15,8 @@ import {
   toCallKey,
   ListenerOptions
 } from './actions'
+
+const DEFAULT_CONTRACT_INTERFACE = new Interface(IUniswapV2PairABI)
 
 export interface Result extends ReadonlyArray<any> {
   readonly [key: string]: any
@@ -257,3 +260,37 @@ export function useSingleCallResult(
     return toCallState(result, contract?.interface, fragment, latestBlockNumber)
   }, [result, contract, fragment, latestBlockNumber])
 }
+
+export function useMultipleCallsNoInputsReturnInt(
+  addresses: (string | undefined)[],
+  methodSignatures: string[],
+  options?: ListenerOptions
+): CallState[] {
+  // Just put a generic function that takes no args and return 1 uint
+  const fragment = useMemo(() => DEFAULT_CONTRACT_INTERFACE.getFunction('totalSupply'), [DEFAULT_CONTRACT_INTERFACE])
+  const calls = useMemo(
+    () =>
+      methodSignatures && addresses && addresses.length > 0 && methodSignatures.length === addresses.length
+        ? addresses.map<Call | undefined>((address, index) => {
+            return address
+              ? {
+                  address: address,
+                  callData: methodSignatures[index]
+                }
+              : undefined
+          })
+        : [],
+    [addresses, methodSignatures]
+  )
+
+  const results = useCallsData(calls, options)
+
+  const latestBlockNumber = useBlockNumber()
+
+  return useMemo(() => {
+    return results.map(result => toCallState(result, DEFAULT_CONTRACT_INTERFACE, fragment, latestBlockNumber))
+  }, [fragment, results, DEFAULT_CONTRACT_INTERFACE, latestBlockNumber])
+}
+// const addrInput = account && ethers.utils.defaultAbiCoder.encode(['address'], [account]);
+// const calls = addrInput && [
+//   ethers.utils.hexConcat([fcnBalanceOf, addrInput]),

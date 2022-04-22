@@ -1,4 +1,4 @@
-import { Token, TokenAmount, Fraction, ChainId } from '@amaterasu-fi/sdk'
+import { Token, TokenAmount, Fraction, ChainId, JSBI } from '@amaterasu-fi/sdk'
 import { wrappedCurrency } from './wrappedCurrency'
 import calculateTotalStakedAmount from './calculateTotalStakedAmount'
 import getPair from './getPair'
@@ -11,28 +11,28 @@ function pairCurrencyAmountInWeth(
 ): TokenAmount | Fraction | undefined {
   if (!baseToken) return valueOfTotalStakedAmountInPairCurrency
 
+  let mult
   switch (baseToken.symbol?.toUpperCase()) {
     case tokens?.WETH?.token?.symbol?.toUpperCase():
       return valueOfTotalStakedAmountInPairCurrency
+    case tokens?.NEAR?.token?.symbol?.toUpperCase():
+      mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(baseToken.decimals - 18))
+      return tokens?.NEAR?.price
+        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.NEAR?.price).multiply(mult)
+        : valueOfTotalStakedAmountInPairCurrency
     case tokens?.govToken?.token?.symbol?.toUpperCase():
       return tokens?.govToken?.price
         ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.govToken?.price)
         : valueOfTotalStakedAmountInPairCurrency
-    case tokens?.BUSD?.token?.symbol?.toUpperCase():
-      return tokens?.BUSD?.price
-        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.BUSD?.price)
-        : valueOfTotalStakedAmountInPairCurrency
     case tokens?.USDC?.token?.symbol?.toUpperCase():
+      mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18 - baseToken.decimals))
       return tokens?.USDC?.price
-        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.USDC?.price)
+        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.USDC?.price).divide(mult)
         : valueOfTotalStakedAmountInPairCurrency
-    case tokens?.bscBUSD?.token?.symbol?.toUpperCase():
-      return tokens?.bscBUSD?.price
-        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.bscBUSD?.price)
-        : valueOfTotalStakedAmountInPairCurrency
-    case tokens?.bridgedETH?.token?.symbol?.toUpperCase():
-      return tokens?.bridgedETH?.price
-        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.bridgedETH?.price)
+    case tokens?.USDT?.token?.symbol?.toUpperCase():
+      mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18 - baseToken.decimals))
+      return tokens?.USDC?.price
+        ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.USDC?.price).divide(mult)
         : valueOfTotalStakedAmountInPairCurrency
     default:
       return valueOfTotalStakedAmountInPairCurrency
@@ -60,7 +60,6 @@ export default function calculateWethAdjustedTotalStakedAmount(
     reserve1
   )
   if (!stakingTokenPair) return undefined
-
   const valueOfTotalStakedAmountInPairCurrency = calculateTotalStakedAmount(
     baseToken,
     stakingTokenPair,
