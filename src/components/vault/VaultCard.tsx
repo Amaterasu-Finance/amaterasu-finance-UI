@@ -42,6 +42,8 @@ const ToolTipContainer = styled.div`
 const HeaderClickable = styled.div`
   cursor: pointer;
   border-radius: 8px;
+  padding: 0;
+  margin: 0;
   &:disabled {
     cursor: auto;
   }
@@ -58,7 +60,14 @@ const StyledLogo = styled(Logo)<{ size: string }>`
   background-color: ${({ theme }) => theme.white};
 `
 
+const StyledAutoColumn = styled(AutoColumn)`
+  padding: 0;
+  margin: 0;
+`
+
 const HidingCol = styled(Col)`
+  padding: 0;
+  margin: 0;
   display: grid;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -66,6 +75,7 @@ const HidingCol = styled(Col)`
 `
 
 const HidingStatistic = styled(Statistic)`
+  margin: 0;
   display: grid;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -75,7 +85,7 @@ const HidingStatistic = styled(Statistic)`
 const DataRow = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
    flex-direction: column;
-   margin: 15px;
+   margin: 1px;
  `};
 `
 
@@ -84,7 +94,7 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
   width: 100%;
   overflow: hidden;
   align-items: center;
-  padding: 0.2rem;
+  padding: 0;
   z-index: 1;
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   position: relative;
@@ -99,7 +109,8 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
 `
 
 const StyledStatCard = styled(GreyCard)`
-  padding: 0;
+  padding: 10px;
+  min-height: 160px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: flex;
     justify-content: center;
@@ -173,11 +184,11 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
   // const backgroundColor = useColor(stakingInfo?.baseToken)
 
   return (
-    <Wrapper showBackground={isStaking}>
-      <HeaderClickable onClick={() => setIsOpen(!isOpen)}>
+    <Wrapper showBackground={isStaking} bodyStyle={{ padding: '0.7rem' }}>
+      <HeaderClickable onClick={() => setIsOpen(!isOpen)} style={{ padding: '0px', margin: '0px' }}>
         <AutoRow justify={'space-between'} style={{ alignSelf: 'center', margin: '0px', marginLeft: '20px' }}>
-          <AutoColumn className="gutter-row" style={{ alignItems: 'center', minWidth: '250px' }}>
-            <AutoRow style={{ margin: '0px' }}>
+          <StyledAutoColumn className="gutter-row" style={{ alignItems: 'center', minWidth: '250px' }}>
+            <AutoRow>
               <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={30} />
               <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '10px' }}>
                 {currency0.symbol}-{currency1.symbol}
@@ -198,7 +209,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                 </span>
               </TYPE.white>
             </AutoRow>
-          </AutoColumn>
+          </StyledAutoColumn>
           <HidingCol>
             <Statistic
               title="TVL"
@@ -207,10 +218,11 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                   ? `$${stakingInfo.valueOfTotalStakedAmountInUsd.toFixed(2, { groupSeparator: ',' })}`
                   : '-'
               }
-              valueStyle={{ fontSize: '17px', color: 'white' }}
+              valueStyle={{ fontSize: '17px', color: 'white', margin: '0' }}
+              style={{ margin: '0' }}
             />
           </HidingCol>
-          <HidingCol style={{ marginTop: '0px' }}>
+          <HidingCol>
             <Statistic
               title="Daily"
               value={
@@ -224,7 +236,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
           </HidingCol>
-          <Col className="gutter-row" style={{ marginTop: '0px' }}>
+          <StyledAutoColumn className="gutter-row" style={{ marginTop: '0px' }}>
             <Statistic
               title={
                 <CustomMouseoverTooltip
@@ -302,7 +314,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               }
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
-          </Col>
+          </StyledAutoColumn>
           <HidingCol className="gutter-row" span={4}>
             <HidingStatistic
               title={
