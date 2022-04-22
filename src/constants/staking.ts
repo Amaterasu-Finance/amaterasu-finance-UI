@@ -44,6 +44,12 @@ export const STAKING_REWARDS_INFO: {
       active: true,
       tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/atUST')
     },
+    {
+      name: 'atUST/NEAR',
+      pid: 10,
+      active: true,
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'atUST/NEAR')
+    },
     { name: 'IZA/ONE', pid: 5, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ONE') },
     { name: 'IZA/NEAR', pid: 3, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR') },
     { name: 'IZA/USDC', pid: 1, active: true, tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC') },

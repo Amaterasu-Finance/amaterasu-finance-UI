@@ -176,15 +176,17 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
 
         const baseToken = determineBaseToken(tokensWithPrices, tokens)
 
-        const totalStakedAmountWETH = calculateWethAdjustedTotalStakedAmount(
-          chainId,
-          baseToken,
-          tokensWithPrices,
-          tokens,
-          totalLpTokenSupply,
-          totalStakedAmount,
-          lpTokenReserve?.result
-        )
+        const totalStakedAmountWETH = totalStakedAmount.greaterThan('0')
+          ? calculateWethAdjustedTotalStakedAmount(
+              chainId,
+              baseToken,
+              tokensWithPrices,
+              tokens,
+              totalLpTokenSupply,
+              totalStakedAmount,
+              lpTokenReserve?.result
+            )
+          : undefined
 
         const totalStakedAmountBUSD =
           wethBusdPrice &&

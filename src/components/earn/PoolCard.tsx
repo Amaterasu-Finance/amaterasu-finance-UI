@@ -125,7 +125,6 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
   const [isOpen, setIsOpen] = useState<boolean>(isStaking)
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   const userLiquidityUnstakedUsd = userLiquidityUnstaked && stakingInfo.pricePerLpToken?.multiply(userLiquidityUnstaked)
-  console.log('userLiquidityUnstakedUsd', userLiquidityUnstakedUsd?.toSignificant(5), userLiquidityUnstakedUsd)
 
   const pendingIzaUsd =
     govTokenPrice && stakingInfo.earnedAmount && stakingInfo.earnedAmount.multiply(govTokenPrice.adjusted)
