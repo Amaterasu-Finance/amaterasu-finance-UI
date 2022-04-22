@@ -17,20 +17,20 @@ export default function determineBaseToken(tokenData: Record<string, any>, token
   ) {
     baseToken = tokenData?.govToken?.token
   } else if (
-    tokens[0]?.symbol?.toUpperCase() === tokenData?.BUSD?.token?.symbol?.toUpperCase() ||
-    tokens[1]?.symbol?.toUpperCase() === tokenData?.BUSD?.token?.symbol?.toUpperCase()
+    tokens[0]?.symbol?.toUpperCase() === tokenData?.USDT?.token?.symbol?.toUpperCase() ||
+    tokens[1]?.symbol?.toUpperCase() === tokenData?.USDT?.token?.symbol?.toUpperCase()
   ) {
-    baseToken = tokenData?.BUSD?.token
+    baseToken = tokenData?.USDT?.token
   } else if (
     tokens[0]?.symbol?.toUpperCase() === tokenData?.USDC?.token?.symbol?.toUpperCase() ||
     tokens[1]?.symbol?.toUpperCase() === tokenData?.USDC?.token?.symbol?.toUpperCase()
   ) {
     baseToken = tokenData?.USDC?.token
   } else if (
-    tokens[0]?.symbol?.toUpperCase() === tokenData?.bscBUSD?.token?.symbol?.toUpperCase() ||
-    tokens[1]?.symbol?.toUpperCase() === tokenData?.bscBUSD?.token?.symbol?.toUpperCase()
+    tokens[0]?.symbol?.toUpperCase() === tokenData?.NEAR?.token?.symbol?.toUpperCase() ||
+    tokens[1]?.symbol?.toUpperCase() === tokenData?.NEAR?.token?.symbol?.toUpperCase()
   ) {
-    baseToken = tokenData?.bscBUSD?.token
+    baseToken = tokenData?.NEAR?.token
   } else if (
     tokens[0]?.symbol?.toUpperCase() === tokenData?.bridgedETH?.token?.symbol?.toUpperCase() ||
     tokens[1]?.symbol?.toUpperCase() === tokenData?.bridgedETH?.token?.symbol?.toUpperCase()
