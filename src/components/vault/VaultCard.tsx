@@ -22,7 +22,7 @@ import { useActiveWeb3React } from '../../hooks'
 import ZapModal from './ZapModal'
 import { CustomMouseoverTooltip } from '../Tooltip/custom'
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import { LightGreyCard } from '../Card'
+import { GreyCard } from '../Card'
 import { CardSection } from './styled'
 import { AutoColumn } from '../Column'
 import { AutoRow } from '../Row'
@@ -84,11 +84,10 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
   width: 100%;
   overflow: hidden;
   align-items: center;
-  padding: 1rem;
+  padding: 0.2rem;
   z-index: 1;
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   position: relative;
-  opacity: ${({ showBackground }) => (showBackground ? '1' : '1')};
   background: ${({ theme }) => theme.bg1};
   ${({ showBackground }) =>
     showBackground &&
@@ -99,7 +98,7 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
   }
 `
 
-const StyledStatCard = styled(LightGreyCard)`
+const StyledStatCard = styled(GreyCard)`
   padding: 0;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: flex;
