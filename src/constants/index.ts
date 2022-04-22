@@ -55,6 +55,11 @@ export const VAULT_CHEF: { [chainId in ChainId]: string } = {
   [ChainId.AURORA_TESTNET]: '0xadfC8B87Deee22154aBf376454cb48e3C6Bdc57C'
 }
 
+export const FARM_ZAPPER: { [chainId in ChainId]: string } = {
+  [ChainId.MTV_MAINNET]: '0x49e75d3Ef717267f77483a7C2a26405C0F84A461',
+  [ChainId.AURORA_MAINNET]: '0x49e75d3Ef717267f77483a7C2a26405C0F84A461',
+  [ChainId.AURORA_TESTNET]: '0x49e75d3Ef717267f77483a7C2a26405C0F84A461'
+}
 export const ZAPPER: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0xdd5C1237B5b95ED5E7A873a5Cb99be9774bc34e5',
   [ChainId.AURORA_MAINNET]: '0xdd5C1237B5b95ED5E7A873a5Cb99be9774bc34e5',

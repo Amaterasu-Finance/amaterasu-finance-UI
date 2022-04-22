@@ -131,19 +131,6 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
 
-          {/*<RowBetween>*/}
-          {/*  <ColumnCenter>*/}
-          {/*    <BlueCard>*/}
-          {/*      <AutoColumn gap="10px">*/}
-          {/*        <TYPE.link fontWeight={400} color={'primaryText1'}>*/}
-          {/*          <b>Important:</b> {platformName} utilizes LP withdrawal fees to disincentivize short term farming*/}
-          {/*          and selling.*/}
-          {/*        </TYPE.link>*/}
-          {/*      </AutoColumn>*/}
-          {/*    </BlueCard>*/}
-          {/*  </ColumnCenter>*/}
-          {/*</RowBetween>*/}
-
           <CurrencyInputPanel
             value={typedValue}
             onUserInput={onUserInput}

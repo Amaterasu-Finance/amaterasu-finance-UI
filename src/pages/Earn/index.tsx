@@ -9,7 +9,7 @@ import { TYPE, StyledInternalLink } from '../../theme'
 import PoolCard from '../../components/earn/PoolCard'
 import { CustomButtonWhite } from '../../components/Button'
 import AwaitingRewards from '../../components/earn/AwaitingRewards'
-import { RowBetween } from '../../components/Row'
+import { AutoRow, RowBetween } from '../../components/Row'
 import { CardSection, ExtraDataCard } from '../../components/earn/styled'
 //import { Countdown } from './Countdown'
 import Loader from '../../components/Loader'
@@ -20,32 +20,41 @@ import useCalculateStakingInfoMembers from '../../hooks/useCalculateStakingInfoM
 import useTotalCombinedTVL from '../../hooks/useTotalCombinedTVL'
 import useBaseStakingRewardsEmission from '../../hooks/useBaseStakingRewardsEmission'
 import { OutlineCard } from '../../components/Card'
-import useFilterStakingInfos from '../../hooks/useFilterStakingInfos'
+import useFilterStakingInfos, { sortByApyYearly, sortByTvl } from '../../hooks/useFilterStakingInfos'
 import CombinedTVL from '../../components/CombinedTVL'
+import OldSelect, { OptionProps } from '../../components/Select'
+import { Col, Row } from 'antd'
+import Toggle from '../../components/Toggle'
+
+const SORTING_OPTIONS = [
+  {
+    label: 'Yearly',
+    value: 'yearly'
+  },
+  {
+    label: 'TVL',
+    value: 'tvl'
+  }
+]
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 720px;
+  max-width: 1000px;
   width: 100%;
 `
 
 const TopSection = styled(AutoColumn)`
-  max-width: 720px;
+  max-width: 1000px;
   width: 100%;
+  margin: 0px;
 `
 
 const PoolSection = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   column-gap: 10px;
-  row-gap: 15px;
+  row-gap: 8px;
   width: 100%;
   justify-self: center;
-`
-
-const DataRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-flex-direction: column;
-`};
 `
 
 export default function Earn() {
@@ -61,6 +70,8 @@ export default function Earn() {
    * @todo only account for this if rewards are inactive
    */
   const stakingRewardsExist = Boolean(typeof chainId === 'number' && (STAKING_REWARDS_INFO[chainId]?.length ?? 0) > 0)
+  const [sortOption, setSortOption] = React.useState(SORTING_OPTIONS[0].value)
+  const [stakedOnlySelected, setStakedOnlySelected] = React.useState(false)
 
   const baseEmissions = useBaseStakingRewardsEmission()
   const blocksPerMinute = 60
@@ -72,6 +83,18 @@ export default function Earn() {
   const stakingInfoStats = useCalculateStakingInfoMembers(chainId)
   const hasArchivedStakingPools =
     (stakingInfoStats?.inactive && stakingInfoStats?.inactive > 0) || inactiveStakingInfos?.length > 0
+
+  const finalStakingInfos = React.useMemo(() => {
+    if (sortOption === SORTING_OPTIONS[0].value) {
+      return sortByApyYearly(stakingInfos, true, stakedOnlySelected)
+    } else {
+      return sortByTvl(stakingInfos, true, stakedOnlySelected)
+    }
+  }, [activeStakingInfos, stakingInfos, sortOption, stakedOnlySelected])
+
+  const handlesortOptionChange = (option: OptionProps): void => {
+    setSortOption(option.value)
+  }
 
   return (
     <PageWrapper gap="lg" justify="center">
@@ -91,7 +114,7 @@ export default function Earn() {
                 <RowBetween>
                   <StyledInternalLink to={`/staking/archived`}>
                     <CustomButtonWhite padding="8px" borderRadius="8px">
-                      Archived Pools
+                      Archived Farms
                     </CustomButtonWhite>
                   </StyledInternalLink>
                 </RowBetween>
@@ -101,17 +124,36 @@ export default function Earn() {
         </ExtraDataCard>
       </TopSection>
 
-      <AutoColumn gap="lg" style={{ width: '100%', maxWidth: '720px' }}>
-        <DataRow style={{ alignItems: 'baseline' }}>
-          <TYPE.mediumHeader style={{ marginTop: '0.5rem' }}>Pools</TYPE.mediumHeader>
-          <TYPE.black style={{ marginTop: '0.5rem' }}>
-            <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
-              🏆
-            </span>
-            <CombinedTVL />
-          </TYPE.black>
-        </DataRow>
-
+      <TopSection gap="lg">
+        <AutoRow style={{ alignItems: 'baseline', justifyContent: 'space-between', margin: '5px' }}>
+          <Col style={{ marginLeft: '5px' }} span={8}>
+            <TYPE.mediumHeader style={{ marginLeft: '0.5rem' }}>Farms</TYPE.mediumHeader>
+          </Col>
+          <AutoColumn style={{ marginRight: '20px' }}>
+            <Row>
+              <TYPE.white>Show Staked</TYPE.white>
+            </Row>
+            <Row>
+              <Toggle isActive={stakedOnlySelected} toggle={() => setStakedOnlySelected(!stakedOnlySelected)} />
+            </Row>
+          </AutoColumn>
+          <AutoColumn style={{ marginTop: '5px' }}>
+            <Row>
+              <TYPE.white marginLeft={'5px'}>Sorting</TYPE.white>
+            </Row>
+            <Row>
+              <OldSelect options={SORTING_OPTIONS} onChange={handlesortOptionChange} />
+            </Row>
+          </AutoColumn>
+          <Col style={{ display: 'flex', justifyContent: 'end' }} span={8}>
+            <TYPE.black style={{ marginRight: '0.5rem' }}>
+              <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
+                🏆
+              </span>
+              <CombinedTVL />
+            </TYPE.black>
+          </Col>
+        </AutoRow>
         <AwaitingRewards />
 
         <PoolSection>
@@ -124,7 +166,7 @@ export default function Earn() {
           ) : !account ? (
             <OutlineCard>Please connect your wallet to see available pools</OutlineCard>
           ) : (
-            activeStakingInfos?.map(stakingInfo => {
+            finalStakingInfos?.map(stakingInfo => {
               // need to sort by added liquidity here
               return <PoolCard key={stakingInfo.pid} stakingInfo={stakingInfo} isArchived={false} />
             })
@@ -151,7 +193,7 @@ export default function Earn() {
             </TYPE.small>
           </TYPE.main>
         )}
-      </AutoColumn>
+      </TopSection>
     </PageWrapper>
   )
 }

@@ -23,6 +23,7 @@ export const STAKING_GENESIS = 6502000
 
 export const REWARDS_DURATION_DAYS = 60
 export interface StakingInfo {
+  name: string
   // the pool id (pid) of the pool
   pid: number
   // the tokens involved in this pair
@@ -57,6 +58,8 @@ export interface StakingInfo {
   valueOfTotalStakedAmountInWeth: TokenAmount | Fraction | undefined
   // value of total staked amount, measured in a USD stable coin (busd, usdt, usdc or a mix thereof)
   valueOfTotalStakedAmountInUsd: Fraction | undefined
+  // price per LP token
+  pricePerLpToken: Fraction | undefined
   // pool APR
   apr: Fraction | undefined
   // if pool is active
@@ -188,11 +191,17 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
           totalStakedAmountWETH &&
           totalStakedAmountWETH.multiply(wethBusdPrice).multiply('1000000000000')
 
+        const pricePerLpToken =
+          totalStakedAmountWETH &&
+          wethBusdPrice &&
+          totalStakedAmountWETH.multiply(wethBusdPrice.adjusted).divide(totalStakedAmount)
+
         const apr = totalStakedAmountWETH
           ? calculateApr(govTokenWETHPrice, baseBlockRewards, blocksPerYear, poolShare, totalStakedAmountWETH)
           : undefined
 
         const stakingInfo = {
+          name: masterInfo[index].name,
           pid: pid,
           allocPoint: allocPoint,
           depositFee: depositFee,
@@ -210,6 +219,7 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
           earnedAmount: totalPendingRewardAmount,
           valueOfTotalStakedAmountInWeth: totalStakedAmountWETH,
           valueOfTotalStakedAmountInUsd: totalStakedAmountBUSD,
+          pricePerLpToken: pricePerLpToken,
           apr: apr,
           active: active
         }

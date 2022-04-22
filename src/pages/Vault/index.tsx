@@ -146,7 +146,7 @@ export default function Vault() {
 
       <TopSection gap="lg">
         <Row style={{ alignItems: 'baseline', justifyContent: 'space-between', margin: '10px' }}>
-          <Col>
+          <Col span={6}>
             <TYPE.black style={{ marginTop: '0.5rem' }}>
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
                 🏆
@@ -187,7 +187,7 @@ export default function Vault() {
               <OldSelect options={SORTING_OPTIONS} onChange={handlesortOptionChange} />
             </Row>
           </Col>
-          <Col style={{ marginTop: '10px' }}>
+          <Col style={{ marginTop: '10px' }} offset={2}>
             <CustomMouseoverTooltip
               element={
                 <ToolTipContainer>

@@ -3,9 +3,9 @@ import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import Modal from '../Modal'
 import { AutoColumn } from '../Column'
 import styled from 'styled-components'
-import { RowBetween } from '../Row'
+import { AutoRow, RowBetween } from '../Row'
 import { TYPE, CloseIcon } from '../../theme'
-import { ButtonConfirmed, ButtonError } from '../Button'
+import { ButtonConfirmed, ButtonError, ButtonPrimary } from '../Button'
 import ProgressCircles from '../ProgressSteps'
 import CurrencyInputPanel from '../CurrencyInputPanel'
 import { TokenAmount, Pair } from '@amaterasu-fi/sdk'
@@ -23,6 +23,9 @@ import { useMasterBreederContract } from '../../hooks/useContract'
 import { BlueCard } from '../Card'
 import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
+import { Link } from 'react-router-dom'
+import { currencyId } from '../../utils/currencyId'
+import { CardSection } from './styled'
 
 /*const HypotheticalRewardRate = styled.div<{ dim: boolean }>`
   display: flex;
@@ -51,16 +54,6 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
   const { parsedAmount, error } = useDerivedStakeInfo(typedValue, stakingInfo.stakedAmount.token, userLiquidityUnstaked)
-  /*const parsedAmountWrapped = wrappedCurrencyAmount(parsedAmount, chainId)
-
-  let hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
-  if (parsedAmountWrapped?.greaterThan('0')) {
-    hypotheticalRewardRate = stakingInfo.getHypotheticalRewardRate(
-      stakingInfo.stakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalStakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalRewardRate
-    )
-  }*/
 
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
@@ -147,8 +140,29 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             <TYPE.mediumHeader>Deposit</TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
+          {userLiquidityUnstaked?.equalTo('0') && (
+            <CardSection style={{ alignContent: 'center' }}>
+              <AutoRow style={{ marginBottom: '1rem' }} width={'100%'}>
+                <TYPE.white fontSize={14}>
+                  {`IZA-LP tokens are required. Once you've added liquidity to the ${stakingInfo.tokens[0]?.symbol}-${stakingInfo.tokens[1]?.symbol} pool you can stake your liquidity tokens on this page.`}
+                </TYPE.white>
+              </AutoRow>
+              <AutoRow style={{ marginBottom: '1rem' }}>
+                <ButtonPrimary
+                  padding="8px"
+                  borderRadius="8px"
+                  width={'fit-content'}
+                  as={Link}
+                  to={`/add/${stakingInfo.tokens[0] && currencyId(stakingInfo.tokens[0])}/${stakingInfo.tokens[1] &&
+                    currencyId(stakingInfo.tokens[1])}`}
+                >
+                  {`Add ${stakingInfo.tokens[0]?.symbol}-${stakingInfo.tokens[1]?.symbol} liquidity`}
+                </ButtonPrimary>
+              </AutoRow>
+            </CardSection>
+          )}
 
-          {depositFee && depositFee > 0 && (
+          {depositFee && depositFee > 0 ? (
             <RowBetween>
               <ColumnCenter>
                 <BlueCard>
@@ -163,6 +177,8 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
                 </BlueCard>
               </ColumnCenter>
             </RowBetween>
+          ) : (
+            <></>
           )}
 
           <CurrencyInputPanel

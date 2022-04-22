@@ -33,7 +33,7 @@ import {
   SwapOutlined,
   WalletOutlined,
   FireOutlined,
-  BankOutlined,
+  // BankOutlined,
   LoginOutlined
 } from '@ant-design/icons'
 import { isMobile } from 'react-device-detect'
@@ -319,11 +319,11 @@ const CondensedMenu = (
         Farm
       </StyledNavLink>
     </Menu.Item>
-    <Menu.Item icon={<BankOutlined style={{ fontSize: '1.25em' }} />}>
-      <StyledNavLink id={`vault-nav-link`} to={'/vault'} style={{ marginLeft: '0px' }}>
-        Vaults
-      </StyledNavLink>
-    </Menu.Item>
+    {/*<Menu.Item icon={<BankOutlined style={{ fontSize: '1.25em' }} />}>*/}
+    {/*  <StyledNavLink id={`vault-nav-link`} to={'/vault'} style={{ marginLeft: '0px' }}>*/}
+    {/*    Vaults*/}
+    {/*  </StyledNavLink>*/}
+    {/*</Menu.Item>*/}
     <Menu.Item icon={<LoginOutlined style={{ fontSize: '1.25em' }} />}>
       <StyledNavLink id={`bridge-nav-link`} to={'/bridge'} style={{ marginLeft: '0px' }}>
         Bridge
@@ -392,10 +392,10 @@ export default function Header() {
             <FireOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {t('Farm')}
           </StyledNavLink>
-          <StyledNavLink id={`vault-nav-link`} to={'/vault'}>
-            <BankOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
-            {t('Vaults')}
-          </StyledNavLink>
+          {/*<StyledNavLink id={`vault-nav-link`} to={'/vault'}>*/}
+          {/*  <BankOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />*/}
+          {/*  {t('Vaults')}*/}
+          {/*</StyledNavLink>*/}
           <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
             <LoginOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {t('Bridge')}

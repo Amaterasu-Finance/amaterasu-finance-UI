@@ -11,6 +11,7 @@ import { abi as IUniswapV2PairABI } from '@foxswap/core/build/IUniswapV2Pair.jso
 import { useMemo } from 'react'
 import {
   BONDING_ADDRESS,
+  FARM_ZAPPER,
   GOVERNANCE_ADDRESS,
   MASTER_BREEDER,
   MERKLE_DISTRIBUTOR_ADDRESS,
@@ -170,6 +171,12 @@ export function useVaultChefContract(withSignerIfPossible?: boolean): Contract |
 export function useZapperContract(withSignerIfPossible?: boolean): Contract | null {
   const { chainId } = useActiveWeb3React()
   const address = chainId && ZAPPER[chainId]
+  return useContract(address, ZAPPER_ABI, withSignerIfPossible)
+}
+
+export function useFarmZapperContract(withSignerIfPossible?: boolean): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  const address = chainId && FARM_ZAPPER[chainId]
   return useContract(address, ZAPPER_ABI, withSignerIfPossible)
 }
 

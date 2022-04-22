@@ -30,3 +30,33 @@ export default function useFilterStakingInfos(
     })
   }, [stakingInfos, isActive, onlyStaked])
 }
+
+export function sortByApyYearly(stakingInfos: StakingInfo[], isActive = true, onlyStaked = false): StakingInfo[] {
+  if (isActive) {
+    stakingInfos = stakingInfos.filter(s => s.active === isActive)
+  }
+  if (onlyStaked) {
+    stakingInfos = stakingInfos.filter(s => s.stakedAmount.greaterThan('0'))
+  }
+  return stakingInfos.sort((a, b) => {
+    if (a.apr === undefined || b.apr === undefined) {
+      return 0
+    }
+    return b.apr.greaterThan(a.apr) ? 1 : -1
+  })
+}
+
+export function sortByTvl(stakingInfos: StakingInfo[], isActive = true, onlyStaked = false): StakingInfo[] {
+  if (isActive) {
+    stakingInfos = stakingInfos.filter(s => s.active === isActive)
+  }
+  if (onlyStaked) {
+    stakingInfos = stakingInfos.filter(s => s.stakedAmount.greaterThan('0'))
+  }
+  return stakingInfos.sort((a, b) => {
+    if (a.valueOfTotalStakedAmountInUsd === undefined || b.valueOfTotalStakedAmountInUsd === undefined) {
+      return 0
+    }
+    return b.valueOfTotalStakedAmountInUsd.greaterThan(a.valueOfTotalStakedAmountInUsd) ? 1 : -1
+  })
+}

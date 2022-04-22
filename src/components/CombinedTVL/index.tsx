@@ -4,6 +4,7 @@ import { useActiveWeb3React } from '../../hooks'
 import useTotalCombinedTVL from '../../hooks/useTotalCombinedTVL'
 import { CustomMouseoverTooltip } from '../Tooltip/custom'
 import { PIT_SETTINGS } from '../../constants'
+import { Break } from '../vault/styled'
 // import useFilterStakingInfos from '../../hooks/useFilterStakingInfos'
 
 export default function CombinedTVL() {
@@ -40,6 +41,7 @@ export default function CombinedTVL() {
               )}
               {TVLs.totalCombinedTVL?.greaterThan('0') && (
                 <>
+                  <Break />
                   <b>Total:</b> ${TVLs.totalCombinedTVL.toFixed(0, { groupSeparator: ',' })}
                 </>
               )}

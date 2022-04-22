@@ -3,7 +3,7 @@ import { RowBetween } from '../Row'
 import styled from 'styled-components'
 import { TYPE } from '../../theme'
 import DoubleCurrencyLogo from '../DoubleLogo'
-import { Col, Statistic, Card, Row } from 'antd'
+import { Avatar, Badge, Col, Statistic, Card, Row } from 'antd'
 import { ButtonPrimary } from '../Button'
 import { VaultsInfo } from '../../state/vault/hooks'
 
@@ -13,7 +13,6 @@ import { unwrappedToken } from '../../utils/wrappedCurrency'
 import ClaimRewardModal from './ClaimRewardModal'
 import usePitToken from '../../hooks/usePitToken'
 import xIzaLogo from '../../assets/images/iza-purple.png'
-import { Avatar, Badge } from 'antd'
 import Logo from '../Logo'
 import ModifiedUnstakingModal from './ModifiedUnstakingModal'
 import StakingModal from './StakingModal'
@@ -109,7 +108,7 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
 `
 
 const StyledStatCard = styled(GreyCard)`
-  padding: 10px;
+  padding: 5px;
   min-height: 160px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: flex;
@@ -184,7 +183,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
   // const backgroundColor = useColor(stakingInfo?.baseToken)
 
   return (
-    <Wrapper showBackground={isStaking} bodyStyle={{ padding: '0.7rem' }}>
+    <Wrapper showBackground={false} bodyStyle={{ padding: '0.7rem' }}>
       <HeaderClickable onClick={() => setIsOpen(!isOpen)} style={{ padding: '0px', margin: '0px' }}>
         <AutoRow justify={'space-between'} style={{ alignSelf: 'center', margin: '0px', marginLeft: '20px' }}>
           <StyledAutoColumn className="gutter-row" style={{ alignItems: 'center', minWidth: '250px' }}>
