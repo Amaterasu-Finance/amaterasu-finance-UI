@@ -13,7 +13,7 @@ export default function useFilterStakingInfos(
 
     if (onlyStaked === true) {
       return stakingInfos
-        .filter(s => s.stakedAmount.greaterThan('0'))
+        .filter(s => s.stakedAmount && s.stakedAmount.greaterThan('0'))
         .sort((a, b) => {
           if (a.stakedAmount === undefined || b.stakedAmount === undefined) {
             return 0
@@ -36,7 +36,7 @@ export function sortByApyDaily(stakingInfos: VaultsInfo[], isActive = true, only
     stakingInfos = stakingInfos.filter(s => s.active === isActive)
   }
   if (onlyStaked) {
-    stakingInfos = stakingInfos.filter(s => s.stakedAmount.greaterThan('0'))
+    stakingInfos = stakingInfos.filter(s => s.stakedAmount && s.stakedAmount.greaterThan('0'))
   }
   return stakingInfos.sort((a, b) => {
     if (a.apyDaily === undefined || b.apyDaily === undefined) {
@@ -51,7 +51,7 @@ export function sortByApyYearly(stakingInfos: VaultsInfo[], isActive = true, onl
     stakingInfos = stakingInfos.filter(s => s.active === isActive)
   }
   if (onlyStaked) {
-    stakingInfos = stakingInfos.filter(s => s.stakedAmount.greaterThan('0'))
+    stakingInfos = stakingInfos.filter(s => s.stakedAmount && s.stakedAmount.greaterThan('0'))
   }
   return stakingInfos.sort((a, b) => {
     if (a.apy === undefined || b.apy === undefined) {
@@ -66,7 +66,7 @@ export function sortByTvl(stakingInfos: VaultsInfo[], isActive = true, onlyStake
     stakingInfos = stakingInfos.filter(s => s.active === isActive)
   }
   if (onlyStaked) {
-    stakingInfos = stakingInfos.filter(s => s.stakedAmount.greaterThan('0'))
+    stakingInfos = stakingInfos.filter(s => s.stakedAmount && s.stakedAmount.greaterThan('0'))
   }
   return stakingInfos.sort((a, b) => {
     if (a.valueOfTotalStakedAmountInUsd === undefined || b.valueOfTotalStakedAmountInUsd === undefined) {

@@ -1,9 +1,14 @@
 import { CurrencyAmount, JSBI, Token, TokenAmount, Fraction, Price } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { useActiveWeb3React } from '../../hooks'
-import { useSingleContractMultipleData } from '../multicall/hooks'
+import { useMultipleContractMultipleData, useSingleContractMultipleData } from '../multicall/hooks'
 import { tryParseAmount } from '../swap/hooks'
-import { useMasterchefContract, useVaultChefContract } from '../../hooks/useContract'
+import {
+  IZA_CHEF_V1_INTERFACE,
+  TRI_CHEF_V1_INTERFACE,
+  TRI_CHEF_V2_INTERFACE,
+  useVaultChefContract
+} from '../../hooks/useContract'
 import { useMultipleContractSingleData, useMultipleCallsNoInputsReturnInt } from '../../state/multicall/hooks'
 import { abi as IUniswapV2PairABI } from '@foxswap/core/build/IUniswapV2Pair.json'
 import stratABI from '../../constants/abis/strat.json'
@@ -50,32 +55,34 @@ export interface VaultsInfo {
   xTokenRate?: number // xToken %, default = 0%
   compoundRate?: number // xToken %, default = 0%
   withdrawFee?: number // withdraw fee, default = 0.1%
+  // lp Token
+  lpToken: Token
   // baseToken used for TVL & APR calculations
   baseToken: Token | undefined
   // the allocation point for the given pool
-  allocPoint: JSBI
+  allocPoint: JSBI | undefined
   // base rewards per block
-  baseRewardsPerBlock: TokenAmount
+  baseRewardsPerBlock: TokenAmount | undefined
   // pool specific rewards per block
-  poolRewardsPerBlock: Fraction
+  poolRewardsPerBlock: Fraction | undefined
   // blocks generated per year
-  blocksPerYear: JSBI
+  blocksPerYear: JSBI | undefined
   // pool share vs all pools
-  poolShare: Fraction
+  poolShare: Fraction | undefined
   // the total supply of lp tokens in existence
-  totalLpTokenSupply: TokenAmount
+  totalLpTokenSupply: TokenAmount | undefined
   // the amount of currently total staked tokens in the pool
-  totalStakedAmount: TokenAmount
+  totalStakedAmount: TokenAmount | undefined
   // the amount of token currently staked, or undefined if no account
-  stakedAmount: TokenAmount
+  stakedAmount: TokenAmount | undefined
   // the amount of token currently staked, or undefined if no account
-  userStakedAtLastAction: TokenAmount
+  userStakedAtLastAction: TokenAmount | undefined
   // the amount of token currently staked, or undefined if no account
   stakedAmountUsd: Fraction | undefined
   // the amount of reward token earned by the active account, or undefined if no account
-  earnedAmountxIza: TokenAmount
+  earnedAmountxIza: TokenAmount | undefined
   // the amount of reward token earned by the active account, or undefined if no account
-  earnedAmountxToken: TokenAmount
+  earnedAmountxToken: TokenAmount | undefined
   // value of total staked amount, measured in a USD stable coin (busd, usdt, usdc or a mix thereof)
   valueOfTotalStakedAmountInUsd: Fraction | undefined
   // price per LP token
@@ -106,6 +113,14 @@ export function getIzaApy20Perc(baseApr: Fraction, basexIzaApr: Fraction): numbe
   return ratio * Number(basexIzaApr.toSignificant(10))
 }
 
+export function getIzaApy50Perc(baseApr: Fraction, basexIzaApr: Fraction): number | undefined {
+  const ratio =
+    0.343 +
+    0.00459 * Number(baseApr.toSignificant(10)) * 100 +
+    0.0000477 * Math.pow(Number(baseApr.toSignificant(10)) * 100, 2)
+  return ratio * Number(basexIzaApr.toSignificant(10))
+}
+
 // gets the staking info from the network for the active chain id
 export function useVaultsInfo(active: boolean | undefined = undefined, pid?: number | null): VaultsInfo[] {
   const { chainId, account } = useActiveWeb3React()
@@ -128,37 +143,72 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const pids = useMemo(() => vaultInfo.map(({ pid }) => pid), [vaultInfo])
   const farmPids = useMemo(() => vaultInfo.map(({ farmPid }) => farmPid), [vaultInfo])
   const lpTokenAddresses = useMemo(() => vaultInfo.map(({ lp }) => lp.address), [vaultInfo])
+  const PAIR_INTERFACES = useMemo(() => lpTokenAddresses.map(() => PAIR_INTERFACE), [lpTokenAddresses])
   const stratAddresses = useMemo(() => vaultInfo.map(({ stratAddress }) => stratAddress), [vaultInfo])
+  const masterchefAddresses = useMemo(() => vaultInfo.map(({ masterchef }) => masterchef), [vaultInfo])
+  const masterchefInterfaces: Interface[] = useMemo(
+    () =>
+      vaultInfo.map(({ masterchef }) => {
+        switch (masterchef) {
+          case PROTOCOLS_MAINNET.Trisolaris.masterchefV1:
+            return TRI_CHEF_V1_INTERFACE
+          case PROTOCOLS_MAINNET.Trisolaris.masterchefV2:
+            return TRI_CHEF_V2_INTERFACE
+          case PROTOCOLS_MAINNET.Amaterasu.masterchefV1:
+            return IZA_CHEF_V1_INTERFACE
+          default:
+            return TRI_CHEF_V1_INTERFACE
+        }
+      }),
+    [vaultInfo]
+  )
 
   const pidAccountMapping = useMemo(
     () => vaultInfo.map(({ pid }) => (account ? [pid, account] : [undefined, undefined])),
     [vaultInfo, account]
   )
+  const masterchefArgs = useMemo(() => vaultInfo.map(({ masterchef }) => [masterchef]), [vaultInfo])
 
   const pendingRewards = useSingleContractMultipleData(vaultChefContract, 'pendingRewards', pidAccountMapping)
   const userInfos = useSingleContractMultipleData(vaultChefContract, 'stakedWantTokens', pidAccountMapping)
   const userInfosList = useSingleContractMultipleData(vaultChefContract, 'userInfo', pidAccountMapping)
   const vaultBalances = useMultipleContractSingleData(stratAddresses, STRAT_INTERFACE, 'wantLockedTotal')
 
-  const triMasterchefV1 = useMasterchefContract(PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].masterchefV1)
   // TODO - need to add each masterchef here and call 2 functions: rewardPerBlock and totalAllocPoint
   const chefData = useMultipleCallsNoInputsReturnInt(
-    [triMasterchefV1?.address, triMasterchefV1?.address],
-    [PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].perBlockFunctionSig, TOTAL_ALLOC_POINT_SIG]
+    [
+      PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].masterchefV1,
+      PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].masterchefV1,
+      PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].masterchefV2,
+      PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].masterchefV2,
+      PROTOCOLS_MAINNET[ProtocolName.AMATERASU].masterchefV1,
+      PROTOCOLS_MAINNET[ProtocolName.AMATERASU].masterchefV1
+    ],
+    [
+      PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].perBlockFunctionSig,
+      TOTAL_ALLOC_POINT_SIG,
+      PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS].perBlockFunctionSig,
+      TOTAL_ALLOC_POINT_SIG,
+      PROTOCOLS_MAINNET[ProtocolName.AMATERASU].perBlockFunctionSig,
+      TOTAL_ALLOC_POINT_SIG
+    ]
   )
 
-  // TODO - need to do this for each underlying farm... triV2, wannaV1, wannaV2, ...
-  const poolInfos = useSingleContractMultipleData(
-    triMasterchefV1,
+  const poolInfos = useMultipleContractMultipleData(
+    masterchefAddresses,
+    masterchefInterfaces,
     'poolInfo',
     farmPids.map(pid => [pid])
   )
 
   const lpTokenTotalSupplies = useMultipleContractSingleData(lpTokenAddresses, PAIR_INTERFACE, 'totalSupply')
   const lpTokenReserves = useMultipleContractSingleData(lpTokenAddresses, PAIR_INTERFACE, 'getReserves')
-  const lpTokenBalances = useMultipleContractSingleData(lpTokenAddresses, PAIR_INTERFACE, 'balanceOf', [
-    triMasterchefV1?.address
-  ])
+  const lpTokenBalances = useMultipleContractMultipleData(
+    lpTokenAddresses,
+    PAIR_INTERFACES,
+    'balanceOf',
+    masterchefArgs
+  )
 
   return useMemo(() => {
     // console.log(new Date().toLocaleString(), 'fetchVaults memo')
@@ -184,9 +234,32 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
       const lpTokenReserve = lpTokenReserves[index]
       const lpTokenBalance = lpTokenBalances[index]
       const vaultBalance = vaultBalances[index]
+      const liquidityToken = new Token(chainId, lp.address, 18, lp.name, lp.name)
 
-      const rewardPerBlock = chefData[0]
-      const totalAllocPoint = chefData[1]
+      let rewardPerBlock
+      let totalAllocPoint
+      let allocIndex
+      switch (vaultInfo[index].masterchef) {
+        case PROTOCOLS_MAINNET.Trisolaris.masterchefV1:
+          rewardPerBlock = chefData[0]
+          totalAllocPoint = chefData[1]
+          allocIndex = 1
+          break
+        case PROTOCOLS_MAINNET.Trisolaris.masterchefV2:
+          rewardPerBlock = chefData[2]
+          totalAllocPoint = chefData[3]
+          allocIndex = 2
+          break
+        case PROTOCOLS_MAINNET.Amaterasu.masterchefV1:
+          rewardPerBlock = chefData[4]
+          totalAllocPoint = chefData[5]
+          allocIndex = 1
+          break
+        default:
+          rewardPerBlock = chefData[0]
+          totalAllocPoint = chefData[1]
+          allocIndex = 1
+      }
 
       if (
         validStakingInfo(
@@ -203,7 +276,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
       ) {
         const poolInfoResult = poolInfo.result
         const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
-        const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])
+        const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[allocIndex])
         const active = poolInfoResult && JSBI.GE(JSBI.BigInt(allocPoint), 0) ? true : false
         const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)
 
@@ -216,7 +289,6 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         const calculatedxIzaRewards = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
         const calculatedxTokenRewards = JSBI.BigInt(pendingReward?.result?.[1] ?? 0)
 
-        const liquidityToken = new Token(chainId, lp.address, 18, lp.name, lp.name)
         const amountParsed = JSBI.BigInt(userInfo?.result?.[0] ?? 0)
         const amountStaked = JSBI.greaterThan(amountParsed, MIN_STAKED_AMOUNT) ? amountParsed : JSBI.BigInt(0)
         const stakedAmount = new TokenAmount(liquidityToken, amountStaked)
@@ -247,8 +319,9 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted).divide(farmStakedAmount)
 
         const userAmountStakedUsd = pricePerLpToken && pricePerLpToken.multiply(stakedAmount)
+        const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
 
-        const apr =
+        const aprInital =
           rewardTokenPrice && totalFarmStakedAmountWETH && wethBusdPrice
             ? calculateApr(
                 rewardTokenPrice,
@@ -259,21 +332,48 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
               )
             : undefined
 
-        const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
+        const bonusRewardTokenPrice =
+          vaultInfo[index].bonusRewarderToken &&
+          getRewardTokenPrice(vaultInfo[index].bonusRewarderToken, tokensWithPrices)
+        const aprBonus =
+          bonusRewardTokenPrice &&
+          vaultInfo[index].bonusRewarderToken &&
+          vaultInfo[index].bonusRewarderTokenPerBlock &&
+          wethBusdPrice &&
+          totalFarmStakedAmountWETH
+            ? calculateApr(
+                bonusRewardTokenPrice,
+                new TokenAmount(
+                  vaultInfo[index].bonusRewarderToken ?? govToken,
+                  vaultInfo[index].bonusRewarderTokenPerBlock ?? '0'
+                ),
+                blocksPerYear,
+                new Fraction('1'),
+                totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted)
+              )
+            : new Fraction('0')
+        const apr = aprInital?.add(aprBonus ?? '0')
 
         const apyDaily = apr && calculateDailyApy(apr)
         const apyBase = apr && calculateApy(apr?.multiply(JSBI.BigInt(compoundRate)).divide('100'))
-        const apyIza = apr && xIzaApr && getIzaApy20Perc(apr, xIzaApr)
+        const apyIza =
+          apr && xIzaApr && (xIzaRate === 50 ? getIzaApy50Perc(apr, xIzaApr) : getIzaApy20Perc(apr, xIzaApr))
         const apyxToken = 0
         const apyCombined = apyBase && apyIza && apyBase + apyIza + apyxToken
-        // console.log('apyLp', apyLp)
-        // console.log('apyIza', apyIza)
-        // console.log('combined new APY', apyCombined)
+        // if (pid === 7) {
+        //   console.log('farmStakedAmount', farmStakedAmount.toSignificant(10))
+        //   console.log('totalFarmStakedAmountWETH', totalFarmStakedAmountWETH?.toSignificant(10))
+        //   console.log(
+        //     'totalFarmStakedAmount',
+        //     wethBusdPrice && totalFarmStakedAmountWETH?.multiply(wethBusdPrice.adjusted)?.toSignificant(10)
+        //   )
+        // }
 
         const stakingInfo = {
           pid: pid,
           farmPid: farmPid,
           lp: lp,
+          lpToken: liquidityToken,
           protocol: vaultInfo[index].protocol,
           active: active,
           masterchef: masterchefAddress,
@@ -306,6 +406,38 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           apyxToken: apyxToken
         }
 
+        memo.push(stakingInfo)
+      } else {
+        const stakingInfo = {
+          ...vaultInfo[index],
+          buybackRate: buybackRate,
+          xIzaRate: xIzaRate,
+          xTokenRate: xTokenRate,
+          withdrawFee: withdrawFee,
+          compoundRate: compoundRate,
+          lpToken: liquidityToken,
+          baseToken: lp.baseToken,
+          allocPoint: undefined,
+          baseRewardsPerBlock: undefined,
+          poolRewardsPerBlock: undefined,
+          blocksPerYear: undefined,
+          poolShare: undefined,
+          totalLpTokenSupply: undefined,
+          totalStakedAmount: undefined,
+          stakedAmount: undefined,
+          stakedAmountUsd: undefined,
+          userStakedAtLastAction: undefined,
+          earnedAmountxIza: undefined,
+          earnedAmountxToken: undefined,
+          valueOfTotalStakedAmountInUsd: undefined,
+          pricePerLpToken: undefined,
+          apr: undefined,
+          apy: undefined,
+          apyDaily: undefined,
+          apyBase: undefined,
+          apyxIza: undefined,
+          apyxToken: undefined
+        }
         memo.push(stakingInfo)
       }
       return memo
@@ -342,7 +474,7 @@ export function useTotalGovTokensEarned(): TokenAmount | undefined {
     if (!govToken) return undefined
     return (
       stakingInfos?.reduce(
-        (accumulator, stakingInfo) => accumulator.add(stakingInfo.earnedAmountxIza),
+        (accumulator, stakingInfo) => accumulator.add(stakingInfo.earnedAmountxIza ?? new TokenAmount(govToken, '0')),
         new TokenAmount(govToken, '0')
       ) ?? new TokenAmount(govToken, '0')
     )

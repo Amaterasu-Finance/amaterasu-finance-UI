@@ -153,7 +153,7 @@ export default function ManageVault({
           <AutoColumn gap="sm">
             <TYPE.body style={{ margin: 0 }}>Emission Rate</TYPE.body>
             <TYPE.body fontSize={24} fontWeight={500}>
-              {stakingInfo
+              {stakingInfo && stakingInfo.poolRewardsPerBlock
                 ? stakingInfo.active
                   ? `${stakingInfo.poolRewardsPerBlock.toSignificant(5, { groupSeparator: ',' })} 
                   ${govToken?.symbol} / block`

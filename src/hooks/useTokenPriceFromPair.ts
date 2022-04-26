@@ -28,3 +28,11 @@ export function useTriPrice(): Price | undefined {
     0
   )
 }
+
+export function useAuroraUsdcPrice(): Price | undefined {
+  return useTokenPriceFromPair(
+    [getTokenWithDefault(ChainId.AURORA_MAINNET, 'AURORA'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC')],
+    '0x5F110f500DeF9897a1182ab38AB004E69e1B296D',
+    1
+  )
+}

@@ -121,10 +121,16 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
   const [showWithdrawModal, setShowWithdrawModal] = useState(false)
   const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
 
-  const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
-  const [isOpen, setIsOpen] = useState<boolean>(isStaking)
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   const userLiquidityUnstakedUsd = userLiquidityUnstaked && stakingInfo.pricePerLpToken?.multiply(userLiquidityUnstaked)
+
+  const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
+  const defaultOpen = isStaking || Boolean(userLiquidityUnstaked && userLiquidityUnstaked?.greaterThan('0'))
+  const [isOpen, setIsOpen] = useState<boolean>(defaultOpen)
+
+  React.useEffect(() => {
+    setIsOpen(defaultOpen)
+  }, [defaultOpen])
 
   const pendingIzaUsd =
     govTokenPrice && stakingInfo.earnedAmount && stakingInfo.earnedAmount.multiply(govTokenPrice.adjusted)
