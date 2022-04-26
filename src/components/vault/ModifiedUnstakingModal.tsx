@@ -150,7 +150,7 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
             onUserInput={onUserInput}
             onMax={handleMax}
             showMaxButton={!atMaxAmount}
-            currency={stakingInfo.stakedAmount.token}
+            currency={stakingInfo.lpToken}
             pair={dummyPair}
             label={''}
             disableCurrencySelect={true}

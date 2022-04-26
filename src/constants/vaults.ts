@@ -2,6 +2,7 @@ import { ChainId, Token } from '@amaterasu-fi/sdk'
 import getPairTokensWithDefaults from '../utils/getPairTokensWithDefaults'
 import { LiqPool, LPS_MAINNET } from './lps'
 import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from './protocol'
+import getTokenWithDefault from '../utils/getTokenWithDefault'
 
 export interface VaultInfo {
   pid: number
@@ -12,6 +13,11 @@ export interface VaultInfo {
   lp: LiqPool
   protocol: Protocol
   masterchef?: string // masterchef address for rewards info
+  // double reward info
+  bonusRewarderAddress?: string
+  bonusRewarderToken?: Token
+  bonusRewarderTokenPerBlock?: string
+  // Vault setup
   buybackRate?: number // buy+burn IZA %, default = 3%
   xIzaRate?: number // xIZA % of rewards, default = 20%
   xTokenRate?: number // xToken %, default = 0%
@@ -22,6 +28,133 @@ export const VAULT_INFO: {
   [chainId in ChainId]?: VaultInfo[]
 } = {
   [ChainId.AURORA_MAINNET]: [
+    // ---------------------------------------------------
+    // Amaterasu
+    // ---------------------------------------------------
+
+    {
+      pid: 18,
+      farmPid: 1,
+      active: true,
+      stratAddress: '0x52614eE4f0DbaeE0C5cD08DD62324Cd2f93D895F',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC'),
+      lp: LPS_MAINNET.AMATERASU_IZA_USDC,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 19,
+      farmPid: 2,
+      active: true,
+      stratAddress: '0xa2267e590e5aCcd356bBc53290C52Fe50069FBb0',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/WETH'),
+      lp: LPS_MAINNET.AMATERASU_IZA_WETH,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 20,
+      farmPid: 3,
+      active: true,
+      stratAddress: '0xb3C7c030007eD9aBE82ba928F636a21540AC98a8',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR'),
+      lp: LPS_MAINNET.AMATERASU_IZA_NEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 21,
+      farmPid: 4,
+      active: true,
+      stratAddress: '0xD1F54ccbd6a2F8fcb9D3Bc1feDbbE8adEEc1fcD7',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/AURORA'),
+      lp: LPS_MAINNET.AMATERASU_IZA_AURORA,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 22,
+      farmPid: 5,
+      active: true,
+      stratAddress: '0x1C7F1214689A7563Ae88a223C5E622f4f569e131',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ONE'),
+      lp: LPS_MAINNET.AMATERASU_IZA_ONE,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 23,
+      farmPid: 6,
+      active: true,
+      stratAddress: '0xe6f147d93B4A94B72457cD3BDcbb672A01391121',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/SHITZU'),
+      lp: LPS_MAINNET.AMATERASU_IZA_SHITZU,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 24,
+      farmPid: 7,
+      active: true,
+      stratAddress: '0xceABBE4994d0592C69842A3B38f20640a8d1b380',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/xIZA'),
+      lp: LPS_MAINNET.AMATERASU_IZA_XIZA,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 25,
+      farmPid: 8,
+      active: true,
+      stratAddress: '0x7a8B63e13525F6AB74CD1d78d54d8fefB94D977E',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/stNEAR'),
+      lp: LPS_MAINNET.AMATERASU_IZA_STNEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 26,
+      farmPid: 9,
+      active: true,
+      stratAddress: '0xC7aE8b94DE8672128e9ED11D124A941B782d5560',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/atUST'),
+      lp: LPS_MAINNET.AMATERASU_IZA_ATUST,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 27,
+      farmPid: 10,
+      active: true,
+      stratAddress: '0x106FFbA39522897bf39f4c0AfD59DD5C5df22787',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'atUST/NEAR'),
+      lp: LPS_MAINNET.AMATERASU_ATUST_NEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    // ---------------------------------------------------
+    // Trisolaris
+    // ---------------------------------------------------
     {
       pid: 1,
       farmPid: 0,
@@ -81,6 +214,19 @@ export const VAULT_INFO: {
       lp: LPS_MAINNET.TRISOLARIS_NEAR_TRI,
       protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
       masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV1
+    },
+    {
+      pid: 7,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x5c16A91E7720Bc8A4E87a4cd8e07d16D3Ee8Dd46',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'AURORA/WETH'),
+      lp: LPS_MAINNET.TRISOLARIS_AURORA_WETH,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
+      bonusRewarderAddress: '0x94669d7a170bfe62FAc297061663e0B48C63B9B5',
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'AURORA'),
+      bonusRewarderTokenPerBlock: '1556069959000000'
     }
   ]
 }

@@ -45,7 +45,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
 
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
-  const { parsedAmount, error } = useDerivedStakeInfo(typedValue, stakingInfo.stakedAmount.token, userLiquidityUnstaked)
+  const { parsedAmount, error } = useDerivedStakeInfo(typedValue, stakingInfo.lpToken, userLiquidityUnstaked)
   /*const parsedAmountWrapped = wrappedCurrencyAmount(parsedAmount, chainId)
 
   let hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
@@ -146,7 +146,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             onUserInput={onUserInput}
             onMax={handleMax}
             showMaxButton={!atMaxAmount}
-            currency={stakingInfo.stakedAmount.token}
+            currency={stakingInfo.lpToken}
             pair={dummyPair}
             label={''}
             disableCurrencySelect={true}

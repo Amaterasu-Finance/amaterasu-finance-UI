@@ -28,6 +28,7 @@ import { AutoRow } from '../Row'
 import usePitRatio from '../../hooks/usePitRatio'
 import useUSDCPrice from '../../utils/useUSDCPrice'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
+import { TokenAmount } from '@amaterasu-fi/sdk'
 
 const ToolTipContainer = styled.div`
   display: flex;
@@ -144,11 +145,15 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
   const [showWithdrawModal, setShowWithdrawModal] = useState(false)
   const [showClaimRewardModal, setShowClaimRewardModal] = useState(false)
 
-  const isStaking = Boolean(stakingInfo.stakedAmount.greaterThan('0'))
+  const isStaking = Boolean(stakingInfo.stakedAmount && stakingInfo.stakedAmount.greaterThan('0'))
   const userLiquidityUnstaked = useTokenBalance(account ?? undefined, stakingInfo?.stakedAmount?.token)
   const userLiquidityUnstakedUsd = userLiquidityUnstaked && stakingInfo.pricePerLpToken?.multiply(userLiquidityUnstaked)
   const defaultOpen = isStaking || Boolean(userLiquidityUnstaked && userLiquidityUnstaked?.greaterThan('0'))
   const [isOpen, setIsOpen] = useState<boolean>(defaultOpen)
+
+  React.useEffect(() => {
+    setIsOpen(defaultOpen)
+  }, [defaultOpen])
 
   const pendingxIzaUsd =
     govTokenPrice &&
@@ -164,7 +169,10 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
       ? '<$0.01'
       : `$${pendingxIzaUsd.toFixed(2)}`)
 
-  const userRecentProfit = stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
+  const userRecentProfit =
+    stakingInfo.stakedAmount && stakingInfo.userStakedAtLastAction
+      ? stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
+      : new TokenAmount(stakingInfo.lpToken, '0')
   const userRecentProfitUsd = stakingInfo.pricePerLpToken?.multiply(userRecentProfit)
   // if less than $0.01, then just show `<$0.01`
   const userRecentProfitUsdString =
@@ -188,24 +196,24 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
         <AutoRow justify={'space-between'} style={{ alignSelf: 'center', margin: '0px', marginLeft: '20px' }}>
           <StyledAutoColumn className="gutter-row" style={{ alignItems: 'center', minWidth: '250px' }}>
             <AutoRow>
-              <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={30} />
+              <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={37} />
               <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '10px' }}>
                 {currency0.symbol}-{currency1.symbol}
               </TYPE.white>
             </AutoRow>
-            <AutoRow style={{ margin: '0px' }}>
+            <AutoRow style={{ margin: '4px 0 0 0' }}>
               <TYPE.gray fontWeight={600} fontSize={14}>
                 Platform:{' '}
               </TYPE.gray>
-              <TYPE.white fontWeight={600} fontSize={14} style={{ marginLeft: '10px' }}>
-                {stakingInfo.protocol.name}
-                <span role="img" aria-label="wizard-icon" style={{ marginLeft: '5px' }}>
+              <TYPE.white fontWeight={600} fontSize={14} style={{ marginLeft: '7px' }}>
+                <span role="img" aria-label="wizard-icon" style={{ marginRight: '5px' }}>
                   <StyledLogo
                     size={'22px'}
                     srcs={[stakingInfo.protocol.logoFilename]}
                     alt={stakingInfo.protocol.name}
                   />
                 </span>
+                {stakingInfo.protocol.name}
               </TYPE.white>
             </AutoRow>
           </StyledAutoColumn>
@@ -432,23 +440,23 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                       element={
                         <ToolTipContainer style={{ minWidth: '150px' }}>
                           <AutoRow>
-                            <TYPE.subHeader style={{ fontSize: '17px', fontWeight: '700' }}>
-                              Recent Profit*
+                            <TYPE.subHeader style={{ fontSize: '16px', fontWeight: '700' }}>
+                              Recent LP Profit*
                             </TYPE.subHeader>
                           </AutoRow>
                           <Break />
                           <AutoRow>
-                            <TYPE.subHeader style={{ fontSize: '14px' }}>
+                            <TYPE.subHeader style={{ fontSize: '16px' }}>
                               {userRecentProfit.toSignificant(4)} ({userRecentProfitUsdString})
                             </TYPE.subHeader>
                           </AutoRow>
                           <AutoRow>
-                            <TYPE.subHeader style={{ fontSize: '12px', fontWeight: '700' }}>
+                            <TYPE.subHeader style={{ fontSize: '14px', fontWeight: '700' }}>
                               {stakingInfo.lp.name} LP Tokens
                             </TYPE.subHeader>
                           </AutoRow>
                           <AutoRow>
-                            <TYPE.small style={{ fontSize: '11px' }}>*Since last stake or unstake</TYPE.small>
+                            <TYPE.small style={{ fontSize: '11px' }}>*Since last deposit or withdraw</TYPE.small>
                           </AutoRow>
                         </ToolTipContainer>
                       }
@@ -467,7 +475,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                   <AutoRow style={{ justifyContent: 'center', marginTop: '20px' }}>
                     <ButtonPrimary
                       padding="8px"
-                      disabled={!(stakingInfo && stakingInfo.stakedAmount.greaterThan('0'))}
+                      disabled={!(stakingInfo && stakingInfo.stakedAmount && stakingInfo.stakedAmount.greaterThan('0'))}
                       borderRadius="8px"
                       onClick={() => setShowWithdrawModal(true)}
                     >
@@ -485,7 +493,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                         </span>
                       }
                       value={
-                        stakingInfo
+                        stakingInfo && stakingInfo.earnedAmountxIza
                           ? `${stakingInfo.earnedAmountxIza.toSignificant(5, { groupSeparator: ',' })} ${
                               xToken?.symbol
                             }`
@@ -498,7 +506,9 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                   <AutoRow style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                     <ButtonPrimary
                       padding="8px"
-                      disabled={!(stakingInfo && stakingInfo.earnedAmountxIza.greaterThan('0'))}
+                      disabled={
+                        !(stakingInfo && stakingInfo.earnedAmountxIza && stakingInfo.earnedAmountxIza.greaterThan('0'))
+                      }
                       borderRadius="8px"
                       onClick={() => setShowClaimRewardModal(true)}
                     >

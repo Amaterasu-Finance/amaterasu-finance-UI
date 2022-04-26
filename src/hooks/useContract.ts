@@ -37,6 +37,7 @@ import WETH_ABI from '../constants/abis/weth.json'
 import VAULT_CHEF_ABI from '../constants/abis/vaultchef.json'
 import ZAPPER_ABI from '../constants/abis/zapper.json'
 import GENERIC_CHEF_ABI from '../constants/abis/masterchefGeneric.json'
+import GENERIC_CHEFV2_ABI from '../constants/abis/masterchefGenericV2.json'
 import PAYOUT_ABI from '../constants/abis/payouts.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
@@ -44,6 +45,11 @@ import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import useGovernanceToken from './useGovernanceToken'
 import { LP_BOND_ABI } from '../constants/abis/lp-contract'
+import { Interface } from '@ethersproject/abi'
+
+export const IZA_CHEF_V1_INTERFACE = new Interface(MASTER_BREEDER_ABI)
+export const TRI_CHEF_V1_INTERFACE = new Interface(GENERIC_CHEF_ABI)
+export const TRI_CHEF_V2_INTERFACE = new Interface(GENERIC_CHEFV2_ABI)
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -183,6 +189,11 @@ export function useFarmZapperContract(withSignerIfPossible?: boolean): Contract 
 export function useMasterchefContract(address: string, withSignerIfPossible?: boolean): Contract | null {
   // const { chainId } = useActiveWeb3React()
   return useContract(address, GENERIC_CHEF_ABI, withSignerIfPossible)
+}
+
+export function useMasterchefV2Contract(address: string, withSignerIfPossible?: boolean): Contract | null {
+  // const { chainId } = useActiveWeb3React()
+  return useContract(address, GENERIC_CHEFV2_ABI, withSignerIfPossible)
 }
 
 export function useBondingContract(): Contract | null {

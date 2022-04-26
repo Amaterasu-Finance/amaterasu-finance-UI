@@ -64,7 +64,7 @@ export default function ClaimAllRewardsModal({ isOpen, onDismiss, stakingInfos }
         })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Claim accumulated ${govToken?.symbol} rewards`
+            summary: `Claim ${govToken?.symbol} rewards`
           })
           setHash(response.hash)
         })

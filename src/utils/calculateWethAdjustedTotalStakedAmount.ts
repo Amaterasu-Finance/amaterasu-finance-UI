@@ -31,7 +31,7 @@ function pairCurrencyAmountInWeth(
         : valueOfTotalStakedAmountInPairCurrency
     case tokens?.NEAR?.token?.symbol?.toUpperCase():
       mult = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(baseToken.decimals - 18))
-      console.log('near price', tokens?.NEAR?.price.toSignificant(5))
+      // console.log('near price', tokens?.NEAR?.price.toSignificant(5))
       return tokens?.NEAR?.price
         ? valueOfTotalStakedAmountInPairCurrency.multiply(tokens?.NEAR?.price).multiply(mult)
         : valueOfTotalStakedAmountInPairCurrency
@@ -61,7 +61,7 @@ export default function calculateWethAdjustedTotalStakedAmount(
     reserve1
   )
   if (!stakingTokenPair) return undefined
-  console.log('stakingTokenPair', stakingTokenPair)
+  // console.log('stakingTokenPair', stakingTokenPair)
   const valueOfTotalStakedAmountInPairCurrency = calculateTotalStakedAmount(
     baseToken,
     stakingTokenPair,

@@ -37,7 +37,7 @@ import {
   LoginOutlined
 } from '@ant-design/icons'
 import { isMobile } from 'react-device-detect'
-import useAuroraPrice from '../../hooks/useAuroraPrice'
+import useUSDCPrice from '../../utils/useUSDCPrice'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -340,7 +340,7 @@ export default function Header() {
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
 
   const govToken = useGovernanceToken()
-  const govTokenPrice = useAuroraPrice(govToken)
+  const govTokenPrice = useUSDCPrice(govToken)
   const addGov = useAddTokenToMetamask(govToken)
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const userFoxBalance: TokenAmount | undefined = useTokenBalance(
