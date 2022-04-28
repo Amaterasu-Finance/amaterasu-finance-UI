@@ -1,14 +1,14 @@
 import React, { useState, useCallback } from 'react'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import Modal from '../Modal'
-import { AutoColumn } from '../Column'
+import { AutoColumn, ColumnCenter } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
 import { TYPE, CloseIcon } from '../../theme'
 import { ButtonConfirmed, ButtonError } from '../Button'
 import ProgressCircles from '../ProgressSteps'
 import CurrencyInputPanel from '../CurrencyInputPanel'
-import { Token, CurrencyAmount } from '@amaterasu-fi/sdk'
+import { Token, CurrencyAmount, Currency } from '@amaterasu-fi/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { useZapperContract } from '../../hooks/useContract'
@@ -26,6 +26,8 @@ import { VaultsInfo, useDerivedStakeInfo } from '../../state/vault/hooks'
 import CurrencyLogo from '../CurrencyLogo'
 import { darken } from 'polished'
 import { useCurrencyBalances } from '../../state/wallet/hooks'
+import { BlueCard } from '../Card'
+import { CURVE_POOLS_MAINNET } from '../../constants/curvePools'
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
@@ -71,6 +73,24 @@ interface StakingModalProps {
   isOpen: boolean
   onDismiss: () => void
   stakingInfo: VaultsInfo
+  currencies: Currency[] | undefined
+}
+
+export function is3PoolToken(symbol: string): boolean {
+  return ['DAI', 'USDC', 'USDT'].includes(symbol)
+}
+
+export function get3PoolIndex(symbol: string): number {
+  switch (symbol) {
+    case 'DAI':
+      return 0
+    case 'USDC':
+      return 1
+    case 'USDT':
+      return 2
+    default:
+      return 0
+  }
 }
 
 export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModalProps) {
@@ -81,7 +101,7 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
   const [typedValue, setTypedValue] = useState('')
   const currencyA = stakingInfo.tokens[0]
   const currencyB = stakingInfo.tokens[1]
-  const balances = useCurrencyBalances(account ?? undefined, [currencyA, currencyB])
+  const balances = useCurrencyBalances(account ?? undefined, stakingInfo.tokens)
 
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
@@ -169,6 +189,187 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
     }
   }
 
+  async function onZap3pool() {
+    setAttempting(true)
+    if (currency && account && zapper && parsedAmount && deadline) {
+      if (approval === ApprovalState.APPROVED) {
+        const formattedAmount = `0x${parsedAmount.raw.toString(16)}`
+
+        //   function zapIn3PoolAndStake(
+        //     address _from, // token to zap in
+        //     uint256 amount, // amount
+        //     address _to, // lp token for 3pool
+        //     address lpMinterAddress, // contract address that can mint the lp tokens
+        //     address _recipient, // user to deposit into vault for
+        //     uint256 _fromIndex, // index of from token on 3pool
+        //     uint256 vaultPid // pool id for vault
+        // ) external {
+        const index = get3PoolIndex(currency.symbol ?? '')
+        const estimatedGas = await zapper.estimateGas.zapIn3PoolAndStake(
+          currency.address,
+          formattedAmount,
+          stakingInfo.lp.address,
+          stakingInfo.lp.minterAddress,
+          account,
+          index,
+          stakingInfo.pid
+        )
+
+        await zapper
+          .zapIn3PoolAndStake(
+            currency.address,
+            formattedAmount,
+            stakingInfo.lp.address,
+            stakingInfo.lp.minterAddress,
+            account,
+            index,
+            stakingInfo.pid,
+            {
+              gasLimit: calculateGasMargin(estimatedGas)
+            }
+          )
+          .then((response: TransactionResponse) => {
+            addTransaction(response, {
+              summary: `Zap into Vault`
+            })
+            setHash(response.hash)
+          })
+          .catch((error: any) => {
+            setAttempting(false)
+            if (error?.code === -32603) {
+              setFailed(true)
+            }
+            console.log(error)
+          })
+      } else {
+        setAttempting(false)
+        throw new Error('Attempting to stake without approval or a signature. Please contact support.')
+      }
+    }
+  }
+
+  async function onZap2pool() {
+    setAttempting(true)
+    if (currency && account && zapper && parsedAmount && deadline) {
+      // console.log('is3PoolToken', is3PoolToken(currency.symbol ?? ''))
+      // console.log('index3Pool', get3PoolIndex(currency.symbol ?? ''))
+      if (approval === ApprovalState.APPROVED) {
+        const formattedAmount = `0x${parsedAmount.raw.toString(16)}`
+        // 2 possibilities - either zap into the 3pool first or just straight into the 2pool
+        if (is3PoolToken(currency.symbol ?? '')) {
+          //   function zapIn2PoolAndStake(
+          //     address _from, // token to zap in
+          //     uint256 amount, // amount
+          //     address _3poolAddress, // lp token for 3pool
+          //     uint256 _fromIndex, // index of `_from` on 3pool
+          //     address _3poolMinterAddress, // contract address that can mint the lp tokens
+          //     address _2poolAddress, // final lp token for vault
+          //     address _2poolMinterAddress, // contract address that can mint the lp tokens
+          //     uint256 _3poolIndex, // index of the 3pool on the final lp token
+          //     address _recipient, // user to deposit into vault for
+          //     uint256 vaultPid // pool id for vault
+          // ) external {
+          const index3Pool = get3PoolIndex(currency.symbol ?? '')
+          const index = 1
+          console.log('symbol index', currency.symbol, index)
+          const estimatedGas = await zapper.estimateGas.zapIn2PoolAndStake(
+            currency.address,
+            formattedAmount,
+            CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT.address,
+            index3Pool,
+            CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT.minterAddress,
+            stakingInfo.lp.address,
+            stakingInfo.lp.minterAddress,
+            index,
+            account,
+            stakingInfo.pid
+          )
+
+          await zapper
+            .zapIn2PoolAndStake(
+              currency.address,
+              formattedAmount,
+              CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT.address,
+              index3Pool,
+              CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT.minterAddress,
+              stakingInfo.lp.address,
+              stakingInfo.lp.minterAddress,
+              index,
+              account,
+              stakingInfo.pid,
+              {
+                gasLimit: calculateGasMargin(estimatedGas)
+              }
+            )
+            .then((response: TransactionResponse) => {
+              addTransaction(response, {
+                summary: `Zap into Vault`
+              })
+              setHash(response.hash)
+            })
+            .catch((error: any) => {
+              setAttempting(false)
+              if (error?.code === -32603) {
+                setFailed(true)
+              }
+              console.log(error)
+            })
+        } else {
+          //   function zapIn2PoolNoJumpAndStake(
+          //     address _from, // token to zap in
+          //     uint256 amount, // amount
+          //     address _to, // lp token for 2pool
+          //     address lpMinterAddress, // contract address that can mint the lp tokens
+          //     address _recipient, // user to deposit into vault for
+          //     uint256 _fromIndex, // index of from token on 2pool
+          //     uint256 vaultPid // pool id for vault
+          // ) external {
+          const index = 0 // always 0 for non-3pool tokens
+          console.log('symbol index', currency.symbol, index)
+          const estimatedGas = await zapper.estimateGas.zapIn2PoolNoJumpAndStake(
+            currency.address,
+            formattedAmount,
+            stakingInfo.lp.address,
+            stakingInfo.lp.minterAddress,
+            account,
+            index,
+            stakingInfo.pid
+          )
+
+          await zapper
+            .zapIn2PoolNoJumpAndStake(
+              currency.address,
+              formattedAmount,
+              stakingInfo.lp.address,
+              stakingInfo.lp.minterAddress,
+              account,
+              index,
+              stakingInfo.pid,
+              {
+                gasLimit: calculateGasMargin(estimatedGas)
+              }
+            )
+            .then((response: TransactionResponse) => {
+              addTransaction(response, {
+                summary: `Zap into Vault`
+              })
+              setHash(response.hash)
+            })
+            .catch((error: any) => {
+              setAttempting(false)
+              if (error?.code === -32603) {
+                setFailed(true)
+              }
+              console.log(error)
+            })
+        }
+      } else {
+        setAttempting(false)
+        throw new Error('Attempting to stake without approval or a signature. Please contact support.')
+      }
+    }
+  }
+
   // wrapped onUserInput to clear signatures
   const onUserInput = useCallback((typedValue: string) => {
     setSignatureData(null)
@@ -200,7 +401,21 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
             <TYPE.largeHeader>Zap into {stakingInfo.lp.name} Vault</TYPE.largeHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
-          <RowBetween style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-around' }}>
+          {stakingInfo.lp.isCurve && (
+            <RowBetween>
+              <ColumnCenter>
+                <BlueCard>
+                  <AutoColumn gap="10px">
+                    <TYPE.link fontWeight={400} color={'primaryText1'} textAlign="center">
+                      📢 <b> Note:</b> <b>{stakingInfo.lp.protocol.name}</b> collects a <b>0.04%</b> deposit fee when
+                      entering this pool. Amaterasu has no control over it.
+                    </TYPE.link>
+                  </AutoColumn>
+                </BlueCard>
+              </ColumnCenter>
+            </RowBetween>
+          )}
+          <RowBetween style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-around', margin: '0' }}>
             <TYPE.mediumHeader>Choose Token to Zap</TYPE.mediumHeader>
           </RowBetween>
           <RowBetween style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-around' }}>
@@ -242,6 +457,54 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
                 </StyledTokenName>
               </Aligner>
             </CurrencySelect>
+            {stakingInfo.tokens[2] && (
+              <CurrencySelect
+                selected={currency === stakingInfo.tokens[2]}
+                className="open-currency-select-button"
+                onClick={() => {
+                  setCurrency(stakingInfo.tokens[2])
+                  balances && balances[2] && setUserTokens(balances[2])
+                }}
+              >
+                <Aligner>
+                  <CurrencyLogo currency={stakingInfo.tokens[2]} size={'24px'} />
+                  <StyledTokenName className="token-symbolb-container" active={Boolean(currency === currencyB)}>
+                    {(stakingInfo.tokens[2] && stakingInfo.tokens[2].symbol && stakingInfo.tokens[2].symbol.length > 20
+                      ? stakingInfo.tokens[2].symbol.slice(0, 4) +
+                        '...' +
+                        stakingInfo.tokens[2].symbol.slice(
+                          stakingInfo.tokens[2].symbol.length - 5,
+                          stakingInfo.tokens[2].symbol.length
+                        )
+                      : stakingInfo.tokens[2]?.symbol) || 'selectToken'}
+                  </StyledTokenName>
+                </Aligner>
+              </CurrencySelect>
+            )}
+            {stakingInfo.tokens[3] && (
+              <CurrencySelect
+                selected={currency === stakingInfo.tokens[3]}
+                className="open-currency-select-button"
+                onClick={() => {
+                  setCurrency(stakingInfo.tokens[3])
+                  balances && balances[3] && setUserTokens(balances[3])
+                }}
+              >
+                <Aligner>
+                  <CurrencyLogo currency={stakingInfo.tokens[3]} size={'24px'} />
+                  <StyledTokenName className="token-symbolb-container" active={Boolean(currency === currencyB)}>
+                    {(stakingInfo.tokens[3] && stakingInfo.tokens[3].symbol && stakingInfo.tokens[3].symbol.length > 20
+                      ? stakingInfo.tokens[3].symbol.slice(0, 4) +
+                        '...' +
+                        stakingInfo.tokens[3].symbol.slice(
+                          stakingInfo.tokens[3].symbol.length - 5,
+                          stakingInfo.tokens[3].symbol.length
+                        )
+                      : stakingInfo.tokens[3]?.symbol) || 'selectToken'}
+                  </StyledTokenName>
+                </Aligner>
+              </CurrencySelect>
+            )}
           </RowBetween>
           <CurrencyInputPanel
             value={typedValue}
@@ -267,7 +530,9 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
             <ButtonError
               disabled={!!error || (signatureData === null && approval !== ApprovalState.APPROVED)}
               error={!!error && !!parsedAmount}
-              onClick={onZap}
+              onClick={
+                stakingInfo.lp.isCurve ? (stakingInfo.lp.urlName === 'stables' ? onZap3pool : onZap2pool) : onZap
+              }
             >
               {error ?? '⚡ Zap In ⚡'}
             </ButtonError>

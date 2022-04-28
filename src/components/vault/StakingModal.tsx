@@ -1,17 +1,17 @@
 import React, { useState, useCallback } from 'react'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import Modal from '../Modal'
-import { AutoColumn } from '../Column'
+import { AutoColumn, ColumnCenter } from '../Column'
 import styled from 'styled-components'
 import { RowBetween } from '../Row'
-import { TYPE, CloseIcon } from '../../theme'
+import { TYPE, CloseIcon, ExternalLink } from '../../theme'
 import { ButtonConfirmed, ButtonError } from '../Button'
 import ProgressCircles from '../ProgressSteps'
 import CurrencyInputPanel from '../CurrencyInputPanel'
-import { TokenAmount, Pair } from '@amaterasu-fi/sdk'
+import { TokenAmount, Currency } from '@amaterasu-fi/sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { maxAmountSpend } from '../../utils/maxAmountSpend'
-import { usePairContract, useVaultChefContract } from '../../hooks/useContract'
+import { useVaultChefContract } from '../../hooks/useContract'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../../state/transactions/hooks'
@@ -38,24 +38,21 @@ interface StakingModalProps {
   onDismiss: () => void
   stakingInfo: VaultsInfo
   userLiquidityUnstaked: TokenAmount | undefined
+  currencies?: Currency[] | undefined
 }
 
-export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiquidityUnstaked }: StakingModalProps) {
+export default function StakingModal({
+  isOpen,
+  onDismiss,
+  stakingInfo,
+  currencies,
+  userLiquidityUnstaked
+}: StakingModalProps) {
   const { library } = useActiveWeb3React()
 
   // track and parse user input
   const [typedValue, setTypedValue] = useState('')
   const { parsedAmount, error } = useDerivedStakeInfo(typedValue, stakingInfo.lpToken, userLiquidityUnstaked)
-  /*const parsedAmountWrapped = wrappedCurrencyAmount(parsedAmount, chainId)
-
-  let hypotheticalRewardRate: TokenAmount = new TokenAmount(stakingInfo.rewardRate.token, '0')
-  if (parsedAmountWrapped?.greaterThan('0')) {
-    hypotheticalRewardRate = stakingInfo.getHypotheticalRewardRate(
-      stakingInfo.stakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalStakedAmount.add(parsedAmountWrapped),
-      stakingInfo.totalRewardRate
-    )
-  }*/
 
   // state for pending and submitted txn views
   const addTransaction = useTransactionAdder()
@@ -70,10 +67,9 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [onDismiss])
 
   const vaultChef = useVaultChefContract()
-
-  // pair contract for this token to be staked
-  const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
-  const pairContract = usePairContract(dummyPair.liquidityToken.address)
+  const href = stakingInfo.lp.isCurve
+    ? `${stakingInfo.lp.protocol.addLiquidityUrl}${stakingInfo.lp.urlName}`
+    : `${stakingInfo.lp.protocol.addLiquidityUrl}${stakingInfo.lp.token0?.address}/${stakingInfo.lp.token1?.address}`
 
   // approval data for stake
   const deadline = useTransactionDeadline()
@@ -126,7 +122,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   }, [maxAmountInput, onUserInput])
 
   async function onAttemptToApprove() {
-    if (!pairContract || !library || !deadline) throw new Error('missing dependencies')
+    if (!library || !deadline) throw new Error('missing dependencies')
     const liquidityAmount = parsedAmount
     if (!liquidityAmount) throw new Error('missing liquidity amount')
 
@@ -138,8 +134,20 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
       {!attempting && !hash && !failed && (
         <ContentWrapper gap="lg">
           <RowBetween>
-            <TYPE.mediumHeader>Deposit</TYPE.mediumHeader>
+            <TYPE.mediumHeader>
+              Vault Deposit: <b>{stakingInfo.lp.name}</b>
+            </TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
+          </RowBetween>
+          <RowBetween>
+            <ColumnCenter>
+              <TYPE.body fontSize={16}>
+                <ExternalLink href={href}>
+                  Get <b>{stakingInfo.lp.name}</b> LP Tokens
+                </ExternalLink>{' '}
+                on {stakingInfo.lp.protocol.name}
+              </TYPE.body>
+            </ColumnCenter>
           </RowBetween>
           <CurrencyInputPanel
             value={typedValue}
@@ -147,7 +155,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
             onMax={handleMax}
             showMaxButton={!atMaxAmount}
             currency={stakingInfo.lpToken}
-            pair={dummyPair}
+            currencies={currencies}
             label={''}
             disableCurrencySelect={true}
             customBalanceText={'Available to deposit: '}

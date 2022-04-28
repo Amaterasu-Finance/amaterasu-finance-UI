@@ -9,7 +9,7 @@ import { TYPE, StyledInternalLink } from '../../theme'
 import PoolCard from '../../components/earn/PoolCard'
 import { CustomButtonWhite } from '../../components/Button'
 import AwaitingRewards from '../../components/earn/AwaitingRewards'
-import { AutoRow, RowBetween } from '../../components/Row'
+import { RowBetween } from '../../components/Row'
 import { CardSection, ExtraDataCard } from '../../components/earn/styled'
 //import { Countdown } from './Countdown'
 import Loader from '../../components/Loader'
@@ -125,27 +125,27 @@ export default function Earn() {
       </TopSection>
 
       <TopSection gap="lg">
-        <AutoRow style={{ alignItems: 'baseline', justifyContent: 'space-between', margin: '5px' }}>
-          <Col style={{ marginLeft: '5px' }} span={8}>
+        <Row align={'middle'} justify={'space-between'} style={{ margin: '5px' }}>
+          <Col style={{ marginLeft: '5px', marginBottom: '10px' }} xs={0} sm={6}>
             <TYPE.mediumHeader style={{ marginLeft: '0.5rem' }}>Farms</TYPE.mediumHeader>
           </Col>
-          <AutoColumn style={{ marginRight: '20px' }}>
+          <Col style={{ marginRight: '20px' }} xs={2} sm={2}>
             <Row>
-              <TYPE.white>Show Staked</TYPE.white>
+              <TYPE.white>Staked</TYPE.white>
             </Row>
             <Row>
               <Toggle isActive={stakedOnlySelected} toggle={() => setStakedOnlySelected(!stakedOnlySelected)} />
             </Row>
-          </AutoColumn>
-          <AutoColumn style={{ marginTop: '5px' }}>
+          </Col>
+          <Col style={{ marginTop: '5px' }} xs={6} sm={2}>
             <Row>
               <TYPE.white marginLeft={'5px'}>Sorting</TYPE.white>
             </Row>
             <Row>
               <OldSelect options={SORTING_OPTIONS} onChange={handlesortOptionChange} />
             </Row>
-          </AutoColumn>
-          <Col style={{ display: 'flex', justifyContent: 'end' }} span={8}>
+          </Col>
+          <Col style={{ display: 'flex', justifyContent: 'end' }} xs={8} sm={8}>
             <TYPE.black style={{ marginRight: '0.5rem' }}>
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
                 🏆
@@ -153,7 +153,7 @@ export default function Earn() {
               <CombinedTVL />
             </TYPE.black>
           </Col>
-        </AutoRow>
+        </Row>
         <AwaitingRewards />
 
         <PoolSection>

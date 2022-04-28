@@ -4,17 +4,18 @@ import getTokenWithDefault from '../utils/getTokenWithDefault'
 export enum ProtocolName {
   TRISOLARIS = 'Trisolaris',
   WANNASWAP = 'WannaSwap',
-  AMATERASU = 'Amaterasu'
+  AMATERASU = 'Amaterasu',
+  ROSE = 'Rose'
 }
 
 export interface Protocol {
   name: string
   xToken?: Token
   buyTokenUrl?: string
-  addLiquidityUrl?: string
+  addLiquidityUrl: string
   nativeToken?: Token
   routerAddress?: string
-  masterchefV1: string
+  masterchefV1?: string
   masterchefV2?: string
   // The per block function signature. i.e. triPerBlock => '0x7030c1a0'
   perBlockFunctionSig: string
@@ -34,6 +35,13 @@ export const PROTOCOLS_MAINNET: {
     buyTokenUrl: 'https://app.amaterasu.finance/#/swap?outputCurrency=',
     addLiquidityUrl: 'https://app.amaterasu.finance/#/add/',
     logoFilename: 'images/protocols/amaterasu.png'
+  },
+  [ProtocolName.ROSE]: {
+    name: ProtocolName.ROSE,
+    nativeToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'ROSE'),
+    perBlockFunctionSig: '',
+    logoFilename: 'images/protocols/rose.png',
+    addLiquidityUrl: 'https://app.rose.fi/#/pools/'
   },
   [ProtocolName.TRISOLARIS]: {
     name: ProtocolName.TRISOLARIS,

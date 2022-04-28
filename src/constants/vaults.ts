@@ -3,14 +3,15 @@ import getPairTokensWithDefaults from '../utils/getPairTokensWithDefaults'
 import { LiqPool, LPS_MAINNET } from './lps'
 import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from './protocol'
 import getTokenWithDefault from '../utils/getTokenWithDefault'
+import { CURVE_POOLS_MAINNET, CurvePool } from './curvePools'
 
 export interface VaultInfo {
   pid: number
   farmPid: number
   active: boolean
-  tokens: [Token, Token]
+  tokens: Token[]
   stratAddress: string
-  lp: LiqPool
+  lp: LiqPool | CurvePool
   protocol: Protocol
   masterchef?: string // masterchef address for rewards info
   // double reward info
@@ -151,6 +152,20 @@ export const VAULT_INFO: {
       masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
       buybackRate: 0.0,
       xIzaRate: 50.0
+    },
+    // ---------------------------------------------------
+    // Rose
+    // ---------------------------------------------------
+    {
+      pid: 28,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x3546E15f89e7D27B9885f54A81a36CbB46D3B9ed',
+      tokens: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT.tokens,
+      lp: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
+      masterchef: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT.stakingAddress,
+      bonusRewarderTokenPerBlock: '234774490878515970'
     },
     // ---------------------------------------------------
     // Trisolaris

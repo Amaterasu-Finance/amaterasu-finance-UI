@@ -41,9 +41,9 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   background: ${({ theme }) => theme.primary2};
   border-radius: 16px;
   height: 40px;
-  min-width: 136px;
+  min-width: 111px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 168px;
+    min-width: 111px;
   `};
 
   ${props => props.isOpen && css`

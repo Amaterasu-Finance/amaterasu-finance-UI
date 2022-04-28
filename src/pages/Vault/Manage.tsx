@@ -135,7 +135,11 @@ export default function ManageVault({
         <TYPE.mediumHeader style={{ margin: 0 }}>
           {stakingInfo?.lp.name} {stakingInfo?.lp.protocol.name} Vault
         </TYPE.mediumHeader>
-        <DoubleCurrencyLogo currency0={lp?.token0 ?? undefined} currency1={lp?.token1 ?? undefined} size={40} />
+        <DoubleCurrencyLogo
+          currency0={stakingInfo?.tokens[0] ?? undefined}
+          currency1={stakingInfo?.tokens[1] ?? undefined}
+          size={40}
+        />
       </RowBetween>
 
       <DataRow style={{ gap: '24px' }}>
@@ -173,7 +177,7 @@ export default function ManageVault({
               </RowBetween>
               <RowBetween style={{ marginBottom: '1rem' }}>
                 <TYPE.white fontSize={14}>
-                  {`LP tokens are required. Once you've added liquidity to the ${lp?.token0?.symbol}-${lp?.token1?.symbol} pool you can stake your liquidity tokens on this page.`}
+                  {`LP tokens are required. Once you've added liquidity to the ${stakingInfo?.tokens[0]?.symbol}-${stakingInfo?.tokens[1]?.symbol} pool you can stake your liquidity tokens on this page.`}
                 </TYPE.white>
               </RowBetween>
               <ButtonPrimary
@@ -181,9 +185,10 @@ export default function ManageVault({
                 borderRadius="8px"
                 width={'fit-content'}
                 as={Link}
-                to={`/add/${lp?.token0 && currencyId(lp?.token0)}/${lp?.token1 && currencyId(lp?.token1)}`}
+                to={`/add/${stakingInfo?.tokens[0] && currencyId(stakingInfo?.tokens[0])}/${stakingInfo?.tokens[1] &&
+                  currencyId(stakingInfo?.tokens[1])}`}
               >
-                {`Add ${lp?.token0?.symbol}-${lp?.token1?.symbol} liquidity on ${lp?.protocol.name}`}
+                {`Add ${stakingInfo?.tokens[0]?.symbol}-${stakingInfo?.tokens[1]?.symbol} liquidity on ${lp?.protocol.name}`}
               </ButtonPrimary>
             </AutoColumn>
           </CardSection>
@@ -225,7 +230,7 @@ export default function ManageVault({
                     {stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'}
                   </TYPE.white>
                   <TYPE.white>
-                    IZA-LP {lp?.token0?.symbol}-{lp?.token1?.symbol}
+                    IZA-LP {stakingInfo?.tokens[0]?.symbol}-{stakingInfo?.tokens[1]?.symbol}
                   </TYPE.white>
                 </RowBetween>
               </AutoColumn>

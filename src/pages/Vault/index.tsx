@@ -39,6 +39,11 @@ const PLATFORM_OPTIONS = [
     label: 'Amaterasu',
     value: 'Amaterasu',
     img: PROTOCOLS_MAINNET.Amaterasu.logoFilename
+  },
+  {
+    label: 'Rose',
+    value: 'Rose',
+    img: PROTOCOLS_MAINNET.Rose.logoFilename
   }
 ]
 
@@ -62,7 +67,7 @@ const PageWrapper = styled(AutoColumn)`
   width: 100%;
 `
 
-const TopSection = styled(AutoColumn)`
+const TopSection = styled(Col)`
   max-width: 1000px;
   width: 100%;
 `
@@ -133,20 +138,19 @@ export default function Vault() {
 
   return (
     <PageWrapper gap="lg" justify="center">
-      <TopSection gap="md">
+      <TopSection>
         <ExtraDataCard>
           <CardSection>
             <AutoColumn gap="md">
               <TYPE.largeHeader>Vaults</TYPE.largeHeader>
             </AutoColumn>
-            <TYPE.largeHeader fontSize={50}>STILL TESTING - USE AT OWN RISK</TYPE.largeHeader>
           </CardSection>
         </ExtraDataCard>
       </TopSection>
 
-      <TopSection gap="lg">
-        <Row style={{ alignItems: 'baseline', justifyContent: 'space-between', margin: '10px' }}>
-          <Col span={6}>
+      <TopSection>
+        <Row align={'middle'} justify={'space-between'} style={{ margin: '15px' }}>
+          <Col xs={12} md={6} style={{ marginBottom: '10px' }}>
             <TYPE.black style={{ marginTop: '0.5rem' }}>
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
                 🏆
@@ -154,45 +158,24 @@ export default function Vault() {
               <CombinedTVL />
             </TYPE.black>
             {hasArchivedStakingPools && (
-              <RowBetween>
+              <Row>
                 <StyledInternalLink to={`/vaults/archived`}>
                   <CustomButtonWhite padding="8px" borderRadius="8px">
                     Archived Vaults
                   </CustomButtonWhite>
                 </StyledInternalLink>
-              </RowBetween>
+              </Row>
             )}
           </Col>
-          <Col style={{ marginTop: '10px' }}>
-            <Row>
-              <TYPE.white>Show Staked</TYPE.white>
-            </Row>
-            <Row>
-              <Toggle isActive={stakedOnlySelected} toggle={() => setStakedOnlySelected(!stakedOnlySelected)} />
-            </Row>
-          </Col>
-          <Col style={{ marginTop: '10px' }}>
-            <Row>
-              <TYPE.white marginLeft={'5px'}>Platform</TYPE.white>
-            </Row>
-            <Row>
-              <OldSelect options={PLATFORM_OPTIONS} onChange={handlePlatformOptionChange} />
-            </Row>
-          </Col>
-          <Col style={{ marginTop: '10px' }}>
-            <Row>
-              <TYPE.white marginLeft={'5px'}>Sorting</TYPE.white>
-            </Row>
-            <Row>
-              <OldSelect options={SORTING_OPTIONS} onChange={handlesortOptionChange} />
-            </Row>
-          </Col>
-          <Col style={{ marginTop: '10px' }} offset={2}>
+          <Col xs={12} md={0} push={6}>
             <CustomMouseoverTooltip
               element={
                 <ToolTipContainer>
                   <RowBetween>
                     <TYPE.subHeader style={{ fontWeight: '600' }}>Fees:</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.0% - Zapping Fee</TYPE.subHeader>
                   </RowBetween>
                   <RowBetween>
                     <TYPE.subHeader>0.0% - Deposit Fee</TYPE.subHeader>
@@ -215,7 +198,67 @@ export default function Vault() {
               <TYPE.body style={{ marginRight: '1rem' }}>
                 Fees
                 <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
-                  <QuestionCircleOutlined style={{ fontSize: '1.2rem', alignSelf: 'center' }} />
+                  <QuestionCircleOutlined style={{ fontSize: '1.2rem', alignSelf: 'end' }} />
+                </span>
+              </TYPE.body>
+            </CustomMouseoverTooltip>
+          </Col>
+          <Col xs={6} md={3}>
+            <Row>
+              <TYPE.white>Staked</TYPE.white>
+            </Row>
+            <Row>
+              <Toggle isActive={stakedOnlySelected} toggle={() => setStakedOnlySelected(!stakedOnlySelected)} />
+            </Row>
+          </Col>
+          <Col xs={9} md={4}>
+            <Row>
+              <TYPE.white marginLeft={'5px'}>Platform</TYPE.white>
+            </Row>
+            <Row>
+              <OldSelect options={PLATFORM_OPTIONS} onChange={handlePlatformOptionChange} />
+            </Row>
+          </Col>
+          <Col xs={9} md={4}>
+            <Row>
+              <TYPE.white marginLeft={'5px'}>Sorting</TYPE.white>
+            </Row>
+            <Row>
+              <OldSelect options={SORTING_OPTIONS} onChange={handlesortOptionChange} />
+            </Row>
+          </Col>
+          <Col xs={0} md={3} push={1} style={{ marginTop: '10px' }}>
+            <CustomMouseoverTooltip
+              element={
+                <ToolTipContainer>
+                  <RowBetween>
+                    <TYPE.subHeader style={{ fontWeight: '600' }}>Fees:</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.0% - Zapping Fee</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.0% - Deposit Fee</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.1% - Withdraw Fee</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader style={{ fontWeight: '600' }}>Fees on Rewards:</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>1.0% - Automation Fee to pay for compounding</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>3.0% - IZA buy+burn for all non-native vaults</TYPE.subHeader>
+                  </RowBetween>
+                </ToolTipContainer>
+              }
+            >
+              <TYPE.body style={{ marginRight: '1rem' }}>
+                Fees
+                <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
+                  <QuestionCircleOutlined style={{ fontSize: '1.2rem', alignSelf: 'end' }} />
                 </span>
               </TYPE.body>
             </CustomMouseoverTooltip>

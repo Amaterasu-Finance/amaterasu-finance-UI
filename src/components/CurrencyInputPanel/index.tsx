@@ -92,9 +92,8 @@ const Container = styled.div<{ hideInput: boolean }>`
 `
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
-  font-size:  ${({ active }) => (active ? '20px' : '16px')};
-
+  ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.25rem;' : '  margin: 0 0.15rem 0 0.50rem;')}
+  font-size:  ${({ active }) => (active ? '20px' : '18px')};
 `
 
 const StyledBalanceMax = styled.button`
@@ -132,6 +131,7 @@ interface CurrencyInputPanelProps {
   hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
+  currencies?: Currency[] | null
   otherCurrency?: Currency | null
   id: string
   showCommonBases?: boolean
@@ -151,6 +151,7 @@ export default function CurrencyInputPanel({
   disableCurrencySelect = false,
   hideBalance = false,
   pair = null, // used for double token logo
+  currencies = null, // used for multiple logos
   hideInput = false,
   otherCurrency,
   id,
@@ -224,12 +225,26 @@ export default function CurrencyInputPanel({
             }}
           >
             <Aligner>
-              {pair ? (
+              {currencies ? (
+                <DoubleCurrencyLogo
+                  currency0={currencies[0]}
+                  currency1={currencies[1]}
+                  currency2={currencies[2]}
+                  currency3={currencies[3]}
+                  size={30}
+                  margin={false}
+                />
+              ) : pair ? (
                 <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={30} margin={true} />
               ) : currency ? (
                 <CurrencyLogo currency={currency} size={'24px'} />
               ) : null}
-              {pair ? (
+              {currencies && currencies.length > 2 ? (
+                <StyledTokenName className="token-symbol-container" active={false}>
+                  {/* Filter out undefined currencies so this says `3Pool` or `4Pool` */}
+                  {currencies.filter(curr => curr).length}Pool
+                </StyledTokenName>
+              ) : pair ? (
                 <StyledTokenName className="pair-name-container">
                   {pair?.token0.symbol}/{pair?.token1.symbol}
                 </StyledTokenName>

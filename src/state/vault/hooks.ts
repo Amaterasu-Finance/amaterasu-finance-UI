@@ -26,6 +26,7 @@ import usePitToken from '../../hooks/usePitToken'
 import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from '../../constants/protocol'
 import calculateApy, { calculateDailyApy } from '../../utils/calculateApy'
 import { useXFoxApr } from '../../hooks/usexFoxApy'
+import { CurvePool } from '../../constants/curvePools'
 
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -46,8 +47,8 @@ export interface VaultsInfo {
   pid: number
   farmPid: number
   active: boolean
-  tokens: [Token, Token]
-  lp: LiqPool
+  tokens: Token[]
+  lp: LiqPool | CurvePool
   protocol: Protocol
   masterchef?: string // masterchef address for rewards info
   buybackRate?: number // buy+burn IZA %, default = 3%
@@ -143,9 +144,22 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const pids = useMemo(() => vaultInfo.map(({ pid }) => pid), [vaultInfo])
   const farmPids = useMemo(() => vaultInfo.map(({ farmPid }) => farmPid), [vaultInfo])
   const lpTokenAddresses = useMemo(() => vaultInfo.map(({ lp }) => lp.address), [vaultInfo])
+  const lpTokenAddressesWoCurve = useMemo(() => vaultInfo.map(({ lp }) => (lp.isCurve ? undefined : lp.address)), [
+    vaultInfo
+  ])
+  // TODO - eventually get from chain. but MUCH simpler to assume each curve pool lp token is worth $1
+  // const curveMinterAddresses = useMemo(
+  //   () => Object.keys(CURVE_POOLS_MAINNET).map((keyName, i) => CURVE_POOLS_MAINNET[keyName].minterAddress),
+  //   [CURVE_POOLS_MAINNET]
+  // )
+  // const curvePrices = useMultipleContractSingleData(stratAddresses, CURVE_MINTER_INTERFACE, 'get_virtual_price')
+
   const PAIR_INTERFACES = useMemo(() => lpTokenAddresses.map(() => PAIR_INTERFACE), [lpTokenAddresses])
   const stratAddresses = useMemo(() => vaultInfo.map(({ stratAddress }) => stratAddress), [vaultInfo])
-  const masterchefAddresses = useMemo(() => vaultInfo.map(({ masterchef }) => masterchef), [vaultInfo])
+  const masterchefAddresses = useMemo(
+    () => vaultInfo.map(({ lp, masterchef }) => (lp.isCurve ? undefined : masterchef)),
+    [vaultInfo]
+  )
   const masterchefInterfaces: Interface[] = useMemo(
     () =>
       vaultInfo.map(({ masterchef }) => {
@@ -202,7 +216,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   )
 
   const lpTokenTotalSupplies = useMultipleContractSingleData(lpTokenAddresses, PAIR_INTERFACE, 'totalSupply')
-  const lpTokenReserves = useMultipleContractSingleData(lpTokenAddresses, PAIR_INTERFACE, 'getReserves')
+  const lpTokenReserves = useMultipleContractSingleData(lpTokenAddressesWoCurve, PAIR_INTERFACE, 'getReserves')
   const lpTokenBalances = useMultipleContractMultipleData(
     lpTokenAddresses,
     PAIR_INTERFACES,
@@ -215,6 +229,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     if (!chainId || !weth || !govToken || !xToken) return []
 
     return pids.reduce<VaultsInfo[]>((memo, pid, index) => {
+      const active = vaultInfo[index].active
       const tokens = vaultInfo[index].tokens
       const farmPid = vaultInfo[index].farmPid
       const lp = vaultInfo[index].lp
@@ -274,16 +289,26 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           totalAllocPoint
         )
       ) {
-        const poolInfoResult = poolInfo.result
-        const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
-        const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[allocIndex])
-        const active = poolInfoResult && JSBI.GE(JSBI.BigInt(allocPoint), 0) ? true : false
-        const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)
+        let allocPoint = JSBI.BigInt('1')
+        let totalAllocPointResult = JSBI.BigInt('1')
+        let poolShare = new Fraction('1')
+        let baseBlockRewards
+        if (lp.isCurve) {
+          // TODO - read from chain eventually
+          baseBlockRewards = new TokenAmount(
+            lp.protocol.nativeToken ?? govToken,
+            vaultInfo[index].bonusRewarderTokenPerBlock ?? '0'
+          )
+        } else {
+          const poolInfoResult = poolInfo.result
+          allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[allocIndex])
+          totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
+          const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)
 
-        const poolShare = new Fraction(allocPoint, totalAllocPointResult)
-
-        // TODO - fallback to gov token even though it's dumb
-        const baseBlockRewards = new TokenAmount(lp.protocol.nativeToken ?? govToken, baseRewardsPerBlock)
+          poolShare = new Fraction(allocPoint, totalAllocPointResult)
+          // Fallback to gov token even though it's dumb
+          baseBlockRewards = new TokenAmount(lp.protocol.nativeToken ?? govToken, baseRewardsPerBlock)
+        }
         const poolBlockRewards = baseBlockRewards && baseBlockRewards.multiply(allocPoint).divide(totalAllocPointResult)
 
         const calculatedxIzaRewards = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
@@ -304,33 +329,33 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
         const rewardTokenPrice = getRewardTokenPrice(lp.protocol.nativeToken, tokensWithPrices)
 
-        const totalFarmStakedAmountWETH = calculateWethAdjustedTotalStakedAmount(
-          chainId,
-          lp.baseToken,
-          tokensWithPrices,
-          tokens,
-          totalLpTokenSupply,
-          farmStakedAmount,
-          lpTokenReserve?.result
-        )
-        const pricePerLpToken =
-          totalFarmStakedAmountWETH &&
-          wethBusdPrice &&
-          totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted).divide(farmStakedAmount)
+        let totalFarmStakedAmountUSD
+        let pricePerLpToken
+        if (lp.isCurve) {
+          totalFarmStakedAmountUSD = farmStakedAmount
+          pricePerLpToken = new Fraction('1')
+        } else {
+          const totalFarmStakedAmountWETH = calculateWethAdjustedTotalStakedAmount(
+            chainId,
+            lp.baseToken,
+            tokensWithPrices,
+            tokens,
+            totalLpTokenSupply,
+            farmStakedAmount,
+            lpTokenReserve?.result
+          )
+          totalFarmStakedAmountUSD =
+            totalFarmStakedAmountWETH && wethBusdPrice && totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted)
+          pricePerLpToken = totalFarmStakedAmountUSD && totalFarmStakedAmountUSD.divide(farmStakedAmount)
+        }
 
         const userAmountStakedUsd = pricePerLpToken && pricePerLpToken.multiply(stakedAmount)
         const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
 
         const aprInital =
-          rewardTokenPrice && totalFarmStakedAmountWETH && wethBusdPrice
-            ? calculateApr(
-                rewardTokenPrice,
-                baseBlockRewards,
-                blocksPerYear,
-                poolShare,
-                totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted)
-              )
-            : undefined
+          rewardTokenPrice && totalFarmStakedAmountUSD
+            ? calculateApr(rewardTokenPrice, baseBlockRewards, blocksPerYear, poolShare, totalFarmStakedAmountUSD)
+            : new Fraction('0')
 
         const bonusRewardTokenPrice =
           vaultInfo[index].bonusRewarderToken &&
@@ -339,8 +364,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           bonusRewardTokenPrice &&
           vaultInfo[index].bonusRewarderToken &&
           vaultInfo[index].bonusRewarderTokenPerBlock &&
-          wethBusdPrice &&
-          totalFarmStakedAmountWETH
+          totalFarmStakedAmountUSD
             ? calculateApr(
                 bonusRewardTokenPrice,
                 new TokenAmount(
@@ -349,7 +373,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
                 ),
                 blocksPerYear,
                 new Fraction('1'),
-                totalFarmStakedAmountWETH.multiply(wethBusdPrice.adjusted)
+                totalFarmStakedAmountUSD
               )
             : new Fraction('0')
         const apr = aprInital?.add(aprBonus ?? '0')
@@ -360,13 +384,11 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           apr && xIzaApr && (xIzaRate === 50 ? getIzaApy50Perc(apr, xIzaApr) : getIzaApy20Perc(apr, xIzaApr))
         const apyxToken = 0
         const apyCombined = apyBase && apyIza && apyBase + apyIza + apyxToken
-        // if (pid === 7) {
-        //   console.log('farmStakedAmount', farmStakedAmount.toSignificant(10))
-        //   console.log('totalFarmStakedAmountWETH', totalFarmStakedAmountWETH?.toSignificant(10))
-        //   console.log(
-        //     'totalFarmStakedAmount',
-        //     wethBusdPrice && totalFarmStakedAmountWETH?.multiply(wethBusdPrice.adjusted)?.toSignificant(10)
-        //   )
+        // if (pid === 28) {
+        //   console.log('pid - ', pid)
+        //   console.log('aprInital', aprInital?.toSignificant(10))
+        //   // console.log('totalFarmStakedAmountUSD', totalFarmStakedAmountUSD?.toSignificant(10), totalFarmStakedAmountUSD)
+        //   console.log('rosePrice', rewardTokenPrice && rewardTokenPrice.toSignificant(10))
         // }
 
         const stakingInfo = {
