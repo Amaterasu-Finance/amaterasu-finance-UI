@@ -105,7 +105,7 @@ const HidingStatistic = styled(Statistic)`
 `
 
 const DataRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
    flex-direction: column;
    margin: 1px;
  `};
@@ -164,7 +164,7 @@ const StyledVaultActionCard = ({ children, badgeValue }: any) => {
     </StyledStatCard>
   )
 }
-export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: VaultsInfo; isArchived: boolean }) {
+export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) {
   const { account } = useActiveWeb3React()
   const xToken = usePitToken()
   const govToken = useGovernanceToken()
@@ -201,7 +201,9 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
       : `$${pendingxIzaUsd.toFixed(2)}`)
 
   const userRecentProfit =
-    stakingInfo.stakedAmount && stakingInfo.userStakedAtLastAction
+    stakingInfo.stakedAmount &&
+    stakingInfo.userStakedAtLastAction &&
+    stakingInfo.stakedAmount.greaterThan(stakingInfo.userStakedAtLastAction)
       ? stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
       : new TokenAmount(stakingInfo.lpToken, '0')
   const userRecentProfitUsd = stakingInfo.pricePerLpToken?.multiply(userRecentProfit)
@@ -485,12 +487,22 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                   </AutoRow>
                   <Row gutter={12} style={{ justifyContent: 'center', marginTop: '20px' }} justify={'space-around'}>
                     <Col className="gutter-row" span={12}>
-                      <ButtonPrimary padding="8px" borderRadius="8px" onClick={() => setShowZapModal(true)}>
+                      <ButtonPrimary
+                        disabled={!stakingInfo.active}
+                        padding="8px"
+                        borderRadius="8px"
+                        onClick={() => setShowZapModal(true)}
+                      >
                         Zap
                       </ButtonPrimary>
                     </Col>
                     <Col className="gutter-row" span={12}>
-                      <ButtonPrimary padding="8px" borderRadius="8px" onClick={() => setShowDepositModal(true)}>
+                      <ButtonPrimary
+                        disabled={!stakingInfo.active}
+                        padding="8px"
+                        borderRadius="8px"
+                        onClick={() => setShowDepositModal(true)}
+                      >
                         Deposit
                       </ButtonPrimary>
                     </Col>

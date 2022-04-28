@@ -183,7 +183,7 @@ export const VAULT_INFO: {
     {
       pid: 2,
       farmPid: 1,
-      active: true,
+      active: false,
       stratAddress: '0x37f2b0cBc932543f253E0706E03b75Ca7B0A4E34',
       tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/NEAR'),
       lp: LPS_MAINNET.TRISOLARIS_USDC_NEAR,
@@ -193,7 +193,7 @@ export const VAULT_INFO: {
     {
       pid: 3,
       farmPid: 2,
-      active: true,
+      active: false,
       stratAddress: '0x5A1Ae6a60929ca14aff2bc15cf6aF755e5dCF40c',
       tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/NEAR'),
       lp: LPS_MAINNET.TRISOLARIS_USDT_NEAR,

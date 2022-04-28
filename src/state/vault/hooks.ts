@@ -187,6 +187,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const userInfos = useSingleContractMultipleData(vaultChefContract, 'stakedWantTokens', pidAccountMapping)
   const userInfosList = useSingleContractMultipleData(vaultChefContract, 'userInfo', pidAccountMapping)
   const vaultBalances = useMultipleContractSingleData(stratAddresses, STRAT_INTERFACE, 'wantLockedTotal')
+  const pausedList = useMultipleContractSingleData(stratAddresses, STRAT_INTERFACE, 'paused')
 
   // TODO - need to add each masterchef here and call 2 functions: rewardPerBlock and totalAllocPoint
   const chefData = useMultipleCallsNoInputsReturnInt(
@@ -229,7 +230,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     if (!chainId || !weth || !govToken || !xToken) return []
 
     return pids.reduce<VaultsInfo[]>((memo, pid, index) => {
-      const active = vaultInfo[index].active
+      let active = vaultInfo[index].active
       const tokens = vaultInfo[index].tokens
       const farmPid = vaultInfo[index].farmPid
       const lp = vaultInfo[index].lp
@@ -239,6 +240,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
       const xTokenRate = vaultInfo[index].xTokenRate ?? DEFAULT_XTOKEN_RATE
       const withdrawFee = vaultInfo[index].withdrawFee ?? DEFAULT_WITHDRAW_FEE
       const poolInfo = poolInfos[index]
+      const paused = pausedList[index]
       const compoundRate = 100 - DEFAULT_CONTROLLER_FEE - buybackRate - xIzaRate - xTokenRate
 
       // amount uint256, rewardDebt uint256, rewardDebtAtBlock uint256, lastWithdrawBlock uint256, firstDepositBlock uint256, blockdelta uint256, lastDepositBlock uint256
@@ -390,6 +392,8 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         //   // console.log('totalFarmStakedAmountUSD', totalFarmStakedAmountUSD?.toSignificant(10), totalFarmStakedAmountUSD)
         //   console.log('rosePrice', rewardTokenPrice && rewardTokenPrice.toSignificant(10))
         // }
+        // update active based on paused status
+        active = paused && paused.result ? !paused.result[0] && active : active
 
         const stakingInfo = {
           pid: pid,

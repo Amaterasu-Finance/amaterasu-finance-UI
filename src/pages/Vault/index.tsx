@@ -1,29 +1,24 @@
 import React from 'react'
-// import { JSBI, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { VAULT_INFO } from '../../constants/vaults'
 import { useVaultsInfo } from '../../state/vault/hooks'
-import { TYPE, StyledInternalLink } from '../../theme'
-import PoolCard from '../../components/vault/VaultCard'
-import { CustomButtonWhite } from '../../components/Button'
+import { TYPE } from '../../theme'
 import AwaitingRewards from '../../components/vault/AwaitingRewards'
 import { RowBetween } from '../../components/Row'
 import { CardSection, ExtraDataCard } from '../../components/vault/styled'
 import Loader from '../../components/Loader'
 import { useActiveWeb3React } from '../../hooks'
-// import useCalculateStakingInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
 import { OutlineCard } from '../../components/Card'
-import useFilterVaultInfos, { sortByApyDaily, sortByApyYearly, sortByTvl } from '../../hooks/useFilterVaultInfos'
-// import useTotalVaultTVL from '../../hooks/useTotalVaultTVL'
-import useCalculateVaultInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
+import { sortByApyDaily, sortByApyYearly, sortByTvl } from '../../hooks/useFilterVaultInfos'
 import CombinedTVL from '../../components/CombinedTVL'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { CustomMouseoverTooltip } from '../../components/Tooltip/custom'
 import OldSelect, { OptionProps } from '../../components/Select'
 import Toggle from '../../components/Toggle'
 import { PROTOCOLS_MAINNET } from '../../constants/protocol'
+import VaultCard from '../../components/vault/VaultCard'
 
 const PLATFORM_OPTIONS = [
   {
@@ -105,28 +100,28 @@ export default function Vault() {
   const [platformOption, setPlatformOption] = React.useState(PLATFORM_OPTIONS[0].value)
   const [sortOption, setSortOption] = React.useState(SORTING_OPTIONS[0].value)
   const [stakedOnlySelected, setStakedOnlySelected] = React.useState(false)
+  const [archivedSelected, setArchivedSelected] = React.useState(false)
 
-  const activeVaultInfos = useFilterVaultInfos(vaultInfos)
-  const inactiveVaultInfos = useFilterVaultInfos(vaultInfos, false)
-  const stakingInfoStats = useCalculateVaultInfoMembers(chainId)
-  const hasArchivedStakingPools =
-    (stakingInfoStats?.inactive && stakingInfoStats?.inactive > 0) || inactiveVaultInfos?.length > 0
+  // TODO - call a vault aggregrate function to get:
+  //   - user total pending rewards
+  //   - pid list for rewards
+  //   - user total staked usd
+  //   - user has any archived vaults
 
   const finalVaultInfos = React.useMemo(() => {
-    // TODO - fix for stakedOnlySelected
-    let filteredVaults = activeVaultInfos
+    let filteredVaults = vaultInfos
     if (platformOption !== PLATFORM_OPTIONS[0].value) {
       filteredVaults = filteredVaults.filter(vault => vault.protocol.name === platformOption)
     }
     if (sortOption === SORTING_OPTIONS[0].value) {
-      return sortByApyYearly(filteredVaults, true, stakedOnlySelected)
+      return sortByApyYearly(filteredVaults, !archivedSelected, stakedOnlySelected)
     } else if (sortOption === SORTING_OPTIONS[1].value) {
-      return sortByApyDaily(filteredVaults, true, stakedOnlySelected)
+      return sortByApyDaily(filteredVaults, !archivedSelected, stakedOnlySelected)
     } else if (sortOption === SORTING_OPTIONS[2].value) {
-      return sortByTvl(filteredVaults, true, stakedOnlySelected)
+      return sortByTvl(filteredVaults, !archivedSelected, stakedOnlySelected)
     }
     return filteredVaults
-  }, [activeVaultInfos, vaultInfos, platformOption, sortOption, stakedOnlySelected])
+  }, [vaultInfos, platformOption, sortOption, stakedOnlySelected, archivedSelected])
 
   const handlePlatformOptionChange = (option: OptionProps): void => {
     setPlatformOption(option.value)
@@ -157,15 +152,6 @@ export default function Vault() {
               </span>
               <CombinedTVL />
             </TYPE.black>
-            {hasArchivedStakingPools && (
-              <Row>
-                <StyledInternalLink to={`/vaults/archived`}>
-                  <CustomButtonWhite padding="8px" borderRadius="8px">
-                    Archived Vaults
-                  </CustomButtonWhite>
-                </StyledInternalLink>
-              </Row>
-            )}
           </Col>
           <Col xs={12} md={0} push={6}>
             <CustomMouseoverTooltip
@@ -203,7 +189,15 @@ export default function Vault() {
               </TYPE.body>
             </CustomMouseoverTooltip>
           </Col>
-          <Col xs={6} md={3}>
+          <Col xs={12} sm={4} md={3}>
+            <Row>
+              <TYPE.white>Archived</TYPE.white>
+            </Row>
+            <Row>
+              <Toggle isActive={archivedSelected} toggle={() => setArchivedSelected(!archivedSelected)} />
+            </Row>
+          </Col>
+          <Col xs={12} sm={4} md={3}>
             <Row>
               <TYPE.white>Staked</TYPE.white>
             </Row>
@@ -211,7 +205,7 @@ export default function Vault() {
               <Toggle isActive={stakedOnlySelected} toggle={() => setStakedOnlySelected(!stakedOnlySelected)} />
             </Row>
           </Col>
-          <Col xs={9} md={4}>
+          <Col xs={12} sm={8} md={4}>
             <Row>
               <TYPE.white marginLeft={'5px'}>Platform</TYPE.white>
             </Row>
@@ -219,7 +213,7 @@ export default function Vault() {
               <OldSelect options={PLATFORM_OPTIONS} onChange={handlePlatformOptionChange} />
             </Row>
           </Col>
-          <Col xs={9} md={4}>
+          <Col xs={12} sm={8} md={4}>
             <Row>
               <TYPE.white marginLeft={'5px'}>Sorting</TYPE.white>
             </Row>
@@ -279,7 +273,7 @@ export default function Vault() {
           ) : (
             finalVaultInfos?.map(vaultInfo => {
               // need to sort by added liquidity here
-              return <PoolCard key={vaultInfo.pid} stakingInfo={vaultInfo} isArchived={false} />
+              return <VaultCard key={vaultInfo.pid} stakingInfo={vaultInfo} />
             })
           )}
         </PoolSection>
