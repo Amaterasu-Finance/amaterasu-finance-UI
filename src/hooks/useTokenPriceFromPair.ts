@@ -36,3 +36,11 @@ export function useAuroraUsdcPrice(): Price | undefined {
     1
   )
 }
+
+export function useRoseNearPrice(): Price | undefined {
+  return useTokenPriceFromPair(
+    [getTokenWithDefault(ChainId.AURORA_MAINNET, 'ROSE'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
+    '0xbe753E99D0dBd12FB39edF9b884eBF3B1B09f26C',
+    0
+  )
+}

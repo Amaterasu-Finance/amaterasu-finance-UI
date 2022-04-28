@@ -1,29 +1,24 @@
 import React from 'react'
-// import { JSBI, BLOCKCHAIN_SETTINGS } from '@amaterasu-fi/sdk'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { VAULT_INFO } from '../../constants/vaults'
 import { useVaultsInfo } from '../../state/vault/hooks'
-import { TYPE, StyledInternalLink } from '../../theme'
-import PoolCard from '../../components/vault/VaultCard'
-import { CustomButtonWhite } from '../../components/Button'
+import { TYPE } from '../../theme'
 import AwaitingRewards from '../../components/vault/AwaitingRewards'
 import { RowBetween } from '../../components/Row'
 import { CardSection, ExtraDataCard } from '../../components/vault/styled'
 import Loader from '../../components/Loader'
 import { useActiveWeb3React } from '../../hooks'
-// import useCalculateStakingInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
 import { OutlineCard } from '../../components/Card'
-import useFilterVaultInfos, { sortByApyDaily, sortByApyYearly, sortByTvl } from '../../hooks/useFilterVaultInfos'
-// import useTotalVaultTVL from '../../hooks/useTotalVaultTVL'
-import useCalculateVaultInfoMembers from '../../hooks/useCalculateVaultInfoMembers'
+import { sortByApyDaily, sortByApyYearly, sortByTvl } from '../../hooks/useFilterVaultInfos'
 import CombinedTVL from '../../components/CombinedTVL'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { CustomMouseoverTooltip } from '../../components/Tooltip/custom'
 import OldSelect, { OptionProps } from '../../components/Select'
 import Toggle from '../../components/Toggle'
 import { PROTOCOLS_MAINNET } from '../../constants/protocol'
+import VaultCard from '../../components/vault/VaultCard'
 
 const PLATFORM_OPTIONS = [
   {
@@ -39,6 +34,11 @@ const PLATFORM_OPTIONS = [
     label: 'Amaterasu',
     value: 'Amaterasu',
     img: PROTOCOLS_MAINNET.Amaterasu.logoFilename
+  },
+  {
+    label: 'Rose',
+    value: 'Rose',
+    img: PROTOCOLS_MAINNET.Rose.logoFilename
   }
 ]
 
@@ -62,7 +62,7 @@ const PageWrapper = styled(AutoColumn)`
   width: 100%;
 `
 
-const TopSection = styled(AutoColumn)`
+const TopSection = styled(Col)`
   max-width: 1000px;
   width: 100%;
 `
@@ -100,28 +100,28 @@ export default function Vault() {
   const [platformOption, setPlatformOption] = React.useState(PLATFORM_OPTIONS[0].value)
   const [sortOption, setSortOption] = React.useState(SORTING_OPTIONS[0].value)
   const [stakedOnlySelected, setStakedOnlySelected] = React.useState(false)
+  const [archivedSelected, setArchivedSelected] = React.useState(false)
 
-  const activeVaultInfos = useFilterVaultInfos(vaultInfos)
-  const inactiveVaultInfos = useFilterVaultInfos(vaultInfos, false)
-  const stakingInfoStats = useCalculateVaultInfoMembers(chainId)
-  const hasArchivedStakingPools =
-    (stakingInfoStats?.inactive && stakingInfoStats?.inactive > 0) || inactiveVaultInfos?.length > 0
+  // TODO - call a vault aggregrate function to get:
+  //   - user total pending rewards
+  //   - pid list for rewards
+  //   - user total staked usd
+  //   - user has any archived vaults
 
   const finalVaultInfos = React.useMemo(() => {
-    // TODO - fix for stakedOnlySelected
-    let filteredVaults = activeVaultInfos
+    let filteredVaults = vaultInfos
     if (platformOption !== PLATFORM_OPTIONS[0].value) {
       filteredVaults = filteredVaults.filter(vault => vault.protocol.name === platformOption)
     }
     if (sortOption === SORTING_OPTIONS[0].value) {
-      return sortByApyYearly(filteredVaults, true, stakedOnlySelected)
+      return sortByApyYearly(filteredVaults, !archivedSelected, stakedOnlySelected)
     } else if (sortOption === SORTING_OPTIONS[1].value) {
-      return sortByApyDaily(filteredVaults, true, stakedOnlySelected)
+      return sortByApyDaily(filteredVaults, !archivedSelected, stakedOnlySelected)
     } else if (sortOption === SORTING_OPTIONS[2].value) {
-      return sortByTvl(filteredVaults, true, stakedOnlySelected)
+      return sortByTvl(filteredVaults, !archivedSelected, stakedOnlySelected)
     }
     return filteredVaults
-  }, [activeVaultInfos, vaultInfos, platformOption, sortOption, stakedOnlySelected])
+  }, [vaultInfos, platformOption, sortOption, stakedOnlySelected, archivedSelected])
 
   const handlePlatformOptionChange = (option: OptionProps): void => {
     setPlatformOption(option.value)
@@ -133,66 +133,35 @@ export default function Vault() {
 
   return (
     <PageWrapper gap="lg" justify="center">
-      <TopSection gap="md">
+      <TopSection>
         <ExtraDataCard>
           <CardSection>
             <AutoColumn gap="md">
               <TYPE.largeHeader>Vaults</TYPE.largeHeader>
             </AutoColumn>
-            <TYPE.largeHeader fontSize={50}>STILL TESTING - USE AT OWN RISK</TYPE.largeHeader>
           </CardSection>
         </ExtraDataCard>
       </TopSection>
 
-      <TopSection gap="lg">
-        <Row style={{ alignItems: 'baseline', justifyContent: 'space-between', margin: '10px' }}>
-          <Col span={6}>
+      <TopSection>
+        <Row align={'middle'} justify={'space-between'} style={{ margin: '15px' }}>
+          <Col xs={12} md={6} style={{ marginBottom: '10px' }}>
             <TYPE.black style={{ marginTop: '0.5rem' }}>
               <span role="img" aria-label="wizard-icon" style={{ marginRight: '0.5rem' }}>
                 🏆
               </span>
               <CombinedTVL />
             </TYPE.black>
-            {hasArchivedStakingPools && (
-              <RowBetween>
-                <StyledInternalLink to={`/vaults/archived`}>
-                  <CustomButtonWhite padding="8px" borderRadius="8px">
-                    Archived Vaults
-                  </CustomButtonWhite>
-                </StyledInternalLink>
-              </RowBetween>
-            )}
           </Col>
-          <Col style={{ marginTop: '10px' }}>
-            <Row>
-              <TYPE.white>Show Staked</TYPE.white>
-            </Row>
-            <Row>
-              <Toggle isActive={stakedOnlySelected} toggle={() => setStakedOnlySelected(!stakedOnlySelected)} />
-            </Row>
-          </Col>
-          <Col style={{ marginTop: '10px' }}>
-            <Row>
-              <TYPE.white marginLeft={'5px'}>Platform</TYPE.white>
-            </Row>
-            <Row>
-              <OldSelect options={PLATFORM_OPTIONS} onChange={handlePlatformOptionChange} />
-            </Row>
-          </Col>
-          <Col style={{ marginTop: '10px' }}>
-            <Row>
-              <TYPE.white marginLeft={'5px'}>Sorting</TYPE.white>
-            </Row>
-            <Row>
-              <OldSelect options={SORTING_OPTIONS} onChange={handlesortOptionChange} />
-            </Row>
-          </Col>
-          <Col style={{ marginTop: '10px' }} offset={2}>
+          <Col xs={12} md={0} push={6}>
             <CustomMouseoverTooltip
               element={
                 <ToolTipContainer>
                   <RowBetween>
                     <TYPE.subHeader style={{ fontWeight: '600' }}>Fees:</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.0% - Zapping Fee</TYPE.subHeader>
                   </RowBetween>
                   <RowBetween>
                     <TYPE.subHeader>0.0% - Deposit Fee</TYPE.subHeader>
@@ -215,7 +184,75 @@ export default function Vault() {
               <TYPE.body style={{ marginRight: '1rem' }}>
                 Fees
                 <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
-                  <QuestionCircleOutlined style={{ fontSize: '1.2rem', alignSelf: 'center' }} />
+                  <QuestionCircleOutlined style={{ fontSize: '1.2rem', alignSelf: 'end' }} />
+                </span>
+              </TYPE.body>
+            </CustomMouseoverTooltip>
+          </Col>
+          <Col xs={12} sm={4} md={3}>
+            <Row>
+              <TYPE.white>Archived</TYPE.white>
+            </Row>
+            <Row>
+              <Toggle isActive={archivedSelected} toggle={() => setArchivedSelected(!archivedSelected)} />
+            </Row>
+          </Col>
+          <Col xs={12} sm={4} md={3}>
+            <Row>
+              <TYPE.white>Staked</TYPE.white>
+            </Row>
+            <Row>
+              <Toggle isActive={stakedOnlySelected} toggle={() => setStakedOnlySelected(!stakedOnlySelected)} />
+            </Row>
+          </Col>
+          <Col xs={12} sm={8} md={4}>
+            <Row>
+              <TYPE.white marginLeft={'5px'}>Platform</TYPE.white>
+            </Row>
+            <Row>
+              <OldSelect options={PLATFORM_OPTIONS} onChange={handlePlatformOptionChange} />
+            </Row>
+          </Col>
+          <Col xs={12} sm={8} md={4}>
+            <Row>
+              <TYPE.white marginLeft={'5px'}>Sorting</TYPE.white>
+            </Row>
+            <Row>
+              <OldSelect options={SORTING_OPTIONS} onChange={handlesortOptionChange} />
+            </Row>
+          </Col>
+          <Col xs={0} md={3} push={1} style={{ marginTop: '10px' }}>
+            <CustomMouseoverTooltip
+              element={
+                <ToolTipContainer>
+                  <RowBetween>
+                    <TYPE.subHeader style={{ fontWeight: '600' }}>Fees:</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.0% - Zapping Fee</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.0% - Deposit Fee</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>0.1% - Withdraw Fee</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader style={{ fontWeight: '600' }}>Fees on Rewards:</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>1.0% - Automation Fee to pay for compounding</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween>
+                    <TYPE.subHeader>3.0% - IZA buy+burn for all non-native vaults</TYPE.subHeader>
+                  </RowBetween>
+                </ToolTipContainer>
+              }
+            >
+              <TYPE.body style={{ marginRight: '1rem' }}>
+                Fees
+                <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
+                  <QuestionCircleOutlined style={{ fontSize: '1.2rem', alignSelf: 'end' }} />
                 </span>
               </TYPE.body>
             </CustomMouseoverTooltip>
@@ -236,7 +273,7 @@ export default function Vault() {
           ) : (
             finalVaultInfos?.map(vaultInfo => {
               // need to sort by added liquidity here
-              return <PoolCard key={vaultInfo.pid} stakingInfo={vaultInfo} isArchived={false} />
+              return <VaultCard key={vaultInfo.pid} stakingInfo={vaultInfo} />
             })
           )}
         </PoolSection>

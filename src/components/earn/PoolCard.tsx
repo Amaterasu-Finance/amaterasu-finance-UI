@@ -254,7 +254,7 @@ export default function PoolCard({ stakingInfo, isArchived }: { stakingInfo: Sta
                   <Row gutter={12} style={{ justifyContent: 'center', marginTop: '20px' }} justify={'space-around'}>
                     <Col className="gutter-row" span={12}>
                       <ButtonPrimary
-                        disabled={stakingInfo?.valueOfTotalStakedAmountInUsd?.lessThan('5000')}
+                        disabled={stakingInfo?.valueOfTotalStakedAmountInUsd?.lessThan('2000')}
                         padding="8px"
                         borderRadius="8px"
                         onClick={() => setShowZapModal(true)}

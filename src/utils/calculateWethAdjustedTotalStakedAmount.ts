@@ -44,7 +44,7 @@ export default function calculateWethAdjustedTotalStakedAmount(
   chainId: ChainId,
   baseToken: Token | undefined,
   tokenData: Record<string, any>,
-  tokens: [Token, Token],
+  tokens: Token[],
   totalLpTokenSupply: TokenAmount,
   totalStakedAmount: TokenAmount,
   lpTokenReserves: Result | undefined

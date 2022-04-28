@@ -2,7 +2,7 @@ import { Token } from '@amaterasu-fi/sdk'
 import { CallState } from '../state/multicall/hooks'
 
 export default function validStakingInfo(
-  tokens: [Token, Token],
+  tokens: Token[],
   poolInfo: CallState,
   pendingReward: CallState,
   userInfo: CallState,
@@ -12,12 +12,12 @@ export default function validStakingInfo(
   rewardPerBlock: CallState,
   totalAllocPoint: CallState
 ): boolean {
-  if (
+  return (
     tokens &&
     poolInfo &&
-    !poolInfo.error &&
-    !poolInfo.loading &&
-    poolInfo?.result?.[0] !== undefined &&
+    // !poolInfo.error &&
+    // !poolInfo.loading &&
+    // poolInfo?.result?.[0] !== undefined &&
     pendingReward &&
     !pendingReward.error &&
     !pendingReward.loading &&
@@ -31,9 +31,9 @@ export default function validStakingInfo(
     !lpTokenTotalSupply.loading &&
     lpTokenTotalSupply?.result?.[0] !== undefined &&
     lpTokenReserve &&
-    !lpTokenReserve.error &&
-    !lpTokenReserve.loading &&
-    lpTokenReserve?.result?.[0] !== undefined &&
+    // !lpTokenReserve.error &&
+    // !lpTokenReserve.loading &&
+    // lpTokenReserve?.result?.[0] !== undefined &&
     lpTokenBalance &&
     !lpTokenBalance.error &&
     !lpTokenBalance.loading &&
@@ -46,9 +46,5 @@ export default function validStakingInfo(
     !totalAllocPoint.error &&
     !totalAllocPoint.loading &&
     totalAllocPoint?.result?.[0] !== undefined
-  ) {
-    return true
-  }
-
-  return false
+  )
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { RowBetween } from '../Row'
 import styled from 'styled-components'
 import { TYPE } from '../../theme'
+import { Text } from 'rebass'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { Avatar, Badge, Col, Statistic, Card, Row } from 'antd'
 import { ButtonPrimary } from '../Button'
@@ -60,16 +61,37 @@ const StyledLogo = styled(Logo)<{ size: string }>`
   background-color: ${({ theme }) => theme.white};
 `
 
-const StyledAutoColumn = styled(AutoColumn)`
+const StyledAutoRow = styled(AutoRow)`
+  margin: 0px;
+  margin-left: 20px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-left: 5px;
+  `};
+`
+
+const StyledAutoColumn = styled(Col)`
   padding: 0;
   margin: 0;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-right: 4px;
+  `};
+`
+
+const StyledAutoColumnEnd = styled(Col)`
+  padding: 0;
+  margin: 0;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    margin-right: 22px;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-right: 10px;
+  `};
 `
 
 const HidingCol = styled(Col)`
-  padding: 0;
-  margin: 0;
-  display: grid;
+  span: 2;
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    span: 0;
     display: none;
   `};
 `
@@ -83,7 +105,7 @@ const HidingStatistic = styled(Statistic)`
 `
 
 const DataRow = styled(RowBetween)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
    flex-direction: column;
    margin: 1px;
  `};
@@ -106,6 +128,15 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
   &:hover {
     box-shadow: #f3841e 0 1px 6px;
   }
+`
+
+const StyledWhiteText = styled(Text)`
+  color: white;
+  padding: 0px;
+  padding-left: 20px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding-left: 2px;
+  `};
 `
 
 const StyledStatCard = styled(GreyCard)`
@@ -133,7 +164,7 @@ const StyledVaultActionCard = ({ children, badgeValue }: any) => {
     </StyledStatCard>
   )
 }
-export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: VaultsInfo; isArchived: boolean }) {
+export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) {
   const { account } = useActiveWeb3React()
   const xToken = usePitToken()
   const govToken = useGovernanceToken()
@@ -170,7 +201,9 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
       : `$${pendingxIzaUsd.toFixed(2)}`)
 
   const userRecentProfit =
-    stakingInfo.stakedAmount && stakingInfo.userStakedAtLastAction
+    stakingInfo.stakedAmount &&
+    stakingInfo.userStakedAtLastAction &&
+    stakingInfo.stakedAmount.greaterThan(stakingInfo.userStakedAtLastAction)
       ? stakingInfo.stakedAmount.subtract(stakingInfo.userStakedAtLastAction)
       : new TokenAmount(stakingInfo.lpToken, '0')
   const userRecentProfitUsd = stakingInfo.pricePerLpToken?.multiply(userRecentProfit)
@@ -187,19 +220,50 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
   const token1 = stakingInfo.tokens[1]
   const currency0 = unwrappedToken(token0)
   const currency1 = unwrappedToken(token1)
+  const currency2 = stakingInfo.tokens[2] && unwrappedToken(stakingInfo.tokens[2])
+  const currency3 = stakingInfo.tokens[3] && unwrappedToken(stakingInfo.tokens[3])
+  const currencies = [currency0, currency1, currency2, currency3].filter(c => c) // filter out undefined
+  let logoSize = 37
+  let vaultNameSize = 22
+  if (stakingInfo.lp.name.length > 10) {
+    vaultNameSize = 18
+  }
+  if (stakingInfo.lp.name.length > 14) {
+    vaultNameSize = 14
+  }
+  if (stakingInfo.tokens.length > 2) {
+    logoSize = 27
+  }
+
   // get the color of the token
   // const backgroundColor = useColor(stakingInfo?.baseToken)
 
   return (
     <Wrapper showBackground={false} bodyStyle={{ padding: '0.7rem' }}>
-      <HeaderClickable onClick={() => setIsOpen(!isOpen)} style={{ padding: '0px', margin: '0px' }}>
-        <AutoRow justify={'space-between'} style={{ alignSelf: 'center', margin: '0px', marginLeft: '20px' }}>
-          <StyledAutoColumn className="gutter-row" style={{ alignItems: 'center', minWidth: '250px' }}>
-            <AutoRow>
-              <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={37} />
-              <TYPE.white fontWeight={600} fontSize={24} style={{ marginLeft: '10px' }}>
-                {currency0.symbol}-{currency1.symbol}
-              </TYPE.white>
+      <HeaderClickable onClick={() => setIsOpen(!isOpen)} style={{ padding: '0', margin: '0' }}>
+        <StyledAutoRow justify={'space-between'} style={{ alignSelf: 'center' }}>
+          <StyledAutoColumn style={{ alignItems: 'center' }} xs={17} sm={11} md={10} lg={8}>
+            <AutoRow style={{ padding: '0px', margin: '0px' }}>
+              <StyledAutoColumn>
+                <AutoRow style={{ padding: '0px', margin: '0px' }}>
+                  <DoubleCurrencyLogo
+                    currency0={currency0}
+                    currency1={currency1}
+                    currency2={!currency3 ? currency2 : undefined}
+                    size={logoSize}
+                  />
+                </AutoRow>
+                {currency3 && (
+                  <AutoRow style={{ padding: '0px', margin: '0px' }}>
+                    <DoubleCurrencyLogo currency0={currency2} currency1={currency3} size={logoSize} />
+                  </AutoRow>
+                )}
+              </StyledAutoColumn>
+              <StyledAutoColumn>
+                <StyledWhiteText fontWeight={600} fontSize={vaultNameSize}>
+                  {stakingInfo.lp.name}
+                </StyledWhiteText>
+              </StyledAutoColumn>
             </AutoRow>
             <AutoRow style={{ margin: '4px 0 0 0' }}>
               <TYPE.gray fontWeight={600} fontSize={14}>
@@ -217,7 +281,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               </TYPE.white>
             </AutoRow>
           </StyledAutoColumn>
-          <HidingCol>
+          <HidingCol xs={0} sm={2}>
             <Statistic
               title="TVL"
               value={
@@ -229,7 +293,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               style={{ margin: '0' }}
             />
           </HidingCol>
-          <HidingCol>
+          <HidingCol xs={0} md={2}>
             <Statistic
               title="Daily"
               value={
@@ -243,7 +307,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
           </HidingCol>
-          <StyledAutoColumn className="gutter-row" style={{ marginTop: '0px' }}>
+          <StyledAutoColumnEnd className="gutter-row" style={{ marginTop: '0px' }} xs={4} md={3} lg={2}>
             <Statistic
               title={
                 <CustomMouseoverTooltip
@@ -303,12 +367,12 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                     </ToolTipContainer>
                   }
                 >
-                  <TYPE.gray>
-                    Yearly
+                  <>
+                    APY
                     <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
                       <QuestionCircleOutlined style={{ fontSize: '0.85rem', alignSelf: 'center' }} />
                     </span>
-                  </TYPE.gray>
+                  </>
                 </CustomMouseoverTooltip>
               }
               value={
@@ -321,8 +385,8 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               }
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
-          </StyledAutoColumn>
-          <HidingCol className="gutter-row" span={4}>
+          </StyledAutoColumnEnd>
+          <HidingCol className="gutter-row" xs={0} lg={3}>
             <HidingStatistic
               title={
                 <CustomMouseoverTooltip
@@ -343,13 +407,13 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                     </ToolTipContainer>
                   }
                 >
-                  <HidingCol style={{ marginTop: '0px' }}>
-                    <TYPE.gray>
+                  <HidingCol style={{ marginTop: '0px' }} xs={0} lg={24}>
+                    <>
                       xIZA Rate
                       <span role="img" aria-label="wizard-icon" style={{ marginLeft: '0.2rem' }}>
                         <QuestionCircleOutlined style={{ fontSize: '0.85rem', alignSelf: 'center' }} />
                       </span>
-                    </TYPE.gray>
+                    </>
                   </HidingCol>
                 </CustomMouseoverTooltip>
               }
@@ -364,7 +428,7 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
               valueStyle={{ fontSize: '17px', color: 'white' }}
             />
           </HidingCol>
-        </AutoRow>
+        </StyledAutoRow>
       </HeaderClickable>
 
       {isOpen && (
@@ -372,11 +436,17 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
           <Break style={{ margin: '10px' }} />
           {stakingInfo && (
             <>
-              <ZapModal isOpen={showZapModal} onDismiss={() => setShowZapModal(false)} stakingInfo={stakingInfo} />
+              <ZapModal
+                isOpen={showZapModal}
+                onDismiss={() => setShowZapModal(false)}
+                stakingInfo={stakingInfo}
+                currencies={currencies}
+              />
               <StakingModal
                 isOpen={showDepositModal}
                 onDismiss={() => setShowDepositModal(false)}
                 stakingInfo={stakingInfo}
+                currencies={currencies}
                 userLiquidityUnstaked={userLiquidityUnstaked}
               />
               <ModifiedUnstakingModal
@@ -417,12 +487,22 @@ export default function VaultCard({ stakingInfo, isArchived }: { stakingInfo: Va
                   </AutoRow>
                   <Row gutter={12} style={{ justifyContent: 'center', marginTop: '20px' }} justify={'space-around'}>
                     <Col className="gutter-row" span={12}>
-                      <ButtonPrimary padding="8px" borderRadius="8px" onClick={() => setShowZapModal(true)}>
+                      <ButtonPrimary
+                        disabled={!stakingInfo.active}
+                        padding="8px"
+                        borderRadius="8px"
+                        onClick={() => setShowZapModal(true)}
+                      >
                         Zap
                       </ButtonPrimary>
                     </Col>
                     <Col className="gutter-row" span={12}>
-                      <ButtonPrimary padding="8px" borderRadius="8px" onClick={() => setShowDepositModal(true)}>
+                      <ButtonPrimary
+                        disabled={!stakingInfo.active}
+                        padding="8px"
+                        borderRadius="8px"
+                        onClick={() => setShowDepositModal(true)}
+                      >
                         Deposit
                       </ButtonPrimary>
                     </Col>
