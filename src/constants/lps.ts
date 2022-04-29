@@ -159,5 +159,37 @@ export const LPS_MAINNET: {
     token0: getTokenWithDefault(ChainId.AURORA_MAINNET, 'AURORA'),
     token1: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WETH'),
     baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WETH')
+  },
+  TRISOLARIS_BSTN_NEAR: {
+    name: 'BSTN-NEAR',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+    address: '0xBBf3D4281F10E537d5b13CA80bE22362310b2bf9',
+    token0: getTokenWithDefault(ChainId.AURORA_MAINNET, 'BSTN'),
+    token1: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')
+  },
+  TRISOLARIS_NEAR_ROSE: {
+    name: 'NEAR-ROSE',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+    address: '0xbe753E99D0dBd12FB39edF9b884eBF3B1B09f26C',
+    token0: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
+    token1: getTokenWithDefault(ChainId.AURORA_MAINNET, 'ROSE'),
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')
+  },
+  TRISOLARIS_RUSD_NEAR: {
+    name: 'RUSD-NEAR',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+    address: '0xbC0e71aE3Ef51ae62103E003A9Be2ffDe8421700',
+    token0: getTokenWithDefault(ChainId.AURORA_MAINNET, 'RUSD'),
+    token1: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')
+  },
+  TRISOLARIS_SOLACE_NEAR: {
+    name: 'SOLACE-NEAR',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+    address: '0xdDAdf88b007B95fEb42DDbd110034C9a8e9746F2',
+    token0: getTokenWithDefault(ChainId.AURORA_MAINNET, 'SOLACE'),
+    token1: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')
   }
 }

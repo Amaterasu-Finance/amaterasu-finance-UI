@@ -242,6 +242,54 @@ export const VAULT_INFO: {
       bonusRewarderAddress: '0x94669d7a170bfe62FAc297061663e0B48C63B9B5',
       bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'AURORA'),
       bonusRewarderTokenPerBlock: '1556069959000000'
+    },
+    {
+      pid: 29,
+      farmPid: 23,
+      active: true,
+      stratAddress: '0xC3bAf1782Eec36E9ca40f710fD1B9Dc39464d038',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'BSTN/NEAR'),
+      lp: LPS_MAINNET.TRISOLARIS_BSTN_NEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'BSTN'),
+      bonusRewarderTokenPerBlock: '7273065476000000000'
+    },
+    {
+      pid: 30,
+      farmPid: 20,
+      active: true,
+      stratAddress: '0x7F52A95262013090dFd4571Fc72c1174063d6b45',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'NEAR/ROSE'),
+      lp: LPS_MAINNET.TRISOLARIS_NEAR_ROSE,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'ROSE'),
+      bonusRewarderTokenPerBlock: '48225308640000000'
+    },
+    {
+      pid: 31,
+      farmPid: 21,
+      active: true,
+      stratAddress: '0xdfbDC73243918F4E9Aa68612845e67ABeFBF7c5d',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'RUSD/NEAR'),
+      lp: LPS_MAINNET.TRISOLARIS_RUSD_NEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'ROSE'),
+      bonusRewarderTokenPerBlock: '48225308640000000'
+    },
+    {
+      pid: 32,
+      farmPid: 10,
+      active: true,
+      stratAddress: '0x28c5d7aA1532361E1D207f612e6126F9cB6E5CF5',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'SOLACE/NEAR'),
+      lp: LPS_MAINNET.TRISOLARIS_SOLACE_NEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'SOLACE'),
+      bonusRewarderTokenPerBlock: '771604938300000000'
     }
   ]
 }
