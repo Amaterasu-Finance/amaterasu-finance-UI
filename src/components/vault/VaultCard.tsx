@@ -297,7 +297,9 @@ export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) 
             <Statistic
               title="Daily"
               value={
-                stakingInfo.apyDaily && stakingInfo.apyDaily > 0
+                !stakingInfo.active
+                  ? 'Paused'
+                  : stakingInfo.apyDaily && stakingInfo.apyDaily > 0
                   ? `${(stakingInfo.apyDaily * 100).toLocaleString('en', {
                       maximumSignificantDigits: 4,
                       minimumSignificantDigits: 2
@@ -376,7 +378,9 @@ export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) 
                 </CustomMouseoverTooltip>
               }
               value={
-                stakingInfo.apy && stakingInfo.apy > 0
+                !stakingInfo.active
+                  ? 'Paused'
+                  : stakingInfo.apy && stakingInfo.apy > 0
                   ? `${(stakingInfo.apy * 100).toLocaleString('en', {
                       maximumSignificantDigits: 4,
                       minimumSignificantDigits: 2
