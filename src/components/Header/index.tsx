@@ -33,7 +33,7 @@ import {
   SwapOutlined,
   WalletOutlined,
   FireOutlined,
-  // BankOutlined,
+  BankOutlined,
   LoginOutlined
 } from '@ant-design/icons'
 import { isMobile } from 'react-device-detect'
@@ -46,7 +46,7 @@ const HeaderFrame = styled.div`
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
   width: 100%;
   top: 0;
   position: relative;
@@ -125,17 +125,17 @@ const HeaderRow = styled(RowFixed)`
 
 const HeaderLinks = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToLarge`
-    padding: 1rem 0 0.5rem 1rem;
+    padding: 1rem 0 0.2rem 0.5rem;
     justify-content: flex-end;
     display: none;
 `};
-  padding: 0.68rem;
+  padding: 0.4rem;
 `
 
 const LogoImage = styled('img')`
   width: 306px;
   height: 72px;
-  padding: 0.25rem;
+  padding: 0.2rem;
   cursor: pointer;
   ${({ theme }) => theme.mediaWidth.upToLarge`
     width: 306px;
@@ -319,11 +319,11 @@ const CondensedMenu = (
         Farm
       </StyledNavLink>
     </Menu.Item>
-    {/*<Menu.Item icon={<BankOutlined style={{ fontSize: '1.25em' }} />}>*/}
-    {/*  <StyledNavLink id={`vault-nav-link`} to={'/vault'} style={{ marginLeft: '0px' }}>*/}
-    {/*    Vaults*/}
-    {/*  </StyledNavLink>*/}
-    {/*</Menu.Item>*/}
+    <Menu.Item icon={<BankOutlined style={{ fontSize: '1.25em' }} />}>
+      <StyledNavLink id={`vault-nav-link`} to={'/vault'} style={{ marginLeft: '0px' }}>
+        Vaults
+      </StyledNavLink>
+    </Menu.Item>
     <Menu.Item icon={<LoginOutlined style={{ fontSize: '1.25em' }} />}>
       <StyledNavLink id={`bridge-nav-link`} to={'/bridge'} style={{ marginLeft: '0px' }}>
         Bridge
@@ -392,10 +392,10 @@ export default function Header() {
             <FireOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {t('Farm')}
           </StyledNavLink>
-          {/*<StyledNavLink id={`vault-nav-link`} to={'/vault'}>*/}
-          {/*  <BankOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />*/}
-          {/*  {t('Vaults')}*/}
-          {/*</StyledNavLink>*/}
+          <StyledNavLink id={`vault-nav-link`} to={'/vault'}>
+            <BankOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
+            {t('Vaults')}
+          </StyledNavLink>
           <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
             <LoginOutlined style={{ fontSize: '1.25em', marginRight: '8px', alignSelf: 'center', color: '#f3841e' }} />
             {t('Bridge')}

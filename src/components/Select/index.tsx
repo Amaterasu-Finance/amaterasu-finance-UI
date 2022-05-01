@@ -19,18 +19,18 @@ const DropDownHeader = styled.div`
 `
 
 const DropDownListContainer = styled.div`
-  min-width: 136px;
+  min-width: 122px;
   height: 0;
   position: absolute;
   overflow: hidden;
   background: ${({ theme }) => theme.bg2};
-  z-index: 10;
+  z-index: 11;
   transition: transform 0.15s, opacity 0.15s;
   transform: scaleY(0);
   transform-origin: top;
   opacity: 0;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 168px;
+    min-width: 144px;
   `};
 `
 
@@ -41,9 +41,9 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   background: ${({ theme }) => theme.primary2};
   border-radius: 16px;
   height: 40px;
-  min-width: 111px;
+  min-width: 122px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 111px;
+    min-width: 144px;
   `};
 
   ${props => props.isOpen && css`
@@ -83,12 +83,12 @@ const DropDownList = styled.ul`
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 11;
 `
 
 const ListItem = styled.li`
   list-style: none;
-  padding: 8px 16px;
+  padding: 7px 16px;
   &:hover {
     background: ${({ theme }) => theme.bg1};
   }
