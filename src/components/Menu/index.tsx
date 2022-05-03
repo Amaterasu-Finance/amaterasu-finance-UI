@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Send, Code, MessageSquare, Book, Twitter } from 'react-feather'
+import { Send, Code, MessageSquare, Book, Twitter, TrendingUp } from 'react-feather'
 import styled from 'styled-components'
 import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
 import { useActiveWeb3React } from '../../hooks'
@@ -70,7 +70,7 @@ const MenuFlyout = styled.span`
   right: 0rem;
   z-index: 100;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     top: -17.25rem;
   `};
 `
@@ -121,6 +121,10 @@ export default function MiscMenu() {
           <MenuItem id="link" href="https://t.me/amaterasufinance">
             <Send size={14} />
             Telegram
+          </MenuItem>
+          <MenuItem id="link" href="https://dexscreener.com/aurora/0x0017Be3E7e36ABF49FE67a78D08bf465bB755120">
+            <TrendingUp size={14} />
+            IZA Chart
           </MenuItem>
           <MenuItem id="link" href="https://twitter.com/amaterasufi?s=21">
             <Twitter size={14} />
