@@ -278,19 +278,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           allocIndex = 1
       }
 
-      if (
-        validStakingInfo(
-          tokens,
-          poolInfo,
-          pendingReward,
-          userInfo,
-          lpTokenTotalSupply,
-          lpTokenReserve,
-          lpTokenBalance,
-          rewardPerBlock,
-          totalAllocPoint
-        )
-      ) {
+      if (validStakingInfo(tokens, poolInfo, lpTokenTotalSupply, lpTokenReserve, lpTokenBalance)) {
         let allocPoint = JSBI.BigInt('1')
         let totalAllocPointResult = JSBI.BigInt('1')
         let poolShare = new Fraction('1')
@@ -303,7 +291,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           )
         } else {
           const poolInfoResult = poolInfo.result
-          allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[allocIndex])
+          allocPoint = JSBI.BigInt((poolInfoResult && poolInfoResult[allocIndex]) ?? '0')
           totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
           const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)
 
