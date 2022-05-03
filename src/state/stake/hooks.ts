@@ -132,22 +132,10 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
       const lpTokenReserve = lpTokenReserves[index]
       const lpTokenBalance = lpTokenBalances[index]
 
-      if (
-        validStakingInfo(
-          tokens,
-          poolInfo,
-          pendingReward,
-          userInfo,
-          lpTokenTotalSupply,
-          lpTokenReserve,
-          lpTokenBalance,
-          rewardPerBlock,
-          totalAllocPoint
-        )
-      ) {
+      if (validStakingInfo(tokens, poolInfo, lpTokenTotalSupply, lpTokenReserve, lpTokenBalance)) {
         const poolInfoResult = poolInfo.result
         const totalAllocPointResult = JSBI.BigInt(totalAllocPoint.result?.[0] ?? 1)
-        const allocPoint = JSBI.BigInt(poolInfoResult && poolInfoResult[1])
+        const allocPoint = JSBI.BigInt((poolInfoResult && poolInfoResult[1]) ?? '0')
         const depositFee = poolInfoResult && poolInfoResult[4] / 100
         const active = poolInfoResult && JSBI.GE(JSBI.BigInt(allocPoint), 0) ? true : false
         const baseRewardsPerBlock = JSBI.BigInt(rewardPerBlock.result?.[0] ?? 0)

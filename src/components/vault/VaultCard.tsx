@@ -113,7 +113,7 @@ const DataRow = styled(RowBetween)`
 
 const Wrapper = styled(Card)<{ showBackground: boolean }>`
   border-radius: 8px;
-  width: 100%;
+  width: 99%;
   overflow: hidden;
   align-items: center;
   padding: 0;
@@ -123,10 +123,10 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
   background: ${({ theme }) => theme.bg1};
   ${({ showBackground }) =>
     showBackground &&
-    `  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);`}
+    `  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.1);`}
   &:hover {
-    box-shadow: #f3841e 0 1px 6px;
+    box-shadow: 0 0 0 3px #916945;
   }
 `
 
@@ -140,13 +140,13 @@ const StyledWhiteText = styled(Text)`
 `
 
 const StyledStatCard = styled(GreyCard)`
-  padding: 5px;
-  min-height: 160px;
+  padding: 0 3px 0 3px;
+  min-height: 135px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 110px;
+    min-height: 90px;
   `};
 `
 
@@ -239,7 +239,7 @@ export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) 
   // const backgroundColor = useColor(stakingInfo?.baseToken)
 
   return (
-    <Wrapper showBackground={false} bodyStyle={{ padding: '0.7rem' }}>
+    <Wrapper showBackground={!isStaking} bodyStyle={{ padding: '0.7rem' }}>
       <HeaderClickable onClick={() => setIsOpen(!isOpen)} style={{ padding: '0', margin: '0' }}>
         <StyledAutoRow justify={'space-between'} style={{ alignSelf: 'center' }}>
           <StyledAutoColumn style={{ alignItems: 'center' }} xs={17} sm={11} md={10} lg={8}>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
-import { Col, Row, Statistic } from 'antd'
+import { Col, Row, List, Statistic, Divider } from 'antd'
 import { VAULT_INFO } from '../../constants/vaults'
 import { useVaultsInfo } from '../../state/vault/hooks'
 import { TYPE } from '../../theme'
@@ -24,7 +24,10 @@ import { calculateGasMargin } from '../../utils'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useVaultChefContract } from '../../hooks/useContract'
 import { useTransactionAdder } from '../../state/transactions/hooks'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
+const PAGE_SIZE = 7
+const NEW_ROWS = 4
 const SHOW_USER_INFO_CARD = false
 const PLATFORM_OPTIONS = [
   {
@@ -99,16 +102,23 @@ const PoolSection = styled.div`
   justify-self: center;
 `
 
+const VaultCardWrapper = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 6px;
+`
+
 export default function Vault() {
   const { chainId, account } = useActiveWeb3React()
 
   const vaultChef = useVaultChefContract()
   const vaultInfos = useVaultsInfo()
   const vaultUserInfo = useUserVaultStats(vaultInfos)
-  console.log('vaultUserInfo', vaultUserInfo)
-  console.log('totalStakedUsd', vaultUserInfo.totalStakedUsd?.toSignificant(5))
-  console.log('totalEarnedAmountxIza', vaultUserInfo.totalEarnedAmountxIza?.toSignificant(5))
-  console.log('pids', vaultUserInfo.pids)
+  // console.log('vaultUserInfo', vaultUserInfo)
+  // console.log('totalStakedUsd', vaultUserInfo.totalStakedUsd?.toSignificant(5))
+  // console.log('totalEarnedAmountxIza', vaultUserInfo.totalEarnedAmountxIza?.toSignificant(5))
+  // console.log('pids', vaultUserInfo.pids)
   /**
    * only show staking cards with balance
    * @todo only account for this if rewards are inactive
@@ -119,15 +129,24 @@ export default function Vault() {
   const [stakedOnlySelected, setStakedOnlySelected] = React.useState(false)
   const [archivedSelected, setArchivedSelected] = React.useState(false)
 
+  // Infinite Scroll
+  const [initLoading, setInitLoading] = React.useState(true)
+  const [scrollLoading, setScrollLoading] = React.useState(false)
+  const [numberOfItemsVisible, setNumberOfItemsVisible] = React.useState(PAGE_SIZE)
+  const onLoadMore = (): void => {
+    if (scrollLoading) {
+      return
+    }
+    setScrollLoading(true)
+    setNumberOfItemsVisible(numberOfItemsVisible + NEW_ROWS)
+    setScrollLoading(false)
+  }
+
   // For the Claim All functionality
   const [attempting, setAttempting] = useState(false)
   const [failed, setFailed] = useState<boolean>(false)
   const addTransaction = useTransactionAdder()
-  // TODO - call a vault aggregrate function to get:
-  //   - user total pending rewards
-  //   - pid list for rewards
-  //   - user total staked usd
-  //   - user has any archived vaults
+
   async function onClaimRewards() {
     const summary = `Claim accumulated xIZA rewards`
     if (vaultChef && vaultUserInfo?.pids?.length > 0) {
@@ -161,18 +180,22 @@ export default function Vault() {
       filteredVaults = filteredVaults.filter(vault => vault.protocol.name === platformOption)
     }
     if (sortOption === SORTING_OPTIONS[0].value) {
-      return sortByApyYearly(filteredVaults, !archivedSelected, stakedOnlySelected)
+      filteredVaults = sortByApyYearly(filteredVaults, !archivedSelected, stakedOnlySelected)
     } else if (sortOption === SORTING_OPTIONS[1].value) {
-      return sortByApyDaily(filteredVaults, !archivedSelected, stakedOnlySelected)
+      filteredVaults = sortByApyDaily(filteredVaults, !archivedSelected, stakedOnlySelected)
     } else if (sortOption === SORTING_OPTIONS[2].value) {
-      return sortByTvl(filteredVaults, !archivedSelected, stakedOnlySelected)
+      filteredVaults = sortByTvl(filteredVaults, !archivedSelected, stakedOnlySelected)
     }
-    return filteredVaults
-  }, [vaultInfos, platformOption, sortOption, stakedOnlySelected, archivedSelected])
+    if (initLoading && filteredVaults[0].valueOfTotalStakedAmountInUsd) {
+      setInitLoading(false)
+    }
+    return filteredVaults.slice(0, numberOfItemsVisible)
+  }, [vaultInfos, platformOption, sortOption, stakedOnlySelected, archivedSelected, numberOfItemsVisible, initLoading])
 
   const handlePlatformOptionChange = (option: OptionProps): void => {
     setPlatformOption(option.value)
   }
+  console.log('finalVaultInfos', finalVaultInfos)
 
   const handlesortOptionChange = (option: OptionProps): void => {
     setSortOption(option.value)
@@ -361,10 +384,36 @@ export default function Vault() {
           ) : !account ? (
             <OutlineCard>Please connect your wallet to see available vaults</OutlineCard>
           ) : (
-            finalVaultInfos?.map(vaultInfo => {
-              // need to sort by added liquidity here
-              return <VaultCard key={vaultInfo.pid} stakingInfo={vaultInfo} />
-            })
+            <InfiniteScroll
+              dataLength={numberOfItemsVisible}
+              next={onLoadMore}
+              hasMore={numberOfItemsVisible < vaultInfos.length}
+              loader={
+                <PoolSection style={{ marginTop: '10px' }}>
+                  <Loader style={{ margin: 'auto' }} />
+                </PoolSection>
+              }
+              endMessage={<Divider plain>End</Divider>}
+              scrollableTarget="scrollableDiv"
+              style={{ overflowY: 'hidden' }}
+            >
+              <List
+                bordered={false}
+                className="vault-list"
+                itemLayout="horizontal"
+                dataSource={finalVaultInfos}
+                renderItem={vaultInfo => (
+                  <VaultCardWrapper>
+                    <VaultCard key={vaultInfo.pid} stakingInfo={vaultInfo} />
+                  </VaultCardWrapper>
+                )}
+                style={{ rowGap: '8px' }}
+              />
+            </InfiniteScroll>
+            // finalVaultInfos?.map(vaultInfo => {
+            //   // need to sort by added liquidity here
+            //   return <VaultCard key={vaultInfo.pid} stakingInfo={vaultInfo} />
+            // })
           )}
         </PoolSection>
       </TopSection>
