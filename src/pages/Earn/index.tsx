@@ -198,7 +198,8 @@ export default function Earn() {
             <TopSection>
               <OutlineCard>
                 <Row align={'middle'} justify={'center'} style={{ margin: '0' }}>
-                  <CenteredCol xs={8}>
+                  <CenteredCol xs={0} md={2} />
+                  <CenteredCol xs={8} md={4}>
                     <Statistic
                       title="User Total Staked"
                       value={`~$${stakeUserInfo.totalStakedUsd?.toSignificant(6, { groupSeparator: ',' })}`}
@@ -206,7 +207,8 @@ export default function Earn() {
                       style={{ margin: '0' }}
                     />
                   </CenteredCol>
-                  <CenteredCol xs={8}>
+                  <CenteredCol xs={0} md={4} />
+                  <CenteredCol xs={8} md={4}>
                     <Statistic
                       title="Pending xIZA"
                       value={stakeUserInfo.totalEarnedAmountIza?.toSignificant(5)}
@@ -214,7 +216,8 @@ export default function Earn() {
                       style={{ margin: '0' }}
                     />
                   </CenteredCol>
-                  <CenteredCol xs={24} sm={6} offset={2} pull={1}>
+                  <CenteredCol xs={0} md={4} />
+                  <CenteredCol xs={24} sm={4}>
                     {/*{vaultUserInfo.totalEarnedAmountxIza?.greaterThan('0') && (*/}
                     {/*  <TYPE.black style={{ margin: '0', fontSize: '12px' }}>*/}
                     {/*    ({vaultUserInfo.pids.length} Txns)*/}
@@ -229,6 +232,7 @@ export default function Earn() {
                       <TYPE.black style={{ margin: '0' }}>Claim + AutoStake All IZA</TYPE.black>
                     </ButtonPrimary>
                   </CenteredCol>
+                  <CenteredCol xs={0} md={2} />
                 </Row>
               </OutlineCard>
             </TopSection>

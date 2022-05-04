@@ -337,7 +337,8 @@ export default function Vault() {
             <TopSection>
               <OutlineCard>
                 <Row align={'middle'} justify={'center'} style={{ margin: '0' }}>
-                  <CenteredCol xs={8}>
+                  <CenteredCol xs={0} md={2} />
+                  <CenteredCol xs={8} md={4}>
                     <Statistic
                       title="User Total Staked"
                       value={`~$${vaultUserInfo.totalStakedUsd?.toSignificant(6, { groupSeparator: ',' })}`}
@@ -345,7 +346,8 @@ export default function Vault() {
                       style={{ margin: '0' }}
                     />
                   </CenteredCol>
-                  <CenteredCol xs={8}>
+                  <CenteredCol xs={0} md={4} />
+                  <CenteredCol xs={8} md={4}>
                     <Statistic
                       title="Pending xIZA"
                       value={vaultUserInfo.totalEarnedAmountxIza?.toSignificant(5)}
@@ -353,7 +355,7 @@ export default function Vault() {
                       style={{ margin: '0' }}
                     />
                   </CenteredCol>
-                  <CenteredCol xs={2} />
+                  <CenteredCol xs={0} md={4} />
                   <CenteredCol xs={24} sm={4}>
                     {/*{vaultUserInfo.totalEarnedAmountxIza?.greaterThan('0') && (*/}
                     {/*  <TYPE.black style={{ margin: '0', fontSize: '12px' }}>*/}
@@ -369,7 +371,7 @@ export default function Vault() {
                       <TYPE.black style={{ margin: '0' }}>Claim All xIZA</TYPE.black>
                     </ButtonPrimary>
                   </CenteredCol>
-                  <CenteredCol xs={2} />
+                  <CenteredCol xs={0} md={2} />
                 </Row>
               </OutlineCard>
             </TopSection>

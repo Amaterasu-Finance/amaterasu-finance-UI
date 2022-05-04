@@ -18,7 +18,7 @@ import { toV2LiquidityToken } from '../../state/user/hooks'
 import { PIT_SETTINGS } from '../../constants'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
 import useBlockchain from '../../hooks/useBlockchain'
-import { PIT_POOLS } from '../../constants/pit'
+import { PIT_POOLS_EXTRA } from '../../constants/pit'
 import useEligiblePitPools from '../../hooks/useEligiblePitPools'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -30,6 +30,7 @@ const ContentWrapper = styled(AutoColumn)`
 interface ClaimModalProps {
   isOpen: boolean
   onDismiss: () => void
+  idx: number
 }
 
 const ButtonErrorPit = styled(ButtonError)`
@@ -41,7 +42,7 @@ const ButtonErrorPit = styled(ButtonError)`
   border: 1px solid #ff6600;
 `
 
-export default function ClaimModal({ isOpen, onDismiss }: ClaimModalProps) {
+export default function ClaimModal({ isOpen, onDismiss, idx = 0 }: ClaimModalProps) {
   const { account, chainId } = useActiveWeb3React()
 
   const blockchain = useBlockchain()
@@ -62,7 +63,7 @@ export default function ClaimModal({ isOpen, onDismiss }: ClaimModalProps) {
   }
 
   const pitBreeder = usePitBreederContract()
-  const stakingPools = useMemo(() => (chainId ? PIT_POOLS[chainId] : []), [chainId])
+  const stakingPools = PIT_POOLS_EXTRA[idx]
 
   const liquidityTokenAddresses = useMemo(
     () =>

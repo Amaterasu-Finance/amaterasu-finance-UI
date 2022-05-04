@@ -32,3 +32,26 @@ export const PIT_POOLS: {
     { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/AURORA') }
   ]
 }
+
+export const PIT_POOLS_EXTRA: {
+  [chainId in number]?: {
+    pid?: number
+    tokens: [Token, Token]
+  }[]
+} = {
+  [0]: [
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/USDC') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/WETH') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/NEAR') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ONE') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/SHITZU') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/AURORA') }
+  ],
+  [1]: [
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'AURORA/USDC') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'ATUST/NEAR') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/ATUST') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/stNEAR') },
+    { tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'SHITZU/NEAR') }
+  ]
+}
