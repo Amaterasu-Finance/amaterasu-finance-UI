@@ -154,6 +154,7 @@ export default function Vault() {
       const estimatedGas = await vaultChef.estimateGas.harvest(vaultUserInfo.pids[0])
 
       vaultUserInfo.pids.map((pid: number) => {
+        setAttempting(true)
         vaultChef
           .harvest(pid, {
             gasLimit: calculateGasMargin(estimatedGas)
@@ -162,6 +163,7 @@ export default function Vault() {
             addTransaction(response, {
               summary: summary
             })
+            setAttempting(false)
           })
           .catch((error: any) => {
             setAttempting(false)
@@ -195,7 +197,6 @@ export default function Vault() {
   const handlePlatformOptionChange = (option: OptionProps): void => {
     setPlatformOption(option.value)
   }
-  console.log('finalVaultInfos', finalVaultInfos)
 
   const handlesortOptionChange = (option: OptionProps): void => {
     setSortOption(option.value)

@@ -27,6 +27,7 @@ import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from '../../constants/proto
 import calculateApy, { calculateDailyApy } from '../../utils/calculateApy'
 import { useXFoxApr } from '../../hooks/usexFoxApy'
 import { CurvePool } from '../../constants/curvePools'
+import { VAULT_34_LUNA_PER_BLOCK } from '../../constants/vaults'
 
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -354,6 +355,10 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         const bonusRewardTokenPrice =
           vaultInfo[index].bonusRewarderToken &&
           getRewardTokenPrice(vaultInfo[index].bonusRewarderToken, tokensWithPrices)
+        const bonusTokenPerBlock = new TokenAmount(
+          vaultInfo[index].bonusRewarderToken ?? govToken,
+          (pid === 34 ? VAULT_34_LUNA_PER_BLOCK : vaultInfo[index].bonusRewarderTokenPerBlock) ?? '0'
+        )
         const aprBonus =
           bonusRewardTokenPrice &&
           vaultInfo[index].bonusRewarderToken &&
@@ -361,10 +366,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           totalFarmStakedAmountUSD
             ? calculateApr(
                 bonusRewardTokenPrice,
-                new TokenAmount(
-                  vaultInfo[index].bonusRewarderToken ?? govToken,
-                  vaultInfo[index].bonusRewarderTokenPerBlock ?? '0'
-                ),
+                bonusTokenPerBlock,
                 blocksPerYear,
                 new Fraction('1'),
                 totalFarmStakedAmountUSD
@@ -378,11 +380,12 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           apr && xIzaApr && (xIzaRate === 50 ? getIzaApy50Perc(apr, xIzaApr) : getIzaApy20Perc(apr, xIzaApr))
         const apyxToken = 0
         const apyCombined = apyBase && apyIza && apyBase + apyIza + apyxToken
-        // if (pid === 28) {
-        //   console.log('pid - ', pid)
-        //   console.log('aprInital', aprInital?.toSignificant(10))
-        //   // console.log('totalFarmStakedAmountUSD', totalFarmStakedAmountUSD?.toSignificant(10), totalFarmStakedAmountUSD)
-        //   console.log('rosePrice', rewardTokenPrice && rewardTokenPrice.toSignificant(10))
+        // if (lp.isCurve) {
+        //   console.log(pid, lp.name, bonusTokenPerBlock.toSignificant(5))
+        //   console.log('aprInital', aprInital?.toSignificant(5))
+        //   console.log('aprBonus', aprBonus?.toSignificant(5))
+        //   console.log('apr', apr?.toSignificant(5))
+        //   console.log('bonusRewardTokenPrice', bonusRewardTokenPrice?.toSignificant(5))
         // }
         // update active based on paused status
         active = paused && paused.result ? !paused.result[0] && active : active

@@ -40,7 +40,7 @@ export const CURVE_POOLS_MAINNET: {
   ROSE_DAI_USDC_USDT_RUSD: {
     name: 'DAI-USDC-USDT-RUSD',
     protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
-    address: '0x79B0a67a4045A7a8DC04b17456F4fe15339cBA34',
+    address: '0x56f87a0cB4713eB513BAf57D5E81750433F5fcB9',
     tokens: [
       getTokenWithDefault(ChainId.AURORA_MAINNET, 'DAI'),
       getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
@@ -77,7 +77,7 @@ export const CURVE_POOLS_MAINNET: {
       getTokenWithDefault(ChainId.AURORA_MAINNET, 'DAI'),
       getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
       getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT'),
-      getTokenWithDefault(ChainId.AURORA_MAINNET, 'UST')
+      getTokenWithDefault(ChainId.AURORA_MAINNET, 'atUST')
     ],
     baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
     minterAddress: '0x8fe44f5cce02D5BE44e3446bBc2e8132958d22B8',

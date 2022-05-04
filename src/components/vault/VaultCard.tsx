@@ -231,9 +231,6 @@ export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) 
   if (stakingInfo.lp.name.length > 10) {
     vaultNameSize = 18
   }
-  if (stakingInfo.lp.name.length > 14) {
-    vaultNameSize = 14
-  }
   if (stakingInfo.tokens.length > 2) {
     logoSize = 27
   }
