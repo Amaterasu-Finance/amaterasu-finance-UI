@@ -1,4 +1,4 @@
-import { TokenAmount, Blockchain } from '@amaterasu-fi/sdk'
+import { TokenAmount } from '@amaterasu-fi/sdk'
 import React from 'react'
 //import React, { useMemo } from 'react'
 import { X } from 'react-feather'
@@ -19,7 +19,7 @@ import { Break, CardSection, DataCard } from '../earn/styled'
 import useGovernanceToken from '../../hooks/useGovernanceToken'
 import { GOVERNANCE_TOKEN_INTERFACE } from '../../constants/abis/governanceToken'
 import { MouseoverTooltip } from '../Tooltip'
-import useBlockchain from '../../hooks/useBlockchain'
+// import useBlockchain from '../../hooks/useBlockchain'
 import usePitRatio from '../../hooks/usePitRatio'
 import usePitToken from '../../hooks/usePitToken'
 
@@ -51,7 +51,6 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
   const { account } = useActiveWeb3React()
   const govToken = useGovernanceToken()
   const xgovToken = usePitToken()
-  const blockchain = useBlockchain()
   const govTokenBalance: TokenAmount | undefined = useTokenBalance(
     account ?? undefined,
     govToken,
@@ -67,7 +66,7 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
   )
   const totalSupply: TokenAmount | undefined = useGovTokenSupply()
   const govTokenPrice = useBUSDPrice(govToken)
-  const circulatingMarketCap = govTokenPrice ? totalSupply?.multiply(govTokenPrice.adjusted) : undefined
+  // const circulatingMarketCap = govTokenPrice ? totalSupply?.multiply(govTokenPrice.adjusted) : undefined
   const totalMarketCap = govTokenPrice ? totalSupply?.multiply(govTokenPrice.adjusted) : undefined
   const govStaked = xGovTokenRatio ? xGovTokenBalance?.multiply(xGovTokenRatio) : xGovTokenBalance
   const total = govStaked ? govStaked?.add(govTokenBalance ? govTokenBalance : '0') : govTokenBalance
@@ -142,30 +141,19 @@ export default function GovTokenBalanceContent({ setShowUniBalanceModal }: { set
         <CardSection gap="sm">
           <AutoColumn gap="md">
             <RowBetween>
+              <TYPE.white color="white">{govToken?.symbol} price:</TYPE.white>
+              <TYPE.white color="white">${govTokenPrice?.toFixed(4) ?? '-'}</TYPE.white>
+            </RowBetween>
+            <RowBetween>
               <TYPE.white color="white">{govToken?.symbol} total supply:</TYPE.white>
               <TYPE.white color="white">{totalSupply?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
+            <RowBetween>
+              <TYPE.white color="white">{govToken?.symbol} total market cap:</TYPE.white>
+              <TYPE.white color="white">${totalMarketCap?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
+            </RowBetween>
           </AutoColumn>
         </CardSection>
-        {blockchain === Blockchain.MTV && govTokenPrice && circulatingMarketCap && totalMarketCap && (
-          <>
-            <Break />
-            <CardSection gap="sm">
-              <AutoColumn gap="md">
-                <RowBetween>
-                  <TYPE.white color="white">{govToken?.symbol} price:</TYPE.white>
-                  <TYPE.white color="white">${govTokenPrice?.toFixed(4) ?? '-'}</TYPE.white>
-                </RowBetween>
-                {totalMarketCap && (
-                  <RowBetween>
-                    <TYPE.white color="white">{govToken?.symbol} total market cap:</TYPE.white>
-                    <TYPE.white color="white">${totalMarketCap?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
-                  </RowBetween>
-                )}
-              </AutoColumn>
-            </CardSection>
-          </>
-        )}
       </ModalUpper>
     </ContentWrapper>
   )
