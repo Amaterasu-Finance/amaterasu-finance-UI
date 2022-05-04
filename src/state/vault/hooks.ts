@@ -27,6 +27,7 @@ import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from '../../constants/proto
 import calculateApy, { calculateDailyApy } from '../../utils/calculateApy'
 import { useXFoxApr } from '../../hooks/usexFoxApy'
 import { CurvePool } from '../../constants/curvePools'
+import { VAULT_34_LUNA_PER_BLOCK } from '../../constants/vaults'
 
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -35,6 +36,7 @@ const STRAT_INTERFACE = new Interface(stratABI)
 // const BLOCKS_PER_YEAR_11 = 28669090 // blocks per year @ 1.1s
 // const BLOCKS_PER_YEAR_10 = 31449600 // blocks per year @ 1.0s
 
+const MIN_XIZA_CLAIMABLE = JSBI.BigInt(10000)
 const MIN_STAKED_AMOUNT = JSBI.BigInt(44)
 const DEFAULT_CONTROLLER_FEE = 1.0
 const DEFAULT_BUYBACK_RATE = 3.0
@@ -301,7 +303,10 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         }
         const poolBlockRewards = baseBlockRewards && baseBlockRewards.multiply(allocPoint).divide(totalAllocPointResult)
 
-        const calculatedxIzaRewards = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
+        const calculatedxIzaRewardsRaw = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
+        const calculatedxIzaRewards = JSBI.greaterThan(calculatedxIzaRewardsRaw, MIN_XIZA_CLAIMABLE)
+          ? calculatedxIzaRewardsRaw
+          : JSBI.BigInt('0')
         const calculatedxTokenRewards = JSBI.BigInt(pendingReward?.result?.[1] ?? 0)
 
         const amountParsed = JSBI.BigInt(userInfo?.result?.[0] ?? 0)
@@ -350,6 +355,10 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         const bonusRewardTokenPrice =
           vaultInfo[index].bonusRewarderToken &&
           getRewardTokenPrice(vaultInfo[index].bonusRewarderToken, tokensWithPrices)
+        const bonusTokenPerBlock = new TokenAmount(
+          vaultInfo[index].bonusRewarderToken ?? govToken,
+          (pid === 34 ? VAULT_34_LUNA_PER_BLOCK : vaultInfo[index].bonusRewarderTokenPerBlock) ?? '0'
+        )
         const aprBonus =
           bonusRewardTokenPrice &&
           vaultInfo[index].bonusRewarderToken &&
@@ -357,10 +366,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           totalFarmStakedAmountUSD
             ? calculateApr(
                 bonusRewardTokenPrice,
-                new TokenAmount(
-                  vaultInfo[index].bonusRewarderToken ?? govToken,
-                  vaultInfo[index].bonusRewarderTokenPerBlock ?? '0'
-                ),
+                bonusTokenPerBlock,
                 blocksPerYear,
                 new Fraction('1'),
                 totalFarmStakedAmountUSD
@@ -374,11 +380,12 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           apr && xIzaApr && (xIzaRate === 50 ? getIzaApy50Perc(apr, xIzaApr) : getIzaApy20Perc(apr, xIzaApr))
         const apyxToken = 0
         const apyCombined = apyBase && apyIza && apyBase + apyIza + apyxToken
-        // if (pid === 28) {
-        //   console.log('pid - ', pid)
-        //   console.log('aprInital', aprInital?.toSignificant(10))
-        //   // console.log('totalFarmStakedAmountUSD', totalFarmStakedAmountUSD?.toSignificant(10), totalFarmStakedAmountUSD)
-        //   console.log('rosePrice', rewardTokenPrice && rewardTokenPrice.toSignificant(10))
+        // if (lp.isCurve) {
+        //   console.log(pid, lp.name, bonusTokenPerBlock.toSignificant(5))
+        //   console.log('aprInital', aprInital?.toSignificant(5))
+        //   console.log('aprBonus', aprBonus?.toSignificant(5))
+        //   console.log('apr', apr?.toSignificant(5))
+        //   console.log('bonusRewardTokenPrice', bonusRewardTokenPrice?.toSignificant(5))
         // }
         // update active based on paused status
         active = paused && paused.result ? !paused.result[0] && active : active

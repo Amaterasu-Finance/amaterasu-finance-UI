@@ -5,6 +5,9 @@ import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from './protocol'
 import getTokenWithDefault from '../utils/getTokenWithDefault'
 import { CURVE_POOLS_MAINNET, CurvePool } from './curvePools'
 
+// Vault 33 is a ROSE vault with 2 reward tokens
+export const VAULT_34_LUNA_PER_BLOCK = '142975206611570'
+
 export interface VaultInfo {
   pid: number
   farmPid: number
@@ -165,7 +168,33 @@ export const VAULT_INFO: {
       lp: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT,
       protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
       masterchef: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT.stakingAddress,
-      bonusRewarderTokenPerBlock: '234774490878515970'
+      bonusRewarderTokenPerBlock: '234774490878515970',
+      xIzaRate: 10
+    },
+    {
+      pid: 33,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x5d4605673C64240c74B0Ba9FaE19c38aC889164E',
+      tokens: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_RUSD.tokens,
+      lp: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_RUSD,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
+      masterchef: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_RUSD.stakingAddress,
+      bonusRewarderTokenPerBlock: '330687830687830687',
+      xIzaRate: 10
+    },
+    {
+      pid: 34,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x928B687422B56dA2e6A2EDA77cdec6955BB330D0',
+      tokens: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST.tokens,
+      lp: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
+      masterchef: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST.stakingAddress,
+      xIzaRate: 10.0,
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'atLUNA'),
+      bonusRewarderTokenPerBlock: '109184191744554191'
     },
     // ---------------------------------------------------
     // Trisolaris

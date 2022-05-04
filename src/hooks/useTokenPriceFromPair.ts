@@ -60,3 +60,11 @@ export function useSolaceNearPrice(): Price | undefined {
     1
   )
 }
+
+export function useLunaNearPrice(): Price | undefined {
+  return useTokenPriceFromPair(
+    [getTokenWithDefault(ChainId.AURORA_MAINNET, 'atLUNA'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
+    '0xdF8CbF89ad9b7dAFdd3e37acEc539eEcC8c47914', // NEAR/ROSE
+    0
+  )
+}

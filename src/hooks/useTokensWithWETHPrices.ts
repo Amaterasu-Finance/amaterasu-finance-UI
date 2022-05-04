@@ -10,7 +10,8 @@ import {
   useRoseNearPrice,
   useTriPrice,
   useBstnNearPrice,
-  useSolaceNearPrice
+  useSolaceNearPrice,
+  useLunaNearPrice
 } from './useTokenPriceFromPair'
 import useUSDCPrice from '../utils/useUSDCPrice'
 
@@ -48,6 +49,9 @@ export default function useTokensWithWethPrices(): Record<string, any> {
   const SOLACE: Token | undefined = getToken(chainId, 'SOLACE')
   const solaceNearPrice = useSolaceNearPrice()
 
+  const atLUNA: Token | undefined = getToken(chainId, 'atLUNA')
+  const lunaNearPrice = useLunaNearPrice()
+
   return useMemo(() => {
     return {
       WETH: { token: weth, price: wethPrice },
@@ -61,6 +65,7 @@ export default function useTokensWithWethPrices(): Record<string, any> {
       AURORA: { token: AURORA, price: NEARPrice && auroraNearPrice?.multiply(NEARPrice) },
       ROSE: { token: ROSE, price: NEARPrice && roseNearPrice?.multiply(NEARPrice) },
       BSTN: { token: BSTN, price: NEARPrice && bstnNearPrice?.multiply(NEARPrice) },
+      atLUNA: { token: atLUNA, price: NEARPrice && lunaNearPrice?.multiply(NEARPrice) },
       SOLACE: { token: SOLACE, price: NEARPrice && solaceNearPrice?.multiply(NEARPrice) }
     }
   }, [chainId, blockchain, weth, govToken, govTokenWETHPrice, NEAR, NEARWETHPrice, USDC, USDCWETHPrice])
