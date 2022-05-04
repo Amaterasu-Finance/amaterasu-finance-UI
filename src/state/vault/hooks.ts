@@ -35,6 +35,7 @@ const STRAT_INTERFACE = new Interface(stratABI)
 // const BLOCKS_PER_YEAR_11 = 28669090 // blocks per year @ 1.1s
 // const BLOCKS_PER_YEAR_10 = 31449600 // blocks per year @ 1.0s
 
+const MIN_XIZA_CLAIMABLE = JSBI.BigInt(10000)
 const MIN_STAKED_AMOUNT = JSBI.BigInt(44)
 const DEFAULT_CONTROLLER_FEE = 1.0
 const DEFAULT_BUYBACK_RATE = 3.0
@@ -301,7 +302,10 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         }
         const poolBlockRewards = baseBlockRewards && baseBlockRewards.multiply(allocPoint).divide(totalAllocPointResult)
 
-        const calculatedxIzaRewards = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
+        const calculatedxIzaRewardsRaw = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
+        const calculatedxIzaRewards = JSBI.greaterThan(calculatedxIzaRewardsRaw, MIN_XIZA_CLAIMABLE)
+          ? calculatedxIzaRewardsRaw
+          : JSBI.BigInt('0')
         const calculatedxTokenRewards = JSBI.BigInt(pendingReward?.result?.[1] ?? 0)
 
         const amountParsed = JSBI.BigInt(userInfo?.result?.[0] ?? 0)

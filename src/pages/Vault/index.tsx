@@ -28,7 +28,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 const PAGE_SIZE = 7
 const NEW_ROWS = 4
-const SHOW_USER_INFO_CARD = false
+const SHOW_USER_INFO_CARD = true
 const PLATFORM_OPTIONS = [
   {
     label: 'All',
@@ -213,48 +213,7 @@ export default function Vault() {
         </ExtraDataCard>
       </TopSection>
       <TopSection>
-        {SHOW_USER_INFO_CARD && vaultUserInfo.totalStakedUsd?.greaterThan('0') && (
-          <Row align={'middle'} justify={'space-around'} style={{ margin: '0px' }}>
-            <TopSection>
-              <OutlineCard>
-                <Row align={'middle'} justify={'space-around'} style={{ margin: '0' }}>
-                  <CenteredCol xs={8}>
-                    <Statistic
-                      title="User Total Staked"
-                      value={`~$${vaultUserInfo.totalStakedUsd?.toSignificant(5)}`}
-                      valueStyle={{ fontSize: '17px', color: 'white', margin: '0' }}
-                      style={{ margin: '0' }}
-                    />
-                  </CenteredCol>
-                  <CenteredCol xs={8}>
-                    <Statistic
-                      title="Pending xIZA"
-                      value={vaultUserInfo.totalEarnedAmountxIza?.toSignificant(5)}
-                      valueStyle={{ fontSize: '17px', color: 'white', margin: '0' }}
-                      style={{ margin: '0' }}
-                    />
-                  </CenteredCol>
-                  <CenteredCol xs={4} offset={4} pull={2}>
-                    <ButtonPrimary
-                      padding="8px"
-                      disabled={failed || attempting || !vaultUserInfo.totalEarnedAmountxIza?.greaterThan('0')}
-                      borderRadius="8px"
-                      onClick={onClaimRewards}
-                    >
-                      <TYPE.black style={{ margin: '0' }}>Claim All xIZA</TYPE.black>
-                    </ButtonPrimary>
-                    {vaultUserInfo.totalEarnedAmountxIza?.greaterThan('0') && (
-                      <TYPE.black style={{ margin: '0', fontSize: '8px' }}>
-                        ({vaultUserInfo.pids.length} Txns)
-                      </TYPE.black>
-                    )}
-                  </CenteredCol>
-                </Row>
-              </OutlineCard>
-            </TopSection>
-          </Row>
-        )}
-        <Row align={'middle'} justify={'space-between'} style={{ marginTop: '5px', padding: '0' }}>
+        <Row align={'middle'} justify={'space-between'} style={{ marginTop: '0px', padding: '0' }}>
           <OutlineCard style={{ maxWidth: '1000px', width: '100%' }}>
             <Row align={'middle'} justify={'space-around'} style={{ margin: '0' }}>
               <Col xs={12} md={6} style={{ marginBottom: '10px' }}>
@@ -372,6 +331,47 @@ export default function Vault() {
             </Row>
           </OutlineCard>
         </Row>
+        {SHOW_USER_INFO_CARD && vaultUserInfo.totalStakedUsd?.greaterThan('0') && (
+          <Row align={'middle'} justify={'space-around'} style={{ margin: '5px 0 0 0' }}>
+            <TopSection>
+              <OutlineCard>
+                <Row align={'middle'} justify={'space-around'} style={{ margin: '0' }}>
+                  <CenteredCol xs={8}>
+                    <Statistic
+                      title="User Total Staked"
+                      value={`~$${vaultUserInfo.totalStakedUsd?.toSignificant(6, { groupSeparator: ',' })}`}
+                      valueStyle={{ fontSize: '17px', color: 'white', margin: '0' }}
+                      style={{ margin: '0' }}
+                    />
+                  </CenteredCol>
+                  <CenteredCol xs={8}>
+                    <Statistic
+                      title="Pending xIZA"
+                      value={vaultUserInfo.totalEarnedAmountxIza?.toSignificant(5)}
+                      valueStyle={{ fontSize: '17px', color: 'white', margin: '0' }}
+                      style={{ margin: '0' }}
+                    />
+                  </CenteredCol>
+                  <CenteredCol xs={4} offset={4} pull={2}>
+                    {/*{vaultUserInfo.totalEarnedAmountxIza?.greaterThan('0') && (*/}
+                    {/*  <TYPE.black style={{ margin: '0', fontSize: '12px' }}>*/}
+                    {/*    ({vaultUserInfo.pids.length} Txns)*/}
+                    {/*  </TYPE.black>*/}
+                    {/*)}*/}
+                    <ButtonPrimary
+                      padding="8px"
+                      disabled={failed || attempting || !vaultUserInfo.totalEarnedAmountxIza?.greaterThan('0')}
+                      borderRadius="8px"
+                      onClick={onClaimRewards}
+                    >
+                      <TYPE.black style={{ margin: '0' }}>Claim All xIZA</TYPE.black>
+                    </ButtonPrimary>
+                  </CenteredCol>
+                </Row>
+              </OutlineCard>
+            </TopSection>
+          </Row>
+        )}
       </TopSection>
       <TopSection>
         <PoolSection>

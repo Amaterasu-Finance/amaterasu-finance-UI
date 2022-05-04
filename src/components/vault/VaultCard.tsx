@@ -121,6 +121,9 @@ const Wrapper = styled(Card)<{ showBackground: boolean }>`
   box-shadow: ${({ theme }) => theme.bg1} 0 2px 8px 0;
   position: relative;
   background: ${({ theme }) => theme.bg1};
+  .ant-card-body {
+    background: ${({ theme }) => theme.bg1};
+  }
   ${({ showBackground }) =>
     showBackground &&
     `  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 16px 24px rgba(0, 0, 0, 0.04),
@@ -239,7 +242,7 @@ export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) 
   // const backgroundColor = useColor(stakingInfo?.baseToken)
 
   return (
-    <Wrapper showBackground={!isStaking} bodyStyle={{ padding: '0.7rem' }}>
+    <Wrapper showBackground={true} bodyStyle={{ padding: '0.7rem' }}>
       <HeaderClickable onClick={() => setIsOpen(!isOpen)} style={{ padding: '0', margin: '0' }}>
         <StyledAutoRow justify={'space-between'} style={{ alignSelf: 'center' }}>
           <StyledAutoColumn style={{ alignItems: 'center' }} xs={17} sm={11} md={10} lg={8}>
