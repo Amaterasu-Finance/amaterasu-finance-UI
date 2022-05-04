@@ -353,7 +353,8 @@ export default function Vault() {
                       style={{ margin: '0' }}
                     />
                   </CenteredCol>
-                  <CenteredCol xs={4} offset={4} pull={2}>
+                  <CenteredCol xs={2} />
+                  <CenteredCol xs={24} sm={4}>
                     {/*{vaultUserInfo.totalEarnedAmountxIza?.greaterThan('0') && (*/}
                     {/*  <TYPE.black style={{ margin: '0', fontSize: '12px' }}>*/}
                     {/*    ({vaultUserInfo.pids.length} Txns)*/}
@@ -368,6 +369,7 @@ export default function Vault() {
                       <TYPE.black style={{ margin: '0' }}>Claim All xIZA</TYPE.black>
                     </ButtonPrimary>
                   </CenteredCol>
+                  <CenteredCol xs={2} />
                 </Row>
               </OutlineCard>
             </TopSection>
