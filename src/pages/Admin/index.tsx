@@ -83,6 +83,7 @@ export default function Admin({
   const [attempting, setAttempting] = useState(false)
   const [failed, setFailed] = useState<boolean>(false)
   const [showClaimModal, setShowClaimModal] = useState(false)
+  const [showClaimModal1, setShowClaimModal1] = useState(false)
 
   const payoutContract = usePayoutContract()
   const govToken = useGovernanceToken()
@@ -137,7 +138,8 @@ export default function Admin({
   return (
     <PageWrapper gap="lg" justify="center">
       <TopSection gap="lg" justify="center">
-        <ClaimModal isOpen={showClaimModal} onDismiss={() => setShowClaimModal(false)} />
+        <ClaimModal isOpen={showClaimModal} idx={0} onDismiss={() => setShowClaimModal(false)} />
+        <ClaimModal isOpen={showClaimModal1} idx={1} onDismiss={() => setShowClaimModal1(false)} />
         <BottomSection gap="lg" justify="center">
           <StyledBottomCard dim={false}>
             <CardBGImage />
@@ -177,9 +179,16 @@ export default function Admin({
                 Distribute Rewards
               </ButtonPit>
             </DataRow>
-            <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal(true)}>
-              Distribute DEX Fees
-            </ButtonPrimary>
+            <DataRow style={{ marginBottom: '0rem' }}>
+              <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal(true)}>
+                Distribute DEX Fees
+              </ButtonPrimary>
+            </DataRow>
+            <DataRow style={{ marginBottom: '0rem' }}>
+              <ButtonPrimary padding="8px" borderRadius="8px" width="160px" onClick={() => setShowClaimModal1(true)}>
+                Distribute DEX Fees2
+              </ButtonPrimary>
+            </DataRow>
           </>
         ) : (
           <div />
