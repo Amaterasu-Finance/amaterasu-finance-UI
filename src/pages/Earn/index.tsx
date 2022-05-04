@@ -194,10 +194,10 @@ export default function Earn() {
           </Row>
         </OutlineCard>
         {stakeUserInfo.totalStakedUsd?.greaterThan('0') && (
-          <Row align={'middle'} justify={'space-around'} style={{ margin: '5px 0 0 0' }}>
+          <Row align={'middle'} justify={'center'} style={{ margin: '5px 0 0 0' }}>
             <TopSection>
               <OutlineCard>
-                <Row align={'middle'} justify={'space-around'} style={{ margin: '0' }}>
+                <Row align={'middle'} justify={'center'} style={{ margin: '0' }}>
                   <CenteredCol xs={8}>
                     <Statistic
                       title="User Total Staked"
