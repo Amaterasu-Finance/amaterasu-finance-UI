@@ -13,6 +13,21 @@ export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 export const SOCKS_TESTNET_ADDRESS = '0x65770b5283117639760beA3F867b69b3697a91dd'
 
+export const FUNCTION_SIGS = {
+  rewardBorrowSpeeds: '0xbf095955',
+  rewardSupplySpeeds: '0x030ce638',
+
+  exchangeRateStored: '0x182df0f5',
+  borrowRatePerBlock: '0xf8f9da28',
+  supplyRatePerBlock: '0xae9d70b0',
+  totalBorrows: '0x47bd3718',
+  totalSupply: '0x18160ddd',
+
+  cTokenTotal: '0x9f09997f',
+  debtTotal: '0xe7e7e387',
+  wantLockedTotal: '0x42da4eb3'
+}
+
 export const ROUTER_ADDRESSES: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0xfee8B01BdB8354ac730D4b28F500e70384158b10',
   [ChainId.AURORA_MAINNET]: '0x3d99B2F578d94f61adcD899DE55F2991522cefE1',
