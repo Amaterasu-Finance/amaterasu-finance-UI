@@ -79,6 +79,28 @@ export const VAULT_INFO: {
       masterchef: CURVE_POOLS_MAINNET.BASTION_NEAR_STNEAR.stakingAddress,
       xIzaRate: 10.0
     },
+    {
+      pid: 40,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x1d9971E8C22399b5b298a51048d7898a0f0933Bb',
+      tokens: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC.stakingAddress,
+      xIzaRate: 10.0
+    },
+    {
+      pid: 41,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x9903C74C05e6B05399715BE543516F16749cd55E',
+      tokens: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH.stakingAddress,
+      xIzaRate: 10.0
+    },
     // ---------------------------------------------------
     // Amaterasu
     // ---------------------------------------------------

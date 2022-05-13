@@ -372,6 +372,11 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         if (lp.isBastion) {
           const supply = new TokenAmount(lp.baseToken, JSBI.BigInt(bastionTokensTotal.result?.[0] ?? 0))
           const debt = new TokenAmount(lp.baseToken, JSBI.BigInt(bastionDebtTotal.result?.[0] ?? 0))
+          apr = bastionInfo
+            ? 365 *
+              (Number(supply.divide(vaultStakedAmount).toSignificant(10)) * bastionInfo.supplyAprDaily +
+                Number(debt.divide(vaultStakedAmount).toSignificant(10)) * bastionInfo.borrowAprDaily)
+            : 0
           // console.log('-------------------------------------')
           // console.log(pid, lp.name)
           // console.log('want', vaultStakedAmount.toSignificant(8))
@@ -383,12 +388,8 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           // console.log('bastionInfo.supplyAprDaily', bastionInfo && bastionInfo.supplyAprDaily)
           // console.log('bastionInfo.borrowAprDailyBase', bastionInfo && bastionInfo.borrowAprDailyBase?.toSignificant(8))
           // console.log('bastionInfo.borrowAprDaily', bastionInfo && bastionInfo.borrowAprDaily)
+          // console.log('apr', apr)
           // console.log('-------------------------------------')
-          apr = bastionInfo
-            ? 365 *
-              (Number(supply.divide(vaultStakedAmount).toSignificant(10)) * bastionInfo.supplyAprDaily +
-                Number(debt.divide(vaultStakedAmount).toSignificant(10)) * bastionInfo.borrowAprDaily)
-            : 0
         } else {
           const aprInital =
             rewardTokenPrice && totalFarmStakedAmountUSD

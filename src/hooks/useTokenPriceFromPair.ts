@@ -61,6 +61,14 @@ export function useStNearNearPrice(): Price | undefined {
   )
 }
 
+export function useWbtcNearPrice(): Price | undefined {
+  return useTokenPriceFromPair(
+    [getTokenWithDefault(ChainId.AURORA_MAINNET, 'WBTC'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
+    '0xbc8A244e8fb683ec1Fd6f88F3cc6E565082174Eb', // NEAR/WBTC
+    0
+  )
+}
+
 export function useSolaceNearPrice(): Price | undefined {
   return useTokenPriceFromPair(
     [getTokenWithDefault(ChainId.AURORA_MAINNET, 'SOLACE'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],

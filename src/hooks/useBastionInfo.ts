@@ -36,6 +36,8 @@ export interface BastionInfo {
 export function getTokenPrice(token: Token | undefined, tokenData: Record<string, any>): Price | undefined {
   if (token && token?.symbol === 'NEAR') {
     return tokenData?.NEARUSD?.price
+  } else if (token && token?.symbol === 'ETH') {
+    return tokenData?.WETHUSD?.price
   } else if (token?.symbol && ['USDC', 'USDT'].includes(token.symbol)) {
     return new Price(token, token, '1', '1')
   }
@@ -103,6 +105,7 @@ export default function useBastionInfo(tokensWithPrices: Record<string, any>): B
           .toFixed(0)
       )
       const tvlUsd = underlyingPrice?.adjusted ? tvl.multiply(underlyingPrice.adjusted) : tvl
+      const tvlBorrowUsd = underlyingPrice?.adjusted ? totalBorrows.multiply(underlyingPrice.adjusted) : totalBorrows
 
       const rewardSupplySpeeds0 = new TokenAmount(
         pool.realm.rewardToken0,
@@ -125,24 +128,36 @@ export default function useBastionInfo(tokensWithPrices: Record<string, any>): B
       const bstnPrice = tokensWithPrices?.BSTN?.price
       const metaPrice = tokensWithPrices?.META?.price
       const supplyBaseAprDaily = supplyRatePerBlock.multiply(blocksPerDay).divide(WEI_DENOM)
-      const supplyRewardAprDaily0 = rewardSupplySpeeds0
-        .multiply(blocksPerDay)
-        .multiply(bstnPrice?.adjusted ?? '0')
-        .divide(tvlUsd)
-      const supplyRewardAprDaily1 = rewardSupplySpeeds1
-        .multiply(blocksPerDay)
-        .multiply(metaPrice?.adjusted ?? '0')
-        .divide(tvlUsd)
+      const supplyRewardAprDaily0 =
+        tvlUsd && tvlUsd.greaterThan('0')
+          ? rewardSupplySpeeds0
+              .multiply(blocksPerDay)
+              .multiply(bstnPrice?.adjusted ?? '0')
+              .divide(tvlUsd)
+          : new Fraction('0')
+      const supplyRewardAprDaily1 =
+        tvlUsd && tvlUsd.greaterThan('0')
+          ? rewardSupplySpeeds1
+              .multiply(blocksPerDay)
+              .multiply(metaPrice?.adjusted ?? '0')
+              .divide(tvlUsd)
+          : new Fraction('0')
 
       const borrowBaseAprDaily = borrowRatePerBlock.multiply(blocksPerDay).divide(WEI_DENOM)
-      const borrowRewardAprDaily0 = rewardBorrowSpeeds0
-        .multiply(blocksPerDay)
-        .multiply(bstnPrice?.adjusted ?? '0')
-        .divide(tvlUsd)
-      const borrowRewardAprDaily1 = rewardBorrowSpeeds1
-        .multiply(blocksPerDay)
-        .multiply(metaPrice?.adjusted ?? '0')
-        .divide(tvlUsd)
+      const borrowRewardAprDaily0 =
+        tvlBorrowUsd && tvlBorrowUsd.greaterThan('0')
+          ? rewardBorrowSpeeds0
+              .multiply(blocksPerDay)
+              .multiply(bstnPrice?.adjusted ?? '0')
+              .divide(tvlBorrowUsd)
+          : new Fraction('0')
+      const borrowRewardAprDaily1 =
+        tvlBorrowUsd && tvlBorrowUsd.greaterThan('0')
+          ? rewardBorrowSpeeds1
+              .multiply(blocksPerDay)
+              .multiply(metaPrice?.adjusted ?? '0')
+              .divide(tvlBorrowUsd)
+          : new Fraction('0')
 
       const totalSupplyAprDaily = Number(
         supplyBaseAprDaily
@@ -151,6 +166,15 @@ export default function useBastionInfo(tokensWithPrices: Record<string, any>): B
           .toSignificant(10)
       )
 
+      // console.log('---------------------------------')
+      // console.log(pool.name)
+      // console.log('borrowBaseAprDaily', borrowBaseAprDaily.toSignificant(10))
+      // console.log('tvlUsd', tvlUsd.toSignificant(10))
+      // console.log('tvlBorrowUsd', tvlBorrowUsd.toSignificant(10))
+      // console.log('rewardBorrowSpeeds0', rewardBorrowSpeeds0.toSignificant(10))
+      // console.log('borrowRewardAprDaily0', borrowRewardAprDaily0.toSignificant(10))
+      // console.log('borrowRewardAprDaily1', borrowRewardAprDaily1.toSignificant(10))
+      // console.log('---------------------------------')
       const totalBorrowAprDaily =
         Number(borrowRewardAprDaily0.add(borrowRewardAprDaily1).toSignificant(10)) -
         Number(borrowBaseAprDaily.toSignificant(10))
