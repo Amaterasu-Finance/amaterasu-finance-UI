@@ -144,7 +144,7 @@ export default function StakingModal({
               <ColumnCenter>
                 <TYPE.body fontSize={16}>
                   <ExternalLink href={href}>
-                    Get <b>{stakingInfo.lp.name}</b> LP Tokens
+                    Get <b>{stakingInfo.lp.name}</b> Tokens
                   </ExternalLink>{' '}
                   on {stakingInfo.lp.protocol.name}
                 </TYPE.body>
@@ -188,7 +188,9 @@ export default function StakingModal({
         <LoadingView onDismiss={wrappedOnDismiss}>
           <AutoColumn gap="12px" justify={'center'}>
             <TYPE.largeHeader>Depositing Liquidity</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>{parsedAmount?.toSignificant(4)} IZA-LP</TYPE.body>
+            <TYPE.body fontSize={20}>
+              {parsedAmount?.toSignificant(4)} {stakingInfo.lp.name}
+            </TYPE.body>
           </AutoColumn>
         </LoadingView>
       )}
@@ -196,7 +198,9 @@ export default function StakingModal({
         <SubmittedView onDismiss={wrappedOnDismiss} hash={hash}>
           <AutoColumn gap="12px" justify={'center'}>
             <TYPE.largeHeader>Transaction Submitted</TYPE.largeHeader>
-            <TYPE.body fontSize={20}>Deposited {parsedAmount?.toSignificant(4)} IZA-LP</TYPE.body>
+            <TYPE.body fontSize={20}>
+              Deposited {parsedAmount?.toSignificant(4)} {stakingInfo.lp.name}
+            </TYPE.body>
           </AutoColumn>
         </SubmittedView>
       )}

@@ -83,6 +83,18 @@ export const BASTION_REALMS: {
 
 export const BASTION_POOLS: BastionPool[] = [
   {
+    name: 'USDC (Multichain)',
+    cToken: new Token(ChainId.AURORA_MAINNET, '0x10a9153A7b4da83Aa1056908C710f1aaCCB3Ef85', 18, 'cUSDC', 'cUSDC'),
+    underlying: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+    realm: BASTION_REALMS.MULTICHAIN
+  },
+  {
+    name: 'stNEAR (Multichain)',
+    cToken: new Token(ChainId.AURORA_MAINNET, '0x30Fff4663A8DCDd9eD81e60acF505e6159f19BbC', 18, 'cstNEAR', 'cstNEAR'),
+    underlying: getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR'),
+    realm: BASTION_REALMS.MULTICHAIN
+  },
+  {
     name: 'NEAR (Near)',
     cToken: new Token(ChainId.AURORA_MAINNET, '0x4A45075D3E752F3676610Fc427F5E6915Ce63A63', 18, 'cNEAR', 'cNEAR'),
     underlying: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
@@ -93,17 +105,5 @@ export const BASTION_POOLS: BastionPool[] = [
     cToken: new Token(ChainId.AURORA_MAINNET, '0xB76108eb764b4427505c4bb020A37D95b3ef5AFE', 18, 'cstNEAR', 'cstNEAR'),
     underlying: getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR'),
     realm: BASTION_REALMS.NEAR
-  },
-  {
-    name: 'USDC (Multichain)',
-    cToken: new Token(ChainId.AURORA_MAINNET, '0x10a9153A7b4da83Aa1056908C710f1aaCCB3Ef85', 18, 'cstNEAR', 'cstNEAR'),
-    underlying: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
-    realm: BASTION_REALMS.MULTICHAIN
-  },
-  {
-    name: 'NEAR (Multichain)',
-    cToken: new Token(ChainId.AURORA_MAINNET, '0x30Fff4663A8DCDd9eD81e60acF505e6159f19BbC', 18, 'cNEAR', 'cNEAR'),
-    underlying: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
-    realm: BASTION_REALMS.MULTICHAIN
   }
 ]
