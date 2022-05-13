@@ -5,8 +5,7 @@ export enum ProtocolName {
   TRISOLARIS = 'Trisolaris',
   WANNASWAP = 'WannaSwap',
   AMATERASU = 'Amaterasu',
-  ROSE = 'Rose',
-  BASTION = 'Bastion'
+  ROSE = 'Rose'
 }
 
 export interface Protocol {
@@ -43,13 +42,6 @@ export const PROTOCOLS_MAINNET: {
     perBlockFunctionSig: '',
     logoFilename: 'images/protocols/rose.png',
     addLiquidityUrl: 'https://app.rose.fi/#/pools/'
-  },
-  [ProtocolName.BASTION]: {
-    name: ProtocolName.BASTION,
-    nativeToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'BSTN'),
-    perBlockFunctionSig: '',
-    logoFilename: 'images/protocols/bastion_logo.png',
-    addLiquidityUrl: 'https://www.trisolaris.io/#/swap/'
   },
   [ProtocolName.TRISOLARIS]: {
     name: ProtocolName.TRISOLARIS,

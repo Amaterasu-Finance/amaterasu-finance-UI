@@ -10,10 +10,8 @@ export interface LiqPool {
   token0: Token
   token1: Token
   isCurve?: boolean
-  isBastion?: boolean
   minterAddress?: string
   urlName?: string
-  cTokenAddress?: string
 }
 
 export const LPS_MAINNET: {

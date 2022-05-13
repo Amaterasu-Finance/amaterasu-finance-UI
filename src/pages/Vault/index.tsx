@@ -45,11 +45,6 @@ const PLATFORM_OPTIONS = [
     img: PROTOCOLS_MAINNET.Amaterasu.logoFilename
   },
   {
-    label: 'Bastion',
-    value: 'Bastion',
-    img: PROTOCOLS_MAINNET.Bastion.logoFilename
-  },
-  {
     label: 'Rose',
     value: 'Rose',
     img: PROTOCOLS_MAINNET.Rose.logoFilename
@@ -398,7 +393,11 @@ export default function Vault() {
               dataLength={numberOfItemsVisible}
               next={onLoadMore}
               hasMore={numberOfItemsVisible < vaultInfos.length}
-              loader={<></>}
+              loader={
+                <PoolSection style={{ marginTop: '10px' }}>
+                  <Loader style={{ margin: 'auto' }} />
+                </PoolSection>
+              }
               endMessage={<Divider plain>End</Divider>}
               scrollableTarget="scrollableDiv"
               style={{ overflowY: 'hidden' }}

@@ -11,9 +11,7 @@ import {
   useTriPrice,
   useBstnNearPrice,
   useSolaceNearPrice,
-  useLunaNearPrice,
-  useMetaNearPrice,
-  useStNearNearPrice
+  useLunaNearPrice
 } from './useTokenPriceFromPair'
 import useUSDCPrice from '../utils/useUSDCPrice'
 
@@ -45,9 +43,6 @@ export default function useTokensWithWethPrices(): Record<string, any> {
   const BSTN: Token | undefined = getToken(chainId, 'BSTN')
   const bstnNearPrice = useBstnNearPrice()
 
-  const stNEAR: Token | undefined = getToken(chainId, 'stNEAR')
-  const stNearNearPrice = useStNearNearPrice()
-
   const AURORA: Token | undefined = getToken(chainId, 'AURORA')
   const auroraNearPrice = useAuroraNearPrice()
 
@@ -57,15 +52,11 @@ export default function useTokensWithWethPrices(): Record<string, any> {
   const atLUNA: Token | undefined = getToken(chainId, 'atLUNA')
   const lunaNearPrice = useLunaNearPrice()
 
-  const META: Token | undefined = getToken(chainId, 'META')
-  const metaNearPrice = useMetaNearPrice()
-
   return useMemo(() => {
     return {
       WETH: { token: weth, price: wethPrice },
       govToken: { token: govToken, price: govTokenWETHPrice },
       NEAR: { token: NEAR, price: NEARWETHPrice },
-      NEARUSD: { token: NEAR, price: NEARPrice },
       USDT: { token: USDT, price: USDCWETHPrice },
       USDC: { token: USDC, price: USDCWETHPrice },
       // USDC prices
@@ -75,9 +66,7 @@ export default function useTokensWithWethPrices(): Record<string, any> {
       ROSE: { token: ROSE, price: NEARPrice && roseNearPrice?.multiply(NEARPrice) },
       BSTN: { token: BSTN, price: NEARPrice && bstnNearPrice?.multiply(NEARPrice) },
       atLUNA: { token: atLUNA, price: NEARPrice && lunaNearPrice?.multiply(NEARPrice) },
-      META: { token: META, price: NEARPrice && metaNearPrice?.multiply(NEARPrice) },
-      STNEAR: { token: stNEAR, price: NEARPrice && stNearNearPrice?.multiply(NEARPrice) },
       SOLACE: { token: SOLACE, price: NEARPrice && solaceNearPrice?.multiply(NEARPrice) }
     }
-  }, [chainId, blockchain, weth, govToken, govTokenWETHPrice, NEAR, USDC, NEARWETHPrice, USDCWETHPrice])
+  }, [chainId, blockchain, weth, govToken, govTokenWETHPrice, NEAR, NEARWETHPrice, USDC, USDCWETHPrice])
 }

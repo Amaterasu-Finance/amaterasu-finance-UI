@@ -139,18 +139,16 @@ export default function StakingModal({
             </TYPE.mediumHeader>
             <CloseIcon onClick={wrappedOnDismiss} />
           </RowBetween>
-          {stakingInfo.tokens.length > 1 && (
-            <RowBetween>
-              <ColumnCenter>
-                <TYPE.body fontSize={16}>
-                  <ExternalLink href={href}>
-                    Get <b>{stakingInfo.lp.name}</b> LP Tokens
-                  </ExternalLink>{' '}
-                  on {stakingInfo.lp.protocol.name}
-                </TYPE.body>
-              </ColumnCenter>
-            </RowBetween>
-          )}
+          <RowBetween>
+            <ColumnCenter>
+              <TYPE.body fontSize={16}>
+                <ExternalLink href={href}>
+                  Get <b>{stakingInfo.lp.name}</b> LP Tokens
+                </ExternalLink>{' '}
+                on {stakingInfo.lp.protocol.name}
+              </TYPE.body>
+            </ColumnCenter>
+          </RowBetween>
           <CurrencyInputPanel
             value={typedValue}
             onUserInput={onUserInput}
