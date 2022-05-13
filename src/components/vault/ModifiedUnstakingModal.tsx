@@ -77,9 +77,7 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
   const vaultChef = useVaultChefContract()
 
   // pair contract for this token to be staked
-  const dummyPair = stakingInfo.tokens[1]
-    ? new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
-    : null
+  const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
 
   async function onWithdraw() {
     if (vaultChef && stakingInfo?.stakedAmount) {

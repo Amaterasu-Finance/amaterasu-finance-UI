@@ -53,14 +53,6 @@ export function useBstnNearPrice(): Price | undefined {
   )
 }
 
-export function useStNearNearPrice(): Price | undefined {
-  return useTokenPriceFromPair(
-    [getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
-    '0x47924Ae4968832984F4091EEC537dfF5c38948a4', // stNEAR/NEAR
-    1
-  )
-}
-
 export function useSolaceNearPrice(): Price | undefined {
   return useTokenPriceFromPair(
     [getTokenWithDefault(ChainId.AURORA_MAINNET, 'SOLACE'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
@@ -72,15 +64,7 @@ export function useSolaceNearPrice(): Price | undefined {
 export function useLunaNearPrice(): Price | undefined {
   return useTokenPriceFromPair(
     [getTokenWithDefault(ChainId.AURORA_MAINNET, 'atLUNA'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
-    '0xdF8CbF89ad9b7dAFdd3e37acEc539eEcC8c47914',
+    '0xdF8CbF89ad9b7dAFdd3e37acEc539eEcC8c47914', // NEAR/ROSE
     0
-  )
-}
-
-export function useMetaNearPrice(): Price | undefined {
-  return useTokenPriceFromPair(
-    [getTokenWithDefault(ChainId.AURORA_MAINNET, 'META'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
-    '0xa8CAaf35c0136033294dD286A14051fBf37aed07',
-    1
   )
 }
