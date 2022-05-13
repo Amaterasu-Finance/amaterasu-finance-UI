@@ -220,9 +220,8 @@ export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) 
       : `$${userRecentProfitUsd.toFixed(2)}`)
 
   const token0 = stakingInfo.tokens[0]
-  const token1 = stakingInfo.tokens[1]
   const currency0 = unwrappedToken(token0)
-  const currency1 = unwrappedToken(token1)
+  const currency1 = stakingInfo.tokens[1] && unwrappedToken(stakingInfo.tokens[1])
   const currency2 = stakingInfo.tokens[2] && unwrappedToken(stakingInfo.tokens[2])
   const currency3 = stakingInfo.tokens[3] && unwrappedToken(stakingInfo.tokens[3])
   const currencies = [currency0, currency1, currency2, currency3].filter(c => c) // filter out undefined
@@ -492,7 +491,7 @@ export default function VaultCard({ stakingInfo }: { stakingInfo: VaultsInfo }) 
                   <Row gutter={12} style={{ justifyContent: 'center', marginTop: '20px' }} justify={'space-around'}>
                     <Col className="gutter-row" span={12}>
                       <ButtonPrimary
-                        disabled={!stakingInfo.active}
+                        disabled={!stakingInfo.active || !currency1}
                         padding="8px"
                         borderRadius="8px"
                         onClick={() => setShowZapModal(true)}
