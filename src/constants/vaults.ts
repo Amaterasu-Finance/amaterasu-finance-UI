@@ -33,9 +33,77 @@ export const VAULT_INFO: {
 } = {
   [ChainId.AURORA_MAINNET]: [
     // ---------------------------------------------------
+    // Bastion
+    // ---------------------------------------------------
+    {
+      pid: 36,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0xf46bbC9596EBf179FcAE93A8cCb2202782f01d89',
+      tokens: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_STNEAR.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_STNEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_STNEAR.stakingAddress,
+      xIzaRate: 10.0
+    },
+    {
+      pid: 37,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0xd199e52B3cbCE65f64fC4aac1d6F52aC3AE99D07',
+      tokens: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_USDC.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_USDC,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_USDC.stakingAddress,
+      xIzaRate: 10.0
+    },
+    {
+      pid: 38,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x40675345537618de3ee2d89593151ff3AD3aD96e',
+      tokens: CURVE_POOLS_MAINNET.BASTION_NEAR_NEAR.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_NEAR_NEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_NEAR_NEAR.stakingAddress,
+      xIzaRate: 10.0
+    },
+    {
+      pid: 39,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x4eDC5fC567619e24c62f32Ba69ff862F54359501',
+      tokens: CURVE_POOLS_MAINNET.BASTION_NEAR_STNEAR.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_NEAR_STNEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_NEAR_STNEAR.stakingAddress,
+      xIzaRate: 10.0
+    },
+    {
+      pid: 40,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x1d9971E8C22399b5b298a51048d7898a0f0933Bb',
+      tokens: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC.stakingAddress,
+      xIzaRate: 10.0
+    },
+    {
+      pid: 41,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x9903C74C05e6B05399715BE543516F16749cd55E',
+      tokens: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH.tokens,
+      lp: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+      masterchef: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH.stakingAddress,
+      xIzaRate: 10.0
+    },
+    // ---------------------------------------------------
     // Amaterasu
     // ---------------------------------------------------
-
     {
       pid: 24,
       farmPid: 7,
@@ -43,30 +111,6 @@ export const VAULT_INFO: {
       stratAddress: '0xceABBE4994d0592C69842A3B38f20640a8d1b380',
       tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/xIZA'),
       lp: LPS_MAINNET.AMATERASU_IZA_XIZA,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
-      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
-      buybackRate: 0.0,
-      xIzaRate: 50.0
-    },
-    {
-      pid: 25,
-      farmPid: 8,
-      active: true,
-      stratAddress: '0x7a8B63e13525F6AB74CD1d78d54d8fefB94D977E',
-      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/stNEAR'),
-      lp: LPS_MAINNET.AMATERASU_IZA_STNEAR,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
-      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
-      buybackRate: 0.0,
-      xIzaRate: 50.0
-    },
-    {
-      pid: 26,
-      farmPid: 9,
-      active: true,
-      stratAddress: '0xC7aE8b94DE8672128e9ED11D124A941B782d5560',
-      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/atUST'),
-      lp: LPS_MAINNET.AMATERASU_IZA_ATUST,
       protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
       masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
       buybackRate: 0.0,
@@ -182,19 +226,6 @@ export const VAULT_INFO: {
       masterchef: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_RUSD.stakingAddress,
       bonusRewarderTokenPerBlock: '330687830687830687',
       xIzaRate: 10
-    },
-    {
-      pid: 34,
-      farmPid: 0,
-      active: true,
-      stratAddress: '0x928B687422B56dA2e6A2EDA77cdec6955BB330D0',
-      tokens: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST.tokens,
-      lp: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
-      masterchef: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST.stakingAddress,
-      xIzaRate: 10.0,
-      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'atLUNA'),
-      bonusRewarderTokenPerBlock: '109184191744554191'
     },
     // ---------------------------------------------------
     // Trisolaris
@@ -319,6 +350,46 @@ export const VAULT_INFO: {
       masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
       bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'SOLACE'),
       bonusRewarderTokenPerBlock: '771604938300000000'
+    },
+    // ---------------------------------------------------
+    // Paused
+    // ---------------------------------------------------
+    {
+      pid: 34,
+      farmPid: 0,
+      active: false,
+      stratAddress: '0x928B687422B56dA2e6A2EDA77cdec6955BB330D0',
+      tokens: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST.tokens,
+      lp: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
+      masterchef: CURVE_POOLS_MAINNET.ROSE_DAI_USDC_USDT_UST.stakingAddress,
+      xIzaRate: 10.0,
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'atLUNA'),
+      bonusRewarderTokenPerBlock: '109184191744554191'
+    },
+    {
+      pid: 25,
+      farmPid: 8,
+      active: false,
+      stratAddress: '0x7a8B63e13525F6AB74CD1d78d54d8fefB94D977E',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/stNEAR'),
+      lp: LPS_MAINNET.AMATERASU_IZA_STNEAR,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
+    },
+    {
+      pid: 26,
+      farmPid: 9,
+      active: false,
+      stratAddress: '0xC7aE8b94DE8672128e9ED11D124A941B782d5560',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/atUST'),
+      lp: LPS_MAINNET.AMATERASU_IZA_ATUST,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.AMATERASU],
+      masterchef: PROTOCOLS_MAINNET.Amaterasu.masterchefV1,
+      buybackRate: 0.0,
+      xIzaRate: 50.0
     }
   ]
 }

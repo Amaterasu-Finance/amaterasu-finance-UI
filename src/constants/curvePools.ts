@@ -1,6 +1,7 @@
 import { ChainId, Token } from '@amaterasu-fi/sdk'
 import getTokenWithDefault from '../utils/getTokenWithDefault'
 import { Protocol, PROTOCOLS_MAINNET, ProtocolName } from './protocol'
+import { BASTION_REALMS } from './bastion'
 
 export interface CurvePool {
   name: string
@@ -14,11 +15,133 @@ export interface CurvePool {
   stakingAddress?: string
   token0?: Token
   token1?: Token
+  cTokenAddress?: string
+  isBastion?: boolean
 }
 
 export const CURVE_POOLS_MAINNET: {
   [key: string]: CurvePool
 } = {
+  // ---------------------------------------------------
+  // Bastion
+  // ---------------------------------------------------
+  BASTION_MULTICHAIN_USDC: {
+    name: 'USDC - Multichain Realm',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+    minterAddress: BASTION_REALMS.MULTICHAIN.comptroller,
+    stakingAddress: BASTION_REALMS.MULTICHAIN.rewarder,
+    urlName: '',
+    cTokenAddress: '0x10a9153A7b4da83Aa1056908C710f1aaCCB3Ef85',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_MULTICHAIN_STNEAR: {
+    name: 'stNEAR - Multichain Realm',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR'),
+    minterAddress: BASTION_REALMS.MULTICHAIN.comptroller,
+    stakingAddress: BASTION_REALMS.MULTICHAIN.rewarder,
+    urlName: '',
+    cTokenAddress: '0x30Fff4663A8DCDd9eD81e60acF505e6159f19BbC',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_NEAR_NEAR: {
+    name: 'NEAR - Near Realm',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
+    minterAddress: BASTION_REALMS.NEAR.comptroller,
+    stakingAddress: BASTION_REALMS.NEAR.rewarder,
+    urlName: '',
+    cTokenAddress: '0x4A45075D3E752F3676610Fc427F5E6915Ce63A63',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_NEAR_STNEAR: {
+    name: 'stNEAR - Near Realm',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'stNEAR'),
+    minterAddress: BASTION_REALMS.NEAR.comptroller,
+    stakingAddress: BASTION_REALMS.NEAR.rewarder,
+    urlName: '',
+    cTokenAddress: '0xB76108eb764b4427505c4bb020A37D95b3ef5AFE',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_MAIN_USDC: {
+    name: 'USDC - Main Hub',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+    minterAddress: BASTION_REALMS.MAIN.comptroller,
+    stakingAddress: BASTION_REALMS.MAIN.rewarder,
+    urlName: '',
+    cTokenAddress: '0xe5308dc623101508952948b141fD9eaBd3337D99',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_MAIN_USDT: {
+    name: 'USDT - Main Hub',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT'),
+    minterAddress: BASTION_REALMS.MAIN.comptroller,
+    stakingAddress: BASTION_REALMS.MAIN.rewarder,
+    urlName: '',
+    cTokenAddress: '0x845E15A441CFC1871B7AC610b0E922019BaD9826',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_MAIN_WBTC: {
+    name: 'WBTC - Main Hub',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WBTC').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'WBTC')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WBTC'),
+    minterAddress: BASTION_REALMS.MAIN.comptroller,
+    stakingAddress: BASTION_REALMS.MAIN.rewarder,
+    urlName: '',
+    cTokenAddress: '0xfa786baC375D8806185555149235AcDb182C033b',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_MAIN_WETH: {
+    name: 'WETH - Main Hub',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WETH').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'WETH')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'WETH'),
+    minterAddress: BASTION_REALMS.MAIN.comptroller,
+    stakingAddress: BASTION_REALMS.MAIN.rewarder,
+    urlName: '',
+    cTokenAddress: '0x4E8fE8fd314cFC09BDb0942c5adCC37431abDCD0',
+    isBastion: true,
+    isCurve: false
+  },
+  BASTION_MAIN_NEAR: {
+    name: 'NEAR - Main Hub',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
+    address: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR').address,
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR'),
+    minterAddress: BASTION_REALMS.MAIN.comptroller,
+    stakingAddress: BASTION_REALMS.MAIN.rewarder,
+    urlName: '',
+    cTokenAddress: '0x8C14ea853321028a7bb5E4FB0d0147F183d3B677',
+    isBastion: true,
+    isCurve: false
+  },
   // ---------------------------------------------------
   // Rose
   // ---------------------------------------------------

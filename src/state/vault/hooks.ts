@@ -24,10 +24,12 @@ import validStakingInfo from '../../utils/validStakingInfo'
 import { LiqPool } from '../../constants/lps'
 import usePitToken from '../../hooks/usePitToken'
 import { Protocol, ProtocolName, PROTOCOLS_MAINNET } from '../../constants/protocol'
-import calculateApy, { calculateDailyApy } from '../../utils/calculateApy'
+import { calculateApyNumber, calculateDailyApyNumber } from '../../utils/calculateApy'
 import { useXFoxApr } from '../../hooks/usexFoxApy'
 import { CurvePool } from '../../constants/curvePools'
 import { VAULT_34_LUNA_PER_BLOCK } from '../../constants/vaults'
+import useBastionInfo, { getBastionInfoFromcToken } from '../../hooks/useBastionInfo'
+import { FUNCTION_SIGS } from '../../constants'
 
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -91,7 +93,7 @@ export interface VaultsInfo {
   // price per LP token
   pricePerLpToken: Fraction | undefined
   // pool APR
-  apr: Fraction | undefined
+  apr: number | undefined
   // pool APY
   apy: number | undefined
   // pool daily APY
@@ -108,19 +110,18 @@ export function getRewardTokenPrice(baseToken: Token | undefined, tokenData: Rec
   return baseToken && baseToken?.symbol && tokenData?.[baseToken?.symbol].price
 }
 
-export function getIzaApy20Perc(baseApr: Fraction, basexIzaApr: Fraction): number | undefined {
-  const ratio =
-    0.0179 +
-    0.00214 * Number(baseApr.toSignificant(10)) * 100 +
-    0.0000172 * Math.pow(Number(baseApr.toSignificant(10)) * 100, 2)
+export function getIzaApy10Perc(baseApr: number, basexIzaApr: Fraction): number | undefined {
+  const ratio = 0.0179 + 0.00214 * baseApr * 100 + 0.0000172 * Math.pow(baseApr * 100, 2)
+  return (ratio * Number(basexIzaApr.toSignificant(10))) / 2
+}
+
+export function getIzaApy20Perc(baseApr: number, basexIzaApr: Fraction): number | undefined {
+  const ratio = 0.0179 + 0.00214 * baseApr * 100 + 0.0000172 * Math.pow(baseApr * 100, 2)
   return ratio * Number(basexIzaApr.toSignificant(10))
 }
 
-export function getIzaApy50Perc(baseApr: Fraction, basexIzaApr: Fraction): number | undefined {
-  const ratio =
-    0.343 +
-    0.00459 * Number(baseApr.toSignificant(10)) * 100 +
-    0.0000477 * Math.pow(Number(baseApr.toSignificant(10)) * 100, 2)
+export function getIzaApy50Perc(baseApr: number, basexIzaApr: Fraction): number | undefined {
+  const ratio = 0.343 + 0.00459 * baseApr * 100 + 0.0000477 * Math.pow(baseApr * 100, 2)
   return ratio * Number(basexIzaApr.toSignificant(10))
 }
 
@@ -133,6 +134,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const xIzaApr = useXFoxApr()
 
   const tokensWithPrices = useTokensWithWethPrices()
+  const bastionInfos = useBastionInfo(tokensWithPrices)
 
   const weth = tokensWithPrices?.WETH?.token
   const wethBusdPrice = useBUSDPrice(weth)
@@ -146,9 +148,10 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const pids = useMemo(() => vaultInfo.map(({ pid }) => pid), [vaultInfo])
   const farmPids = useMemo(() => vaultInfo.map(({ farmPid }) => farmPid), [vaultInfo])
   const lpTokenAddresses = useMemo(() => vaultInfo.map(({ lp }) => lp.address), [vaultInfo])
-  const lpTokenAddressesWoCurve = useMemo(() => vaultInfo.map(({ lp }) => (lp.isCurve ? undefined : lp.address)), [
-    vaultInfo
-  ])
+  const lpTokenAddressesWoCurve = useMemo(
+    () => vaultInfo.map(({ lp }) => (lp.isCurve || lp.isBastion ? undefined : lp.address)),
+    [vaultInfo]
+  )
   // TODO - eventually get from chain. but MUCH simpler to assume each curve pool lp token is worth $1
   // const curveMinterAddresses = useMemo(
   //   () => Object.keys(CURVE_POOLS_MAINNET).map((keyName, i) => CURVE_POOLS_MAINNET[keyName].minterAddress),
@@ -159,7 +162,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const PAIR_INTERFACES = useMemo(() => lpTokenAddresses.map(() => PAIR_INTERFACE), [lpTokenAddresses])
   const stratAddresses = useMemo(() => vaultInfo.map(({ stratAddress }) => stratAddress), [vaultInfo])
   const masterchefAddresses = useMemo(
-    () => vaultInfo.map(({ lp, masterchef }) => (lp.isCurve ? undefined : masterchef)),
+    () => vaultInfo.map(({ lp, masterchef }) => (lp.isCurve || lp.isBastion ? undefined : masterchef)),
     [vaultInfo]
   )
   const masterchefInterfaces: Interface[] = useMemo(
@@ -217,6 +220,14 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     'poolInfo',
     farmPids.map(pid => [pid])
   )
+  const bastionStratAddresses = useMemo(
+    () => vaultInfo.map(({ lp, stratAddress }) => (lp.isBastion ? stratAddress : undefined)),
+    [vaultInfo]
+  )
+  const totalTotalSig = bastionStratAddresses.map(() => FUNCTION_SIGS.cTokenTotal)
+  const bastionStratTokensTotal = useMultipleCallsNoInputsReturnInt(bastionStratAddresses, totalTotalSig)
+  const debtTotalSig = bastionStratAddresses.map(() => FUNCTION_SIGS.debtTotal)
+  const bastionStratDebtTotal = useMultipleCallsNoInputsReturnInt(bastionStratAddresses, debtTotalSig)
 
   const lpTokenTotalSupplies = useMultipleContractSingleData(lpTokenAddresses, PAIR_INTERFACE, 'totalSupply')
   const lpTokenReserves = useMultipleContractSingleData(lpTokenAddressesWoCurve, PAIR_INTERFACE, 'getReserves')
@@ -245,6 +256,9 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
       const paused = pausedList[index]
       const compoundRate = 100 - DEFAULT_CONTROLLER_FEE - buybackRate - xIzaRate - xTokenRate
 
+      const bastionTokensTotal = bastionStratTokensTotal[index]
+      const bastionDebtTotal = bastionStratDebtTotal[index]
+
       // amount uint256, rewardDebt uint256, rewardDebtAtBlock uint256, lastWithdrawBlock uint256, firstDepositBlock uint256, blockdelta uint256, lastDepositBlock uint256
       const userInfo = userInfos[index]
       const userInfoList = userInfosList[index]
@@ -253,7 +267,13 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
       const lpTokenReserve = lpTokenReserves[index]
       const lpTokenBalance = lpTokenBalances[index]
       const vaultBalance = vaultBalances[index]
-      const liquidityToken = new Token(chainId, lp.address, 18, lp.name, lp.name)
+
+      let bastionInfo
+      let liquidityToken = new Token(chainId, lp.address, 18, lp.name, lp.name)
+      if (lp.isBastion) {
+        bastionInfo = getBastionInfoFromcToken(lp.cTokenAddress, bastionInfos)
+        liquidityToken = lp.baseToken
+      }
 
       let rewardPerBlock
       let totalAllocPoint
@@ -285,6 +305,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         let totalAllocPointResult = JSBI.BigInt('1')
         let poolShare = new Fraction('1')
         let baseBlockRewards
+
         if (lp.isCurve) {
           // TODO - read from chain eventually
           baseBlockRewards = new TokenAmount(
@@ -329,6 +350,9 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         if (lp.isCurve) {
           totalFarmStakedAmountUSD = farmStakedAmount
           pricePerLpToken = new Fraction('1')
+        } else if (lp.isBastion) {
+          totalFarmStakedAmountUSD = bastionInfo && bastionInfo.tvlUsd
+          pricePerLpToken = bastionInfo && bastionInfo.underlyingPrice
         } else {
           const totalFarmStakedAmountWETH = calculateWethAdjustedTotalStakedAmount(
             chainId,
@@ -344,49 +368,78 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
           pricePerLpToken = totalFarmStakedAmountUSD && totalFarmStakedAmountUSD.divide(farmStakedAmount)
         }
 
-        const userAmountStakedUsd = pricePerLpToken && pricePerLpToken.multiply(stakedAmount)
-        const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
+        let apr
+        if (lp.isBastion) {
+          const supply = new TokenAmount(lp.baseToken, JSBI.BigInt(bastionTokensTotal.result?.[0] ?? 0))
+          const debt = new TokenAmount(lp.baseToken, JSBI.BigInt(bastionDebtTotal.result?.[0] ?? 0))
+          apr = bastionInfo
+            ? 365 *
+              (Number(supply.divide(vaultStakedAmount).toSignificant(10)) * bastionInfo.supplyAprDaily +
+                Number(debt.divide(vaultStakedAmount).toSignificant(10)) * bastionInfo.borrowAprDaily)
+            : 0
+          // console.log('-------------------------------------')
+          // console.log(pid, lp.name)
+          // console.log('want', vaultStakedAmount.toSignificant(8))
+          // console.log('supply', supply.toSignificant(8))
+          // console.log('debt', debt.toSignificant(8))
+          // console.log('supplyMult', supply.divide(vaultStakedAmount).toSignificant(8))
+          // console.log('debtMult', debt.divide(vaultStakedAmount).toSignificant(8))
+          // console.log('bastionInfo.supplyAprDailyBase', bastionInfo && bastionInfo.supplyAprDailyBase?.toSignificant(8))
+          // console.log('bastionInfo.supplyAprDaily', bastionInfo && bastionInfo.supplyAprDaily)
+          // console.log('bastionInfo.borrowAprDailyBase', bastionInfo && bastionInfo.borrowAprDailyBase?.toSignificant(8))
+          // console.log('bastionInfo.borrowAprDaily', bastionInfo && bastionInfo.borrowAprDaily)
+          // console.log('apr', apr)
+          // console.log('-------------------------------------')
+        } else {
+          const aprInital =
+            rewardTokenPrice && totalFarmStakedAmountUSD
+              ? calculateApr(rewardTokenPrice, baseBlockRewards, blocksPerYear, poolShare, totalFarmStakedAmountUSD)
+              : new Fraction('0')
 
-        const aprInital =
-          rewardTokenPrice && totalFarmStakedAmountUSD
-            ? calculateApr(rewardTokenPrice, baseBlockRewards, blocksPerYear, poolShare, totalFarmStakedAmountUSD)
-            : new Fraction('0')
+          const bonusRewardTokenPrice =
+            vaultInfo[index].bonusRewarderToken &&
+            getRewardTokenPrice(vaultInfo[index].bonusRewarderToken, tokensWithPrices)
+          const bonusTokenPerBlock = new TokenAmount(
+            vaultInfo[index].bonusRewarderToken ?? govToken,
+            (pid === 34 ? VAULT_34_LUNA_PER_BLOCK : vaultInfo[index].bonusRewarderTokenPerBlock) ?? '0'
+          )
+          const aprBonus =
+            bonusRewardTokenPrice &&
+            vaultInfo[index].bonusRewarderToken &&
+            vaultInfo[index].bonusRewarderTokenPerBlock &&
+            totalFarmStakedAmountUSD
+              ? calculateApr(
+                  bonusRewardTokenPrice,
+                  bonusTokenPerBlock,
+                  blocksPerYear,
+                  new Fraction('1'),
+                  totalFarmStakedAmountUSD
+                )
+              : new Fraction('0')
+          apr = Number(aprInital?.add(aprBonus ?? '0').toSignificant(10))
+        }
+        const apyDaily = calculateDailyApyNumber(apr)
+        const apyBase = apr && calculateApyNumber((apr * compoundRate) / 100)
 
-        const bonusRewardTokenPrice =
-          vaultInfo[index].bonusRewarderToken &&
-          getRewardTokenPrice(vaultInfo[index].bonusRewarderToken, tokensWithPrices)
-        const bonusTokenPerBlock = new TokenAmount(
-          vaultInfo[index].bonusRewarderToken ?? govToken,
-          (pid === 34 ? VAULT_34_LUNA_PER_BLOCK : vaultInfo[index].bonusRewarderTokenPerBlock) ?? '0'
-        )
-        const aprBonus =
-          bonusRewardTokenPrice &&
-          vaultInfo[index].bonusRewarderToken &&
-          vaultInfo[index].bonusRewarderTokenPerBlock &&
-          totalFarmStakedAmountUSD
-            ? calculateApr(
-                bonusRewardTokenPrice,
-                bonusTokenPerBlock,
-                blocksPerYear,
-                new Fraction('1'),
-                totalFarmStakedAmountUSD
-              )
-            : new Fraction('0')
-        const apr = aprInital?.add(aprBonus ?? '0')
-
-        const apyDaily = apr && calculateDailyApy(apr)
-        const apyBase = apr && calculateApy(apr?.multiply(JSBI.BigInt(compoundRate)).divide('100'))
+        // Same for all below here
         const apyIza =
-          apr && xIzaApr && (xIzaRate === 50 ? getIzaApy50Perc(apr, xIzaApr) : getIzaApy20Perc(apr, xIzaApr))
+          apr &&
+          xIzaApr &&
+          (xIzaRate === 50
+            ? getIzaApy50Perc(apr, xIzaApr)
+            : xIzaRate === 10
+            ? getIzaApy10Perc(apr, xIzaApr)
+            : getIzaApy20Perc(apr, xIzaApr))
         const apyxToken = 0
         const apyCombined = apyBase && apyIza && apyBase + apyIza + apyxToken
-        // if (lp.isCurve) {
-        //   console.log(pid, lp.name, bonusTokenPerBlock.toSignificant(5))
-        //   console.log('aprInital', aprInital?.toSignificant(5))
-        //   console.log('aprBonus', aprBonus?.toSignificant(5))
-        //   console.log('apr', apr?.toSignificant(5))
-        //   console.log('bonusRewardTokenPrice', bonusRewardTokenPrice?.toSignificant(5))
+
+        // if (lp.isBastion) {
+        //   console.log(pid, lp.name)
+        //   console.log('pricePerLpToken', pricePerLpToken)
+        //   console.log('stakedAmount', stakedAmount)
         // }
+        const userAmountStakedUsd = pricePerLpToken && pricePerLpToken.multiply(stakedAmount)
+        const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
         // update active based on paused status
         active = paused && paused.result ? !paused.result[0] && active : active
 
@@ -467,6 +520,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     chainId,
     vaultInfo,
     tokensWithPrices,
+    bastionInfos,
     weth,
     govToken,
     xToken,
@@ -483,6 +537,8 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     lpTokenTotalSupplies,
     lpTokenReserves,
     vaultBalances,
+    bastionStratTokensTotal,
+    bastionStratDebtTotal,
     lpTokenBalances
   ])
 }
