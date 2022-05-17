@@ -28,6 +28,7 @@ import { darken } from 'polished'
 import { useCurrencyBalances } from '../../state/wallet/hooks'
 import { BlueCard } from '../Card'
 import { CURVE_POOLS_MAINNET } from '../../constants/curvePools'
+import { ProtocolName } from '../../constants/protocol'
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
@@ -87,6 +88,19 @@ export function get3PoolIndex(symbol: string): number {
     case 'USDC':
       return 1
     case 'USDT':
+      return 2
+    default:
+      return 0
+  }
+}
+
+export function get3PoolTriIndex(symbol: string): number {
+  switch (symbol) {
+    case 'USDC':
+      return 0
+    case 'USDT':
+      return 1
+    case 'USN':
       return 2
     default:
       return 0
@@ -217,6 +231,65 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
 
         await zapper
           .zapIn3PoolAndStake(
+            currency.address,
+            formattedAmount,
+            stakingInfo.lp.address,
+            stakingInfo.lp.minterAddress,
+            account,
+            index,
+            stakingInfo.pid,
+            {
+              gasLimit: calculateGasMargin(estimatedGas)
+            }
+          )
+          .then((response: TransactionResponse) => {
+            addTransaction(response, {
+              summary: `Zap into Vault`
+            })
+            setHash(response.hash)
+          })
+          .catch((error: any) => {
+            setAttempting(false)
+            if (error?.code === -32603) {
+              setFailed(true)
+            }
+            console.log(error)
+          })
+      } else {
+        setAttempting(false)
+        throw new Error('Attempting to stake without approval or a signature. Please contact support.')
+      }
+    }
+  }
+
+  async function onZap3poolTri() {
+    setAttempting(true)
+    if (currency && account && zapper && parsedAmount && deadline) {
+      if (approval === ApprovalState.APPROVED) {
+        const formattedAmount = `0x${parsedAmount.raw.toString(16)}`
+
+        //   function zapIn3PoolAndStake(
+        //     address _from, // token to zap in
+        //     uint256 amount, // amount
+        //     address _to, // lp token for 3pool
+        //     address lpMinterAddress, // contract address that can mint the lp tokens
+        //     address _recipient, // user to deposit into vault for
+        //     uint256 _fromIndex, // index of from token on 3pool
+        //     uint256 vaultPid // pool id for vault
+        // ) external {
+        const index = get3PoolTriIndex(currency.symbol ?? '')
+        const estimatedGas = await zapper.estimateGas.zapIn3PoolTriAndStake(
+          currency.address,
+          formattedAmount,
+          stakingInfo.lp.address,
+          stakingInfo.lp.minterAddress,
+          account,
+          index,
+          stakingInfo.pid
+        )
+
+        await zapper
+          .zapIn3PoolTriAndStake(
             currency.address,
             formattedAmount,
             stakingInfo.lp.address,
@@ -531,7 +604,13 @@ export default function ZapModal({ isOpen, onDismiss, stakingInfo }: StakingModa
               disabled={!!error || (signatureData === null && approval !== ApprovalState.APPROVED)}
               error={!!error && !!parsedAmount}
               onClick={
-                stakingInfo.lp.isCurve ? (stakingInfo.lp.urlName === 'stables' ? onZap3pool : onZap2pool) : onZap
+                stakingInfo.lp.isCurve
+                  ? stakingInfo.lp.protocol.name === ProtocolName.TRISOLARIS
+                    ? onZap3poolTri
+                    : stakingInfo.lp.urlName === 'stables'
+                    ? onZap3pool
+                    : onZap2pool
+                  : onZap
               }
             >
               {error ?? '⚡ Zap In ⚡'}

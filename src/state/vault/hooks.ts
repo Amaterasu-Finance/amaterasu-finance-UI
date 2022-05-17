@@ -30,6 +30,7 @@ import { CurvePool } from '../../constants/curvePools'
 import { VAULT_34_LUNA_PER_BLOCK } from '../../constants/vaults'
 import useBastionInfo, { getBastionInfoFromcToken } from '../../hooks/useBastionInfo'
 import { FUNCTION_SIGS } from '../../constants'
+import useCurvePoolInfo from '../../hooks/useCurvePoolInfo'
 
 const TOTAL_ALLOC_POINT_SIG = '0x17caf6f1'
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
@@ -135,6 +136,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
   const tokensWithPrices = useTokensWithWethPrices()
   const bastionInfos = useBastionInfo(tokensWithPrices)
+  const curvePoolInfo = useCurvePoolInfo()
 
   const weth = tokensWithPrices?.WETH?.token
   const wethBusdPrice = useBUSDPrice(weth)
@@ -152,12 +154,6 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     () => vaultInfo.map(({ lp }) => (lp.isCurve || lp.isBastion ? undefined : lp.address)),
     [vaultInfo]
   )
-  // TODO - eventually get from chain. but MUCH simpler to assume each curve pool lp token is worth $1
-  // const curveMinterAddresses = useMemo(
-  //   () => Object.keys(CURVE_POOLS_MAINNET).map((keyName, i) => CURVE_POOLS_MAINNET[keyName].minterAddress),
-  //   [CURVE_POOLS_MAINNET]
-  // )
-  // const curvePrices = useMultipleContractSingleData(stratAddresses, CURVE_MINTER_INTERFACE, 'get_virtual_price')
 
   const PAIR_INTERFACES = useMemo(() => lpTokenAddresses.map(() => PAIR_INTERFACE), [lpTokenAddresses])
   const stratAddresses = useMemo(() => vaultInfo.map(({ stratAddress }) => stratAddress), [vaultInfo])
@@ -347,7 +343,10 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
 
         let totalFarmStakedAmountUSD
         let pricePerLpToken
-        if (lp.isCurve) {
+        if (curvePoolInfo.hasOwnProperty(lp.name)) {
+          pricePerLpToken = curvePoolInfo[lp.name]
+          totalFarmStakedAmountUSD = farmStakedAmount.multiply(pricePerLpToken)
+        } else if (lp.isCurve) {
           totalFarmStakedAmountUSD = farmStakedAmount
           pricePerLpToken = new Fraction('1')
         } else if (lp.isBastion) {
@@ -539,7 +538,8 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
     vaultBalances,
     bastionStratTokensTotal,
     bastionStratDebtTotal,
-    lpTokenBalances
+    lpTokenBalances,
+    curvePoolInfo
   ])
 }
 
