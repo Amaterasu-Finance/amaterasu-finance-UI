@@ -22,6 +22,21 @@ export interface CurvePool {
 export const CURVE_POOLS_MAINNET: {
   [key: string]: CurvePool
 } = {
+  TRISOLARIS_USDC_USDT_USN: {
+    name: 'USDC-USDT-USN',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+    address: '0x87BCC091d0A7F9352728100268Ac8D25729113bB',
+    tokens: [
+      getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+      getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT'),
+      getTokenWithDefault(ChainId.AURORA_MAINNET, 'USN')
+    ],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+    minterAddress: '0x458459E48dbAC0C8Ca83F8D0b7b29FEfE60c3970',
+    stakingAddress: '0x3838956710bcc9D122Dd23863a0549ca8D5675D6',
+    urlName: 'https://www.trisolaris.io/#/pool/stable/add/USDC_USDT_USN',
+    isCurve: true
+  },
   // ---------------------------------------------------
   // Bastion
   // ---------------------------------------------------

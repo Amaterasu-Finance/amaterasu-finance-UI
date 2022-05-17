@@ -25,7 +25,10 @@ export const FUNCTION_SIGS = {
 
   cTokenTotal: '0x9f09997f',
   debtTotal: '0xe7e7e387',
-  wantLockedTotal: '0x42da4eb3'
+  wantLockedTotal: '0x42da4eb3',
+
+  getVirtualPrice: '0xe25aa5fa',
+  get_virtual_price: '0xbb7b8b80'
 }
 
 export const ROUTER_ADDRESSES: { [chainId in ChainId]: string } = {
@@ -77,8 +80,8 @@ export const FARM_ZAPPER: { [chainId in ChainId]: string } = {
 }
 export const ZAPPER: { [chainId in ChainId]: string } = {
   [ChainId.MTV_MAINNET]: '0xB2e1b1D6721cD3F940e3CA34769f8c90b75B55a7',
-  [ChainId.AURORA_MAINNET]: '0xB2e1b1D6721cD3F940e3CA34769f8c90b75B55a7',
-  [ChainId.AURORA_TESTNET]: '0xB2e1b1D6721cD3F940e3CA34769f8c90b75B55a7'
+  [ChainId.AURORA_MAINNET]: '0x991716808c6100043a66277B17916789006E6E01',
+  [ChainId.AURORA_TESTNET]: '0x991716808c6100043a66277B17916789006E6E01'
 }
 
 export const MASTER_BREEDER: { [chainId in ChainId]: string } = {

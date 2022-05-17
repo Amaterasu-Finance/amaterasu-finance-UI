@@ -36,32 +36,10 @@ export const VAULT_INFO: {
     // Bastion
     // ---------------------------------------------------
     {
-      pid: 36,
+      pid: 45,
       farmPid: 0,
       active: true,
-      stratAddress: '0xf46bbC9596EBf179FcAE93A8cCb2202782f01d89',
-      tokens: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_STNEAR.tokens,
-      lp: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_STNEAR,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
-      masterchef: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_STNEAR.stakingAddress,
-      xIzaRate: 10.0
-    },
-    {
-      pid: 37,
-      farmPid: 0,
-      active: true,
-      stratAddress: '0xd199e52B3cbCE65f64fC4aac1d6F52aC3AE99D07',
-      tokens: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_USDC.tokens,
-      lp: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_USDC,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
-      masterchef: CURVE_POOLS_MAINNET.BASTION_MULTICHAIN_USDC.stakingAddress,
-      xIzaRate: 10.0
-    },
-    {
-      pid: 38,
-      farmPid: 0,
-      active: true,
-      stratAddress: '0x40675345537618de3ee2d89593151ff3AD3aD96e',
+      stratAddress: '0xEAfEf7b3a3cAC589D6Df5A62d7D43548A2aD6F56',
       tokens: CURVE_POOLS_MAINNET.BASTION_NEAR_NEAR.tokens,
       lp: CURVE_POOLS_MAINNET.BASTION_NEAR_NEAR,
       protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
@@ -69,10 +47,10 @@ export const VAULT_INFO: {
       xIzaRate: 10.0
     },
     {
-      pid: 39,
+      pid: 46,
       farmPid: 0,
       active: true,
-      stratAddress: '0x4eDC5fC567619e24c62f32Ba69ff862F54359501',
+      stratAddress: '0xAA471c5572426bb653dAEAC5845eaE8C0b7c2299',
       tokens: CURVE_POOLS_MAINNET.BASTION_NEAR_STNEAR.tokens,
       lp: CURVE_POOLS_MAINNET.BASTION_NEAR_STNEAR,
       protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
@@ -80,10 +58,10 @@ export const VAULT_INFO: {
       xIzaRate: 10.0
     },
     {
-      pid: 40,
+      pid: 47,
       farmPid: 0,
       active: true,
-      stratAddress: '0x1d9971E8C22399b5b298a51048d7898a0f0933Bb',
+      stratAddress: '0x4e8Da1B77307BC93793fBd9a812968C1e584f823',
       tokens: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC.tokens,
       lp: CURVE_POOLS_MAINNET.BASTION_MAIN_WBTC,
       protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
@@ -91,10 +69,10 @@ export const VAULT_INFO: {
       xIzaRate: 10.0
     },
     {
-      pid: 41,
+      pid: 48,
       farmPid: 0,
       active: true,
-      stratAddress: '0x9903C74C05e6B05399715BE543516F16749cd55E',
+      stratAddress: '0x75B11A45C3C83545015F7f7D94Acb881aef8cDBC',
       tokens: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH.tokens,
       lp: CURVE_POOLS_MAINNET.BASTION_MAIN_WETH,
       protocol: PROTOCOLS_MAINNET[ProtocolName.BASTION],
@@ -231,24 +209,17 @@ export const VAULT_INFO: {
     // Trisolaris
     // ---------------------------------------------------
     {
-      pid: 1,
+      pid: 44,
       farmPid: 0,
       active: true,
-      stratAddress: '0x81867AA6bDD0Cb22EC9cc5b03e27e926298d620E',
-      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'NEAR/WETH'),
-      lp: LPS_MAINNET.TRISOLARIS_NEAR_WETH,
+      stratAddress: '0xe12bB99C7debf4050AA98aA52D7bB9b004Ac468C',
+      tokens: CURVE_POOLS_MAINNET.TRISOLARIS_USDC_USDT_USN.tokens,
+      lp: CURVE_POOLS_MAINNET.TRISOLARIS_USDC_USDT_USN,
       protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
-      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV1
-    },
-    {
-      pid: 2,
-      farmPid: 1,
-      active: false,
-      stratAddress: '0x37f2b0cBc932543f253E0706E03b75Ca7B0A4E34',
-      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/NEAR'),
-      lp: LPS_MAINNET.TRISOLARIS_USDC_NEAR,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
-      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV1
+      masterchef: CURVE_POOLS_MAINNET.TRISOLARIS_USDC_USDT_USN.stakingAddress,
+      xIzaRate: 10.0,
+      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'AURORA'),
+      bonusRewarderTokenPerBlock: '3214763374000000'
     },
     {
       pid: 3,
@@ -257,16 +228,6 @@ export const VAULT_INFO: {
       stratAddress: '0x5A1Ae6a60929ca14aff2bc15cf6aF755e5dCF40c',
       tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/NEAR'),
       lp: LPS_MAINNET.TRISOLARIS_USDT_NEAR,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
-      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV1
-    },
-    {
-      pid: 4,
-      farmPid: 3,
-      active: true,
-      stratAddress: '0xf5Cc0696c3522d92a2aaC10E4794Ff04Bf19aD86',
-      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/USDC'),
-      lp: LPS_MAINNET.TRISOLARIS_USDT_USDC,
       protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
       masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV1
     },
@@ -316,30 +277,6 @@ export const VAULT_INFO: {
       bonusRewarderTokenPerBlock: '7273065476000000000'
     },
     {
-      pid: 30,
-      farmPid: 20,
-      active: true,
-      stratAddress: '0x7F52A95262013090dFd4571Fc72c1174063d6b45',
-      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'NEAR/ROSE'),
-      lp: LPS_MAINNET.TRISOLARIS_NEAR_ROSE,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
-      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
-      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'ROSE'),
-      bonusRewarderTokenPerBlock: '48225308640000000'
-    },
-    {
-      pid: 31,
-      farmPid: 21,
-      active: true,
-      stratAddress: '0xdfbDC73243918F4E9Aa68612845e67ABeFBF7c5d',
-      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'RUSD/NEAR'),
-      lp: LPS_MAINNET.TRISOLARIS_RUSD_NEAR,
-      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
-      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV2,
-      bonusRewarderToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'ROSE'),
-      bonusRewarderTokenPerBlock: '48225308640000000'
-    },
-    {
       pid: 32,
       farmPid: 10,
       active: true,
@@ -354,6 +291,16 @@ export const VAULT_INFO: {
     // ---------------------------------------------------
     // Paused
     // ---------------------------------------------------
+    {
+      pid: 4,
+      farmPid: 3,
+      active: true,
+      stratAddress: '0xf5Cc0696c3522d92a2aaC10E4794Ff04Bf19aD86',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/USDC'),
+      lp: LPS_MAINNET.TRISOLARIS_USDT_USDC,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV1
+    },
     {
       pid: 34,
       farmPid: 0,
@@ -370,7 +317,7 @@ export const VAULT_INFO: {
     {
       pid: 25,
       farmPid: 8,
-      active: false,
+      active: true,
       stratAddress: '0x7a8B63e13525F6AB74CD1d78d54d8fefB94D977E',
       tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'IZA/stNEAR'),
       lp: LPS_MAINNET.AMATERASU_IZA_STNEAR,
