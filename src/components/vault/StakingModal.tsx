@@ -151,6 +151,19 @@ export default function StakingModal({
               </ColumnCenter>
             </RowBetween>
           )}
+          {stakingInfo.lp.name === 'WETH - Main Hub' && (
+            <RowBetween>
+              <ColumnCenter>
+                <TYPE.body fontSize={16}>
+                  <ExternalLink
+                    href={'https://app.amaterasu.fi/#/swap?outputCurrency=0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB'}
+                  >
+                    Wrap ETH to get WETH here
+                  </ExternalLink>{' '}
+                </TYPE.body>
+              </ColumnCenter>
+            </RowBetween>
+          )}
           <CurrencyInputPanel
             value={typedValue}
             onUserInput={onUserInput}
