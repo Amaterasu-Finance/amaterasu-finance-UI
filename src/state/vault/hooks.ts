@@ -158,7 +158,10 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
   const PAIR_INTERFACES = useMemo(() => lpTokenAddresses.map(() => PAIR_INTERFACE), [lpTokenAddresses])
   const stratAddresses = useMemo(() => vaultInfo.map(({ stratAddress }) => stratAddress), [vaultInfo])
   const masterchefAddresses = useMemo(
-    () => vaultInfo.map(({ lp, masterchef }) => (lp.isCurve || lp.isBastion ? undefined : masterchef)),
+    () =>
+      vaultInfo.map(({ lp, masterchef }) =>
+        lp.protocol.name === ProtocolName.ROSE || lp.isBastion ? undefined : masterchef
+      ),
     [vaultInfo]
   )
   const masterchefInterfaces: Interface[] = useMemo(
@@ -302,7 +305,7 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         let poolShare = new Fraction('1')
         let baseBlockRewards
 
-        if (lp.isCurve) {
+        if (lp.isCurve && lp.protocol.name === ProtocolName.ROSE) {
           // TODO - read from chain eventually
           baseBlockRewards = new TokenAmount(
             lp.protocol.nativeToken ?? govToken,
@@ -416,6 +419,17 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
                 )
               : new Fraction('0')
           apr = Number(aprInital?.add(aprBonus ?? '0').toSignificant(10))
+          // if (lp.isCurve) {
+          //   console.log('-------------------------------------')
+          //   console.log(pid, lp.name)
+          //   console.log('totalFarmStakedAmountUSD', totalFarmStakedAmountUSD?.toFixed(2))
+          //   console.log('rewardTokenPrice', rewardTokenPrice?.toSignificant(10))
+          //   console.log('aprInital', aprInital?.toSignificant(10))
+          //   console.log('bonusRewardTokenPrice', bonusRewardTokenPrice?.toSignificant(10))
+          //   console.log('aprBonus', aprBonus?.toSignificant(10))
+          //   console.log('apr', apr)
+          //   console.log('-------------------------------------')
+          // }
         }
         const apyDaily = calculateDailyApyNumber(apr)
         const apyBase = apr && calculateApyNumber((apr * compoundRate) / 100)
@@ -432,11 +446,6 @@ export function useVaultsInfo(active: boolean | undefined = undefined, pid?: num
         const apyxToken = 0
         const apyCombined = apyBase && apyIza && apyBase + apyIza + apyxToken
 
-        // if (lp.isBastion) {
-        //   console.log(pid, lp.name)
-        //   console.log('pricePerLpToken', pricePerLpToken)
-        //   console.log('stakedAmount', stakedAmount)
-        // }
         const userAmountStakedUsd = pricePerLpToken && pricePerLpToken.multiply(stakedAmount)
         const totalStakedAmountBUSD = pricePerLpToken && pricePerLpToken.multiply(vaultStakedAmount)
         // update active based on paused status
