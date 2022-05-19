@@ -222,6 +222,16 @@ export const VAULT_INFO: {
       bonusRewarderTokenPerBlock: '3214763374000000'
     },
     {
+      pid: 1,
+      farmPid: 0,
+      active: true,
+      stratAddress: '0x81867AA6bDD0Cb22EC9cc5b03e27e926298d620E',
+      tokens: getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'NEAR/WETH'),
+      lp: LPS_MAINNET.TRISOLARIS_NEAR_WETH,
+      protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+      masterchef: PROTOCOLS_MAINNET.Trisolaris.masterchefV1
+    },
+    {
       pid: 3,
       farmPid: 2,
       active: false,
