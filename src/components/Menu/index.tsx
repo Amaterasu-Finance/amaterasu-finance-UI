@@ -110,7 +110,7 @@ export default function MiscMenu() {
 
       {open && (
         <MenuFlyout>
-          <MenuItem id="link" href="https://docs.amaterasu.finance/overview/introduction">
+          <MenuItem id="link" href="https://docs.amaterasu.fi">
             <Book size={14} />
             Docs
           </MenuItem>
