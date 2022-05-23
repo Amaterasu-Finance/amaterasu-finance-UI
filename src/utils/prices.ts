@@ -1,12 +1,26 @@
-import { BLOCKED_PRICE_IMPACT_NON_EXPERT } from '../constants'
-import { CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade, Currency } from '@amaterasu-fi/sdk'
-import { ALLOWED_PRICE_IMPACT_HIGH, ALLOWED_PRICE_IMPACT_LOW, ALLOWED_PRICE_IMPACT_MEDIUM } from '../constants'
+import {
+  ALLOWED_PRICE_IMPACT_HIGH,
+  ALLOWED_PRICE_IMPACT_LOW,
+  ALLOWED_PRICE_IMPACT_MEDIUM,
+  BLOCKED_PRICE_IMPACT_NON_EXPERT
+} from '../constants'
+import {
+  Currency,
+  CurrencyAmount,
+  Fraction,
+  JSBI,
+  Percent,
+  ProtocolName,
+  PROTOCOLS,
+  TokenAmount,
+  Trade
+} from '@amaterasu-fi/sdk'
 import { Field } from '../state/swap/actions'
 import { basisPointsToPercent } from './index'
 
-const BASE_FEE = new Percent(JSBI.BigInt(25), JSBI.BigInt(10000))
 const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
-const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
+// const BASE_FEE = new Percent(JSBI.BigInt(25), JSBI.BigInt(10000))
+// const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
 
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(
@@ -14,6 +28,11 @@ export function computeTradePriceBreakdown(
 ): { priceImpactWithoutFee: Percent | undefined; realizedLPFee: CurrencyAmount | undefined | null } {
   // for each hop in our trade, take away the x*y=k price impact from 0.25% fees
   // e.g. for 3 tokens/2 hops: 1 - ((1 - .025) * (1-.025))
+  const INPUT_FRACTION_AFTER_FEE = new Percent(
+    PROTOCOLS[trade?.protocol ?? ProtocolName.AMATERASU].fee,
+    JSBI.BigInt(10000)
+  )
+
   const realizedLPFee = !trade
     ? undefined
     : ONE_HUNDRED_PERCENT.subtract(

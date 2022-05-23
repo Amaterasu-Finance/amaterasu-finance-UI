@@ -1,11 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@amaterasu-fi/sdk'
+import { JSBI, Percent, PROTOCOLS, Router, SwapParameters, Trade, TradeType } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
+import { calculateGasMargin, getRouterContractFromAddress, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import v1SwapArguments from '../utils/v1SwapArguments'
 import { useActiveWeb3React } from './index'
@@ -62,8 +62,9 @@ function useSwapCallArguments(
     const tradeVersion = getTradeVersion(trade)
     if (!trade || !recipient || !library || !account || !tradeVersion || !chainId || !deadline) return []
 
+    const routerAddress = PROTOCOLS[trade.protocol].routerAddress
     const contract: Contract | null =
-      tradeVersion === Version.v2 ? getRouterContract(chainId, library, account) : v1Exchange
+      tradeVersion === Version.v2 ? getRouterContractFromAddress(routerAddress, library, account) : v1Exchange
     if (!contract) {
       return []
     }

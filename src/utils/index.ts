@@ -104,6 +104,10 @@ export function getRouterContract(chainId: number, library: Web3Provider, accoun
   return getContract(routerAddress, IUniswapV2Router02ABI, library, account)
 }
 
+export function getRouterContractFromAddress(address: string, library: Web3Provider, account?: string): Contract {
+  return getContract(address, IUniswapV2Router02ABI, library, account)
+}
+
 export function useRouterContractAddress(): string | undefined {
   const { chainId } = useActiveWeb3React()
   const routerAddress = (chainId && ROUTER_ADDRESSES[chainId]) as string

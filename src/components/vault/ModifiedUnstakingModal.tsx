@@ -20,6 +20,7 @@ import { LoadingView, SubmittedView } from '../ModalViews'
 // import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
 import { useVaultChefContract } from '../../hooks/useContract'
+import { DEFAULT_PROTOCOL } from '../../constants'
 // import useCalculateWithdrawalFee from '../../hooks/useCalculateWithdrawalFee'
 // import useBlockchain from '../../hooks/useBlockchain'
 
@@ -78,7 +79,11 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
 
   // pair contract for this token to be staked
   const dummyPair = stakingInfo.tokens[1]
-    ? new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
+    ? new Pair(
+        new TokenAmount(stakingInfo.tokens[0], '0'),
+        new TokenAmount(stakingInfo.tokens[1], '0'),
+        DEFAULT_PROTOCOL
+      )
     : null
 
   async function onWithdraw() {

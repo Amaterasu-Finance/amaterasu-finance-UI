@@ -26,6 +26,7 @@ import { calculateGasMargin } from '../../utils'
 import { Link } from 'react-router-dom'
 import { currencyId } from '../../utils/currencyId'
 import { CardSection } from './styled'
+import { DEFAULT_PROTOCOL } from '../../constants'
 
 /*const HypotheticalRewardRate = styled.div<{ dim: boolean }>`
   display: flex;
@@ -71,7 +72,11 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   const depositFee = stakingInfo.depositFee
 
   // pair contract for this token to be staked
-  const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
+  const dummyPair = new Pair(
+    new TokenAmount(stakingInfo.tokens[0], '0'),
+    new TokenAmount(stakingInfo.tokens[1], '0'),
+    DEFAULT_PROTOCOL
+  )
   const pairContract = usePairContract(dummyPair.liquidityToken.address)
 
   // approval data for stake

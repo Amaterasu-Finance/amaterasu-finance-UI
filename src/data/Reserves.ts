@@ -1,4 +1,4 @@
-import { TokenAmount, Pair, Currency } from '@amaterasu-fi/sdk'
+import { TokenAmount, Pair, Currency, ProtocolName } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@foxswap/core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
@@ -6,6 +6,7 @@ import { useActiveWeb3React } from '../hooks'
 
 import { useMultipleContractSingleData } from '../state/multicall/hooks'
 import { wrappedCurrency } from '../utils/wrappedCurrency'
+import { DEFAULT_PROTOCOL } from '../constants'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
@@ -16,7 +17,11 @@ export enum PairState {
   INVALID
 }
 
-export function usePairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
+export function usePairs(
+  currencies: [Currency | undefined, Currency | undefined][],
+  protocol?: ProtocolName
+): [PairState, Pair | null][] {
+  const activeProtocol = protocol ?? DEFAULT_PROTOCOL
   const { chainId } = useActiveWeb3React()
 
   const tokens = useMemo(() => {
@@ -30,7 +35,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
     () =>
       tokens.map(([tokenA, tokenB]) => {
         return tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)
-          ? Pair.getAddress(tokenA, tokenB)
+          ? Pair.getAddress(tokenA, tokenB, activeProtocol)
           : undefined
       }),
     [tokens]
@@ -54,12 +59,16 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
         PairState.EXISTS,
-        new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString()))
+        new Pair(
+          new TokenAmount(token0, reserve0.toString()),
+          new TokenAmount(token1, reserve1.toString()),
+          activeProtocol
+        )
       ]
     })
   }, [results, tokens])
 }
 
-export function usePair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
-  return usePairs([[tokenA, tokenB]])[0]
+export function usePair(tokenA?: Currency, tokenB?: Currency, protocol?: ProtocolName): [PairState, Pair | null] {
+  return usePairs([[tokenA, tokenB]], protocol)[0]
 }

@@ -20,6 +20,7 @@ import { useV1FactoryContract } from '../hooks/useContract'
 import { Version } from '../hooks/useToggledVersion'
 import { NEVER_RELOAD, useSingleCallResult, useSingleContractMultipleData } from '../state/multicall/hooks'
 import { useETHBalances, useTokenBalance, useTokenBalances } from '../state/wallet/hooks'
+import { DEFAULT_PROTOCOL } from '../constants'
 
 export function useV1ExchangeAddress(tokenAddress?: string): string | undefined {
   const contract = useV1FactoryContract()
@@ -30,7 +31,7 @@ export function useV1ExchangeAddress(tokenAddress?: string): string | undefined 
 
 export class MockV1Pair extends Pair {
   constructor(etherAmount: BigintIsh, tokenAmount: TokenAmount) {
-    super(tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount))
+    super(tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount), DEFAULT_PROTOCOL)
   }
 }
 
@@ -126,7 +127,7 @@ export function useV1Trade(
   try {
     v1Trade =
       route && exactAmount
-        ? new Trade(route, exactAmount, isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT)
+        ? new Trade(route, exactAmount, isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT, DEFAULT_PROTOCOL)
         : undefined
   } catch (error) {
     console.debug('Failed to create V1 trade', error)

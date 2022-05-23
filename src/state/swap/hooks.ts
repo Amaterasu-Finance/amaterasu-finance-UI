@@ -2,14 +2,15 @@ import useENS from '../../hooks/useENS'
 // import { Version } from '../../hooks/useToggledVersion'
 import { parseUnits } from '@ethersproject/units'
 import {
+  ChainId,
   Currency,
   CurrencyAmount,
+  DEFAULT_CURRENCIES,
   JSBI,
+  ProtocolName,
   Token,
   TokenAmount,
-  Trade,
-  DEFAULT_CURRENCIES,
-  ChainId
+  Trade
 } from '@amaterasu-fi/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
@@ -131,6 +132,7 @@ export function useDerivedSwapInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
+  allTrades?: (Trade | null)[]
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
@@ -160,10 +162,26 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
-
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const bestTradesExactIn = [
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.AMATERASU),
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.TRISOLARIS),
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.WANNASWAP),
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.NEARPAD)
+  ]
+  const bestTradesExactOut = [
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.AMATERASU),
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.TRISOLARIS),
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.WANNASWAP),
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.NEARPAD)
+  ]
+  // Immediately sort them so the first trade is always the best
+  bestTradesExactIn?.sort((a, b) => (a?.outputAmount.greaterThan(b?.outputAmount ?? '0') ? -1 : 1))
+  bestTradesExactOut?.sort((a, b) =>
+    a?.inputAmount.lessThan(b?.inputAmount ?? '10000000000000000000000000000000') ? -1 : 1
+  )
+  // console.log('bestTradeIn', bestTradesExactIn[0])
+  // console.log('bestTradeOut', bestTradesExactOut[0])
+  const v2Trade = isExactIn ? bestTradesExactIn[0] : bestTradesExactOut[0]
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
@@ -197,8 +215,8 @@ export function useDerivedSwapInfo(): {
   } else {
     if (
       BAD_RECIPIENT_ADDRESSES.indexOf(formattedTo) !== -1 ||
-      (bestTradeExactIn && involvesAddress(bestTradeExactIn, formattedTo)) ||
-      (bestTradeExactOut && involvesAddress(bestTradeExactOut, formattedTo))
+      (bestTradesExactIn[0] && involvesAddress(bestTradesExactIn[0], formattedTo)) ||
+      (bestTradesExactOut[0] && involvesAddress(bestTradesExactOut[0], formattedTo))
     ) {
       inputError = inputError ?? 'Invalid recipient'
     }
@@ -224,6 +242,7 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
+    allTrades: isExactIn ? bestTradesExactIn : bestTradesExactOut,
     inputError
   }
 }
