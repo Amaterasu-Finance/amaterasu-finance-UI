@@ -187,7 +187,7 @@ type ProtocolTokenList = {
 export const BASES_TO_CHECK_TRADES_AGAINST: ProtocolTokenList = {
   [ProtocolName.AMATERASU]: [WETH[ChainId.AURORA_MAINNET], IZA, NEAR, AURORA],
   [ProtocolName.TRISOLARIS]: [WETH[ChainId.AURORA_MAINNET], NEAR, USDT, AURORA],
-  [ProtocolName.WANNASWAP]: [WETH[ChainId.AURORA_MAINNET], NEAR, USDC, WANNA],
+  [ProtocolName.WANNASWAP]: [WETH[ChainId.AURORA_MAINNET], NEAR, WANNA],
   [ProtocolName.NEARPAD]: [WETH[ChainId.AURORA_MAINNET], NEAR, PAD]
 }
 
@@ -203,6 +203,13 @@ export const CUSTOM_BASES: { [protocol in ProtocolName]?: [Token, Token][] } = {
     getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'TRI/stNEAR'),
     getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'TRI/NEAR'),
     getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'TRI/USDT')
+  ],
+  [ProtocolName.WANNASWAP]: [
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'META/stNEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'WANNAx/stNEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/USDC'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/NEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/WANNA')
   ],
   [ProtocolName.NEARPAD]: [
     getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/USDC'),
