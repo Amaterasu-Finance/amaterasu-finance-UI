@@ -48,10 +48,10 @@ const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
 `
 
 function FormattedDelta({ delta }: { delta?: Percent }) {
-  const sev = delta && delta.lessThan(ONE_BIPS) ? 1 : warningSeverity(ALLOWED_PRICE_IMPACT_MEDIUM)
+  const sev = delta && delta.lessThan(ONE_BIPS) ? 0 : warningSeverity(ALLOWED_PRICE_IMPACT_MEDIUM)
   return (
     <ErrorText fontWeight={500} fontSize={14} severity={sev}>
-      {delta ? (delta.lessThan(ONE_BIPS) ? '- - - - ' : `-${delta.toFixed(2)}%`) : '-'}
+      {delta ? (delta.lessThan(ONE_BIPS) ? 'Best' : `-${delta.toFixed(2)}%`) : '-'}
     </ErrorText>
   )
 }
