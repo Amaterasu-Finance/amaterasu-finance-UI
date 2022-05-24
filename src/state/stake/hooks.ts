@@ -16,6 +16,7 @@ import calculateWethAdjustedTotalStakedAmount from '../../utils/calculateWethAdj
 import calculateApr from '../../utils/calculateApr'
 import validStakingInfo from '../../utils/validStakingInfo'
 import determineBaseToken from '../../utils/determineBaseToken'
+import { DEFAULT_PROTOCOL } from '../../constants'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
 
@@ -147,7 +148,7 @@ export function useStakingInfo(active: boolean | undefined = undefined, pairToFi
 
         const calculatedTotalPendingRewards = JSBI.BigInt(pendingReward?.result?.[0] ?? 0)
 
-        const dummyPair = new Pair(new TokenAmount(tokens[0], '0'), new TokenAmount(tokens[1], '0'))
+        const dummyPair = new Pair(new TokenAmount(tokens[0], '0'), new TokenAmount(tokens[1], '0'), DEFAULT_PROTOCOL)
         const stakedAmount = new TokenAmount(dummyPair.liquidityToken, JSBI.BigInt(userInfo?.result?.[0] ?? 0))
         const totalStakedAmount = new TokenAmount(
           dummyPair.liquidityToken,

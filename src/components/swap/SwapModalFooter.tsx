@@ -1,4 +1,4 @@
-import { Trade, TradeType } from '@amaterasu-fi/sdk'
+import { ProtocolName, Trade, TradeType } from '@amaterasu-fi/sdk'
 import React, { useContext, useMemo, useState } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
@@ -21,6 +21,13 @@ import useBlockchain from '../../hooks/useBlockchain'
 import getBlockchainAdjustedCurrency from '../../utils/getBlockchainAdjustedCurrency'
 import { useActiveWeb3React } from '../../hooks'
 import { PIT_SETTINGS } from '../../constants'
+
+function titleCase(str: string): string {
+  return str
+    .split(' ')
+    .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
 
 export default function SwapModalFooter({
   trade,
@@ -115,6 +122,17 @@ export default function SwapModalFooter({
           </RowFixed>
           <TYPE.black fontSize={14}>
             {realizedLPFee ? realizedLPFee?.toSignificant(6) + ' ' + tradeInputCurrency?.symbol : '-'}
+          </TYPE.black>
+        </RowBetween>
+        <RowBetween>
+          <RowFixed>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              Protocol
+            </TYPE.black>
+            <QuestionHelper text={`We check all Protocols to get users the best price on every trade!`} />
+          </RowFixed>
+          <TYPE.black fontSize={14} color={theme.text1}>
+            {titleCase(ProtocolName[trade.protocol])}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>

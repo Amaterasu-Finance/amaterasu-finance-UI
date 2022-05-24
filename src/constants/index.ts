@@ -1,10 +1,20 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { ChainId, JSBI, Percent, Token, WETH } from '@amaterasu-fi/sdk'
+import { ChainId, JSBI, Percent, ProtocolName, Token, WETH } from '@amaterasu-fi/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { injected, portis, walletconnect, walletlink } from '../connectors'
 
 import getTokenWithDefault from '../utils/getTokenWithDefault'
+import getPairTokensWithDefaults from '../utils/getPairTokensWithDefaults'
+
+export const DEFAULT_PROTOCOL = ProtocolName.AMATERASU
+
+export const ALL_PROTOCOLS = [
+  ProtocolName.AMATERASU,
+  ProtocolName.TRISOLARIS,
+  ProtocolName.WANNASWAP,
+  ProtocolName.NEARPAD
+]
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const ZERO_ONE_ADDRESS = '0x0000000000000000000000000000000000000001'
@@ -164,19 +174,49 @@ export const IZA = getTokenWithDefault(ChainId.AURORA_MAINNET, 'IZA')
 export const AURORA = getTokenWithDefault(ChainId.AURORA_MAINNET, 'AURORA')
 export const NEAR = getTokenWithDefault(ChainId.AURORA_MAINNET, 'NEAR')
 export const USDC = getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC')
+export const USDT = getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT')
+export const WANNA = getTokenWithDefault(ChainId.AURORA_MAINNET, 'WANNA')
+export const PAD = getTokenWithDefault(ChainId.AURORA_MAINNET, 'PAD')
+
+// a list of tokens by chain
+type ProtocolTokenList = {
+  readonly [protocol in ProtocolName]: Token[]
+}
 
 // used to construct intermediary pairs for trading
-export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
-  [ChainId.MTV_MAINNET]: [WETH[ChainId.MTV_MAINNET], IZA, USDC],
-  [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET], IZA, NEAR, USDC, AURORA],
-  [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET], IZA, NEAR, USDC, AURORA]
+export const BASES_TO_CHECK_TRADES_AGAINST: ProtocolTokenList = {
+  [ProtocolName.AMATERASU]: [WETH[ChainId.AURORA_MAINNET], IZA, NEAR, AURORA],
+  [ProtocolName.TRISOLARIS]: [WETH[ChainId.AURORA_MAINNET], NEAR, USDT, AURORA],
+  [ProtocolName.WANNASWAP]: [WETH[ChainId.AURORA_MAINNET], NEAR, WANNA],
+  [ProtocolName.NEARPAD]: [WETH[ChainId.AURORA_MAINNET], NEAR, PAD]
 }
 
 /**
- * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
+ * Some tokens can only be swapped via certain pairs, so we add the list of bases that are considered for these
  * tokens.
  */
-export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {}
+export const CUSTOM_BASES: { [protocol in ProtocolName]?: [Token, Token][] } = {
+  [ProtocolName.TRISOLARIS]: [
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/USDC'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'stNEAR/NEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'stNEAR/xTRI'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'TRI/stNEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'TRI/NEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'TRI/USDT')
+  ],
+  [ProtocolName.WANNASWAP]: [
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'META/stNEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'WANNAx/stNEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/USDC'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/NEAR'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/WANNA')
+  ],
+  [ProtocolName.NEARPAD]: [
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/USDC'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDT/PAD'),
+    getPairTokensWithDefaults(ChainId.AURORA_MAINNET, 'USDC/PAD')
+  ]
+}
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {

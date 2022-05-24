@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@amaterasu-fi/sdk'
+import { CurrencyAmount, JSBI, ProtocolName, Token, Trade } from '@amaterasu-fi/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -21,7 +21,7 @@ import TradePrice from '../../components/swap/TradePrice'
 import TokenWarningModal from '../../components/TokenWarningModal'
 import ProgressSteps from '../../components/ProgressSteps'
 import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
-import { getTradeVersion } from '../../data/V1'
+// import { getTradeVersion } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
@@ -48,6 +48,7 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import useAntiWhalePerc from '../../hooks/useAntiWhalePerc'
 import AntiWhaleImg from 'assets/images/antiwhale.png'
 import Settings from '../../components/Settings'
+import { AllSwapDetails } from '../../components/swap/AllSwapDetails'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 720px;
@@ -103,9 +104,17 @@ const InputRow = styled.div<{ selected: boolean }>`
   margin-bottom: 0.25rem;
 `
 
+function titleCase(str: string): string {
+  return str
+    .split(' ')
+    .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
   const showAntiWhaleHeader = true
+  // TODO pre-load default pairs
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -144,7 +153,14 @@ export default function Swap() {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const {
+    v2Trade,
+    currencyBalances,
+    parsedAmount,
+    currencies,
+    inputError: swapInputError,
+    allTrades
+  } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -263,11 +279,7 @@ export default function Swap() {
               : (recipientAddress ?? recipient) === account
               ? 'Swap w/o Send + recipient'
               : 'Swap w/ Send',
-          label: [
-            trade?.inputAmount?.currency?.symbol,
-            trade?.outputAmount?.currency?.symbol,
-            getTradeVersion(trade)
-          ].join('/')
+          label: [trade?.inputAmount?.currency?.symbol, trade?.outputAmount?.currency?.symbol, Version.v2].join('/')
         })
 
         ReactGA.event({
@@ -537,7 +549,9 @@ export default function Swap() {
                   ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
                     'Approved'
                   ) : (
-                    'Approve ' + currencies[Field.INPUT]?.symbol
+                    'Approve ' +
+                    currencies[Field.INPUT]?.symbol +
+                    (v2Trade ? ' on ' + titleCase(ProtocolName[v2Trade.protocol]) : '')
                   )}
                 </ButtonConfirmed>
                 <ButtonError
@@ -615,6 +629,7 @@ export default function Swap() {
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
+      <AllSwapDetails allTrades={allTrades} />
     </>
   )
 }
