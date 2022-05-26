@@ -407,7 +407,7 @@ export default function Swap() {
         <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
           <TYPE.black color={'#212429'}>...</TYPE.black>
           <TYPE.black fontWeight={500} fontSize={'20px'}>
-            Swap
+            DEX Aggregator
           </TYPE.black>
           <Settings />
         </RowBetween>
@@ -634,7 +634,7 @@ export default function Swap() {
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
-      <AllSwapDetails allTrades={allTradesAndStables} />
+      {trade && <AllSwapDetails allTrades={allTradesAndStables} />}
     </>
   )
 }
