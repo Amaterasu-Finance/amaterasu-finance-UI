@@ -30,7 +30,19 @@ const Break = styled.div`
 
 const CenteredCol = styled(Col)`
   display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+`
+
+const HidingCol = styled(Col)`
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: none;
+  `};
 `
 
 const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
@@ -98,11 +110,11 @@ function TradeHeader({ tradeType }: { tradeType: TradeType | undefined }) {
               Protocol
             </TYPE.black>
           </Col>
-          <CenteredCol xs={0} sm={9}>
+          <HidingCol xs={0} sm={9}>
             <TYPE.black color={theme.text1} fontSize={16}>
               Route
             </TYPE.black>
-          </CenteredCol>
+          </HidingCol>
           <CenteredCol xs={15} sm={6}>
             <TYPE.black color={theme.text1} fontSize={16}>
               Amount {tradeType === 0 ? 'Out' : ' In'}
@@ -160,9 +172,9 @@ function TradeSummary({
               {name}
             </TYPE.black>
           </Col>
-          <CenteredCol xs={0} sm={9}>
+          <HidingCol xs={0} sm={9}>
             <SwapRoute trade={trade} />
-          </CenteredCol>
+          </HidingCol>
           <CenteredCol xs={15} sm={6}>
             <TYPE.black color={theme.text1} fontSize={14}>
               {isExactIn
