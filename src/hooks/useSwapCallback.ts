@@ -1,20 +1,25 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, PROTOCOLS, Router, SwapParameters, Trade, TradeType } from '@amaterasu-fi/sdk'
+import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@amaterasu-fi/sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
-import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin, getRouterContractFromAddress, isAddress, shortenAddress } from '../utils'
+import {
+  calculateGasMargin,
+  getCurveContractFromAddress,
+  getRouterContractFromAddress,
+  isAddress,
+  shortenAddress
+} from '../utils'
 import isZero from '../utils/isZero'
-import v1SwapArguments from '../utils/v1SwapArguments'
 import { useActiveWeb3React } from './index'
-import { useV1ExchangeContract } from './useContract'
 import useTransactionDeadline from './useTransactionDeadline'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
 import useBlockchain from './useBlockchain'
 import getBlockchainAdjustedCurrency from '../utils/getBlockchainAdjustedCurrency'
+import { getSwapParamsFromStableTrade, StableTrade } from '../state/swap/hooks'
+import { useRouterAddressFromTrade } from './useApproveCallback'
 
 export enum SwapCallbackState {
   INVALID,
@@ -46,7 +51,7 @@ type EstimatedSwapCall = SuccessfulCall | FailedCall
  * @param recipientAddressOrName
  */
 function useSwapCallArguments(
-  trade: Trade | undefined, // trade to execute, required
+  trade: Trade | StableTrade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
@@ -55,62 +60,57 @@ function useSwapCallArguments(
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const deadline = useTransactionDeadline()
-
-  const v1Exchange = useV1ExchangeContract(useV1TradeExchangeAddress(trade), true)
+  const routerAddress = useRouterAddressFromTrade(trade)
 
   return useMemo(() => {
-    const tradeVersion = getTradeVersion(trade)
-    if (!trade || !recipient || !library || !account || !tradeVersion || !chainId || !deadline) return []
+    if (!trade || !recipient || !library || !account || !routerAddress || !chainId || !deadline) return []
 
-    const routerAddress = PROTOCOLS[trade.protocol].routerAddress
-    const contract: Contract | null =
-      tradeVersion === Version.v2 ? getRouterContractFromAddress(routerAddress, library, account) : v1Exchange
-    if (!contract) {
+    const contract: Contract | null = getRouterContractFromAddress(routerAddress, library, account)
+    const curveContract = getCurveContractFromAddress(routerAddress, library, account)
+    if (!contract || !curveContract) {
       return []
     }
 
     const swapMethods = []
 
-    switch (tradeVersion) {
-      case Version.v2:
+    if (trade instanceof Trade) {
+      swapMethods.push(
+        Router.swapCallParameters(trade, {
+          feeOnTransfer: false,
+          allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+          recipient,
+          deadline: deadline.toNumber()
+        })
+      )
+      if (trade.tradeType === TradeType.EXACT_INPUT) {
         swapMethods.push(
           Router.swapCallParameters(trade, {
-            feeOnTransfer: false,
+            feeOnTransfer: true,
             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
             recipient,
             deadline: deadline.toNumber()
           })
         )
-
-        if (trade.tradeType === TradeType.EXACT_INPUT) {
-          swapMethods.push(
-            Router.swapCallParameters(trade, {
-              feeOnTransfer: true,
-              allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-              recipient,
-              deadline: deadline.toNumber()
-            })
-          )
-        }
-        break
-      case Version.v1:
-        swapMethods.push(
-          v1SwapArguments(trade, {
-            allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
-            recipient,
-            deadline: deadline.toNumber()
-          })
-        )
-        break
+      }
+    } else {
+      swapMethods.push(
+        getSwapParamsFromStableTrade(trade, {
+          feeOnTransfer: true,
+          allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+          recipient,
+          deadline: deadline.toNumber()
+        })
+      )
+      return swapMethods.map(parameters => ({ parameters, contract: curveContract }))
     }
     return swapMethods.map(parameters => ({ parameters, contract }))
-  }, [account, allowedSlippage, chainId, deadline, library, recipient, trade, v1Exchange])
+  }, [account, allowedSlippage, chainId, deadline, library, recipient, trade, routerAddress])
 }
 
 // returns a function that will execute a swap, if the parameters are all valid
 // and the user has approved the slippage adjusted input amount for the trade
 export function useSwapCallback(
-  trade: Trade | undefined, // trade to execute, required
+  trade: Trade | StableTrade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
@@ -136,7 +136,7 @@ export function useSwapCallback(
       }
     }
 
-    const tradeVersion = getTradeVersion(trade)
+    const tradeVersion = Version.v2
 
     return {
       state: SwapCallbackState.VALID,

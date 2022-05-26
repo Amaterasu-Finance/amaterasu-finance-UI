@@ -3,6 +3,7 @@ import { abi as UNI_ABI } from '@uniswap/governance/build/Uni.json'
 // import { abi as GOVERNANCE_TOKEN_ABI } from '@venomswap/contracts/build/GovernanceToken.json'
 import { abi as STAKING_REWARDS_ABI } from '@uniswap/liquidity-staker/build/StakingRewards.json'
 import MASTER_BREEDER_ABI from 'constants/abis/masterchef.json'
+import CURVE_MINTER_ABI from 'constants/abis/curveMinter.json'
 import PIT_ABI from 'constants/abis/gov-token.json'
 import PIT_BREEDER_ABI from 'constants/abis/sunmaker.json'
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
@@ -204,4 +205,9 @@ export function useBondingContract(): Contract | null {
 export function useSocksController(): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(chainId === ChainId.MTV_MAINNET ? SOCKS_TESTNET_ADDRESS : undefined, UNISOCKS_ABI, false)
+}
+
+export function useCurveMinterContract(address: string, withSignerIfPossible?: boolean): Contract | null {
+  // const { chainId } = useActiveWeb3React()
+  return useContract(address, CURVE_MINTER_ABI, withSignerIfPossible)
 }

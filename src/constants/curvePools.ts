@@ -3,6 +3,13 @@ import getTokenWithDefault from '../utils/getTokenWithDefault'
 import { Protocol, PROTOCOLS_MAINNET, ProtocolName } from './protocol'
 import { BASTION_REALMS } from './bastion'
 
+export const StableName = {
+  TRISOLARIS_USDC_USDT: 'TRISOLARIS_USDC_USDT',
+  TRISOLARIS_USDC_USDT_USN: 'TRISOLARIS_USDC_USDT_USN',
+  ROSE_DAI_USDC_USDT: 'ROSE_DAI_USDC_USDT',
+  CURVE_DAI_USDC_USDT: 'CURVE_DAI_USDC_USDT'
+}
+
 export interface CurvePool {
   name: string
   protocol: Protocol
@@ -17,13 +24,31 @@ export interface CurvePool {
   token1?: Token
   cTokenAddress?: string
   isBastion?: boolean
+  calculateSwapFunctionName?: string
+  swapFunctionName?: string
+  stableSwapName?: string
 }
 
 export const CURVE_POOLS_MAINNET: {
   [key: string]: CurvePool
 } = {
-  TRISOLARIS_USDC_USDT_USN: {
+  [StableName.TRISOLARIS_USDC_USDT]: {
+    name: 'USDC-USDT',
+    stableSwapName: 'Tri 2pool',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
+    address: '0x5EB99863f7eFE88c447Bc9D52AA800421b1de6c9',
+    tokens: [getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'), getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT')],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+    minterAddress: '0x13e7a001EC72AB30D66E2f386f677e25dCFF5F59',
+    stakingAddress: '0x3838956710bcc9D122Dd23863a0549ca8D5675D6',
+    urlName: 'https://www.trisolaris.io/#/pool/stable/add/USDC_USDT',
+    isCurve: true,
+    calculateSwapFunctionName: 'calculateSwap',
+    swapFunctionName: 'swap'
+  },
+  [StableName.TRISOLARIS_USDC_USDT_USN]: {
     name: 'USDC-USDT-USN',
+    stableSwapName: 'Tri 3pool',
     protocol: PROTOCOLS_MAINNET[ProtocolName.TRISOLARIS],
     address: '0x87BCC091d0A7F9352728100268Ac8D25729113bB',
     tokens: [
@@ -35,7 +60,30 @@ export const CURVE_POOLS_MAINNET: {
     minterAddress: '0x458459E48dbAC0C8Ca83F8D0b7b29FEfE60c3970',
     stakingAddress: '0x3838956710bcc9D122Dd23863a0549ca8D5675D6',
     urlName: 'https://www.trisolaris.io/#/pool/stable/add/USDC_USDT_USN',
-    isCurve: true
+    isCurve: true,
+    calculateSwapFunctionName: 'calculateSwap',
+    swapFunctionName: 'swap'
+  },
+  // ---------------------------------------------------
+  // Curve
+  // ---------------------------------------------------
+  [StableName.CURVE_DAI_USDC_USDT]: {
+    name: 'DAI-USDC-USDT',
+    stableSwapName: 'Curve 3pool',
+    protocol: PROTOCOLS_MAINNET[ProtocolName.CURVE],
+    address: '0xbF7E49483881C76487b0989CD7d9A8239B20CA41',
+    tokens: [
+      getTokenWithDefault(ChainId.AURORA_MAINNET, 'DAI'),
+      getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+      getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDT')
+    ],
+    baseToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'USDC'),
+    minterAddress: '0xbF7E49483881C76487b0989CD7d9A8239B20CA41',
+    stakingAddress: '0xC2b1DF84112619D190193E48148000e3990Bf627',
+    urlName: 'stables',
+    isCurve: true,
+    calculateSwapFunctionName: 'get_dy',
+    swapFunctionName: 'exchange'
   },
   // ---------------------------------------------------
   // Bastion
@@ -160,8 +208,9 @@ export const CURVE_POOLS_MAINNET: {
   // ---------------------------------------------------
   // Rose
   // ---------------------------------------------------
-  ROSE_DAI_USDC_USDT: {
+  [StableName.ROSE_DAI_USDC_USDT]: {
     name: 'DAI-USDC-USDT',
+    stableSwapName: 'Rose 3pool',
     protocol: PROTOCOLS_MAINNET[ProtocolName.ROSE],
     address: '0xfF79D5bff48e1C01b722560D6ffDfCe9FC883587',
     tokens: [
@@ -173,7 +222,9 @@ export const CURVE_POOLS_MAINNET: {
     minterAddress: '0xc90dB0d8713414d78523436dC347419164544A3f',
     stakingAddress: '0x52CACa9a2D52b27b28767d3649565774A3B991f3',
     urlName: 'stables',
-    isCurve: true
+    isCurve: true,
+    calculateSwapFunctionName: 'get_dy',
+    swapFunctionName: 'exchange'
   },
   ROSE_DAI_USDC_USDT_RUSD: {
     name: 'DAI-USDC-USDT-RUSD',
@@ -189,7 +240,8 @@ export const CURVE_POOLS_MAINNET: {
     minterAddress: '0x79B0a67a4045A7a8DC04b17456F4fe15339cBA34',
     stakingAddress: '0x9286d58C1c8d434Be809221923Cf4575f7A4d058',
     urlName: 'rusd',
-    isCurve: true
+    isCurve: true,
+    calculateSwapFunctionName: 'get_dy_underlying'
   },
   ROSE_DAI_USDC_USDT_FRAX: {
     name: 'DAI-USDC-USDT-FRAX',
@@ -205,7 +257,8 @@ export const CURVE_POOLS_MAINNET: {
     minterAddress: '0xa34315F1ef49392387Dd143f4578083A9Bd33E94',
     stakingAddress: '0xB9D873cDc15e462f5414CCdFe618a679a47831b4',
     urlName: 'frax',
-    isCurve: true
+    isCurve: true,
+    calculateSwapFunctionName: 'get_dy_underlying'
   },
   ROSE_DAI_USDC_USDT_UST: {
     name: 'DAI-USDC-USDT-UST',
@@ -221,7 +274,8 @@ export const CURVE_POOLS_MAINNET: {
     minterAddress: '0x8fe44f5cce02D5BE44e3446bBc2e8132958d22B8',
     stakingAddress: '0x56DE5E2c25828040330CEF45258F3FFBc090777C',
     urlName: 'ust',
-    isCurve: true
+    isCurve: true,
+    calculateSwapFunctionName: 'get_dy_underlying'
   },
   ROSE_DAI_USDC_USDT_MAI: {
     name: 'DAI-USDC-USDT-MAI',
@@ -237,7 +291,8 @@ export const CURVE_POOLS_MAINNET: {
     minterAddress: '0x65a761136815B45A9d78d9781d22d47247B49D23',
     stakingAddress: '0x226991aADeEfDe03bF557eF067da95fc613aBfFc',
     urlName: 'mai',
-    isCurve: true
+    isCurve: true,
+    calculateSwapFunctionName: 'get_dy_underlying'
   },
   ROSE_DAI_USDC_USDT_BUSD: {
     name: 'DAI-USDC-USDT-BUSD',
@@ -253,6 +308,7 @@ export const CURVE_POOLS_MAINNET: {
     minterAddress: '0xD6cb7Bb7D63f636d1cA72A1D3ed6f7F67678068a',
     stakingAddress: '0x18A6115150A060F22Bacf62628169ee9b231368f',
     urlName: 'busd',
-    isCurve: true
+    isCurve: true,
+    calculateSwapFunctionName: 'get_dy_underlying'
   }
 }

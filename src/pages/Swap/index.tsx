@@ -32,7 +32,9 @@ import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import {
+  StableTrade,
   useDefaultsFromURLSearch,
+  useDerivedStableSwapInfo,
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState
@@ -153,14 +155,17 @@ export default function Swap() {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const {
-    v2Trade,
-    currencyBalances,
-    parsedAmount,
-    currencies,
-    inputError: swapInputError,
-    allTrades
-  } = useDerivedSwapInfo()
+  const { currencyBalances, parsedAmount, currencies, inputError: swapInputError, allTrades } = useDerivedSwapInfo()
+  const stableTrades = useDerivedStableSwapInfo()
+  const allTradesAndStables = [...allTrades, ...stableTrades]
+  if (independentField === Field.INPUT) {
+    allTradesAndStables?.sort((a, b) => (a?.outputAmount.greaterThan(b?.outputAmount ?? '0') ? -1 : 1))
+  } else {
+    allTradesAndStables?.sort((a, b) =>
+      a?.inputAmount.lessThan(b?.inputAmount ?? '10000000000000000000000000000000') ? -1 : 1
+    )
+  }
+  const v2Trade = allTradesAndStables[0] ?? undefined
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -208,7 +213,7 @@ export default function Swap() {
   // modal and loading
   const [{ showConfirm, tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
     showConfirm: boolean
-    tradeToConfirm: Trade | undefined
+    tradeToConfirm: Trade | StableTrade | undefined
     attemptingTxn: boolean
     swapErrorMessage: string | undefined
     txHash: string | undefined
@@ -371,6 +376,8 @@ export default function Swap() {
   ])
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
+
+  const name = trade instanceof Trade ? titleCase(ProtocolName[trade.protocol]) : trade?.stablePool.stableSwapName ?? ''
 
   return (
     <>
@@ -549,9 +556,7 @@ export default function Swap() {
                   ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
                     'Approved'
                   ) : (
-                    'Approve ' +
-                    currencies[Field.INPUT]?.symbol +
-                    (v2Trade ? ' on ' + titleCase(ProtocolName[v2Trade.protocol]) : '')
+                    'Approve ' + currencies[Field.INPUT]?.symbol + (v2Trade ? ' on ' + name : '')
                   )}
                 </ButtonConfirmed>
                 <ButtonError
@@ -629,7 +634,7 @@ export default function Swap() {
       ) : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}
-      <AllSwapDetails allTrades={allTrades} />
+      <AllSwapDetails allTrades={allTradesAndStables} />
     </>
   )
 }

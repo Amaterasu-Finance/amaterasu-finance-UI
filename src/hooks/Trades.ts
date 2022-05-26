@@ -15,6 +15,7 @@ import { wrappedCurrency } from '../utils/wrappedCurrency'
 import { useActiveWeb3React } from './index'
 import { useUnsupportedTokens } from './Tokens'
 import { useUserSingleHopOnly } from 'state/user/hooks'
+// import { StableName } from '../constants/curvePools'
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency, protocol?: ProtocolName): Pair[] {
   const activeProtocol = protocol ?? DEFAULT_PROTOCOL
@@ -116,6 +117,39 @@ export function useTradeExactIn(
     return null
   }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly])
 }
+
+// /**
+//  * Returns the best trade for the exact amount of tokens in to the given token out
+//  */
+// export function useStableTradesExactIn(
+//   currencyAmountIn?: CurrencyAmount,
+//   currencyOut?: Currency
+// ): (StableTrade | null)[] {
+//   return useMemo(() => {
+//     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
+//       if (singleHopOnly) {
+//         return (
+//           Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ??
+//           null
+//         )
+//       }
+//       // search through trades with varying hops, find best trade out of them
+//       let bestTradeSoFar: Trade | null = null
+//       for (let i = 1; i <= MAX_HOPS; i++) {
+//         const currentTrade: Trade | null =
+//           Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: i, maxNumResults: 1 })[0] ??
+//           null
+//         // if current trade is best yet, save it
+//         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
+//           bestTradeSoFar = currentTrade
+//         }
+//       }
+//       return bestTradeSoFar
+//     }
+//
+//     return null
+//   }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly])
+// }
 
 /**
  * Returns the best trade for the token in to the exact amount of token out

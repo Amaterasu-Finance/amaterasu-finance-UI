@@ -9,13 +9,14 @@ import SwapModalHeader from './SwapModalHeader'
 
 import useBlockchain from '../../hooks/useBlockchain'
 import getBlockchainAdjustedCurrency from '../../utils/getBlockchainAdjustedCurrency'
+import { StableTrade } from '../../state/swap/hooks'
 
 /**
  * Returns true if the trade requires a confirmation of details before we can submit it
  * @param tradeA trade A
  * @param tradeB trade B
  */
-function tradeMeaningfullyDiffers(tradeA: Trade, tradeB: Trade): boolean {
+function tradeMeaningfullyDiffers(tradeA: Trade | StableTrade, tradeB: Trade | StableTrade): boolean {
   return (
     tradeA.tradeType !== tradeB.tradeType ||
     !currencyEquals(tradeA.inputAmount.currency, tradeB.inputAmount.currency) ||
@@ -39,8 +40,8 @@ export default function ConfirmSwapModal({
   txHash
 }: {
   isOpen: boolean
-  trade: Trade | undefined
-  originalTrade: Trade | undefined
+  trade: Trade | StableTrade | undefined
+  originalTrade: Trade | StableTrade | undefined
   attemptingTxn: boolean
   txHash: string | undefined
   recipient: string | null

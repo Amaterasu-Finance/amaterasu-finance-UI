@@ -6,7 +6,8 @@ export enum ProtocolName {
   WANNASWAP = 'WannaSwap',
   AMATERASU = 'Amaterasu',
   ROSE = 'Rose',
-  BASTION = 'Bastion'
+  BASTION = 'Bastion',
+  CURVE = 'Curve'
 }
 
 export interface Protocol {
@@ -43,6 +44,13 @@ export const PROTOCOLS_MAINNET: {
     perBlockFunctionSig: '',
     logoFilename: 'images/protocols/rose.png',
     addLiquidityUrl: 'https://app.rose.fi/#/pools/'
+  },
+  [ProtocolName.CURVE]: {
+    name: ProtocolName.CURVE,
+    nativeToken: getTokenWithDefault(ChainId.AURORA_MAINNET, 'CURVE'),
+    perBlockFunctionSig: '',
+    logoFilename: 'images/protocols/curve_logo.png',
+    addLiquidityUrl: 'https://aurora.curve.fi/'
   },
   [ProtocolName.BASTION]: {
     name: ProtocolName.BASTION,

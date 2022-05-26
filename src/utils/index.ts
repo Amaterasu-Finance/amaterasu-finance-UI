@@ -8,6 +8,7 @@ import { ROUTER_ADDRESSES } from '../constants'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, DEFAULT_CURRENCIES } from '@amaterasu-fi/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 import { useActiveWeb3React } from '../hooks/index'
+import CURVE_MINTER_ABI from '../constants/abis/curveMinter.json'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -106,6 +107,10 @@ export function getRouterContract(chainId: number, library: Web3Provider, accoun
 
 export function getRouterContractFromAddress(address: string, library: Web3Provider, account?: string): Contract {
   return getContract(address, IUniswapV2Router02ABI, library, account)
+}
+
+export function getCurveContractFromAddress(address: string, library: Web3Provider, account?: string): Contract {
+  return getContract(address, CURVE_MINTER_ABI, library, account)
 }
 
 export function useRouterContractAddress(): string | undefined {

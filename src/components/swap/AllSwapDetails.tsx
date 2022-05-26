@@ -20,6 +20,7 @@ import { ChevronRight } from 'react-feather'
 import { ErrorText } from './styleds'
 import { ALLOWED_PRICE_IMPACT_MEDIUM, ONE_BIPS } from '../../constants'
 import { Col } from 'antd'
+import { StableTrade } from '../../state/swap/hooks'
 
 const Break = styled.div`
   width: 100%;
@@ -56,7 +57,7 @@ function FormattedDelta({ delta }: { delta?: Percent }) {
   )
 }
 
-function SwapRoute({ trade }: { trade: Trade }) {
+function SwapRoute({ trade }: { trade: Trade | StableTrade }) {
   const theme = useContext(ThemeContext)
   const fontSize = trade.route.path.length > 3 ? 12 : 14
   return (
@@ -92,17 +93,17 @@ function TradeHeader({ tradeType }: { tradeType: TradeType | undefined }) {
     <>
       <AutoColumn style={{ padding: '0 16px' }}>
         <RowBetween>
-          <Col xs={4}>
+          <Col xs={6}>
             <TYPE.black fontSize={16} color={theme.text1}>
               Protocol
             </TYPE.black>
           </Col>
-          <CenteredCol xs={0} sm={10}>
+          <CenteredCol xs={0} sm={9}>
             <TYPE.black color={theme.text1} fontSize={16}>
               Route
             </TYPE.black>
           </CenteredCol>
-          <CenteredCol xs={15} sm={7}>
+          <CenteredCol xs={15} sm={6}>
             <TYPE.black color={theme.text1} fontSize={16}>
               Amount {tradeType === 0 ? 'Out' : ' In'}
             </TYPE.black>
@@ -123,9 +124,9 @@ function TradeSummary({
   allowedSlippage,
   baseTrade
 }: {
-  trade: Trade
+  trade: Trade | StableTrade
   allowedSlippage: number
-  baseTrade: Trade
+  baseTrade: Trade | StableTrade
 }) {
   const theme = useContext(ThemeContext)
   // const { chainId } = useActiveWeb3React()
@@ -144,19 +145,25 @@ function TradeSummary({
   const tradeInputCurrency = getBlockchainAdjustedCurrency(blockchain, trade.inputAmount.currency)
   const tradeOutputCurrency = getBlockchainAdjustedCurrency(blockchain, trade.outputAmount.currency)
 
+  const name = trade instanceof Trade ? titleCase(ProtocolName[trade.protocol]) : trade.stablePool.stableSwapName ?? ''
+  let fontSize = 14
+  if (name.length > 12) {
+    fontSize = 11
+  }
+
   return (
     <>
       <AutoColumn style={{ padding: '0 16px' }}>
         <RowBetween>
-          <Col xs={4}>
-            <TYPE.black fontSize={14} color={theme.text1}>
-              {titleCase(ProtocolName[trade.protocol])}
+          <Col xs={6}>
+            <TYPE.black fontSize={fontSize} color={theme.text1}>
+              {name}
             </TYPE.black>
           </Col>
-          <CenteredCol xs={0} sm={10}>
+          <CenteredCol xs={0} sm={9}>
             <SwapRoute trade={trade} />
           </CenteredCol>
-          <CenteredCol xs={15} sm={7}>
+          <CenteredCol xs={15} sm={6}>
             <TYPE.black color={theme.text1} fontSize={14}>
               {isExactIn
                 ? `${trade.outputAmount.toSignificant(4)} ${tradeOutputCurrency?.symbol}` ?? '-'
@@ -173,13 +180,13 @@ function TradeSummary({
 }
 
 export interface AllSwapDetailsProps {
-  allTrades?: (Trade | null)[]
+  allTrades?: (Trade | StableTrade | null)[]
 }
 
 export function AllSwapDetails({ allTrades }: AllSwapDetailsProps) {
   const [allowedSlippage] = useUserSlippageTolerance()
   const baseTrade = allTrades && allTrades[0]
-  console.log('allTrades', allTrades)
+  // console.log('allTrades', allTrades)
 
   return (
     <>
