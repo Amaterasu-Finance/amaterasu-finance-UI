@@ -5,8 +5,9 @@ import { Flex } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { TYPE } from '../../theme'
 import { unwrappedToken } from 'utils/wrappedCurrency'
+import { StableTrade } from '../../state/swap/hooks'
 
-export default memo(function SwapRoute({ trade }: { trade: Trade }) {
+export default memo(function SwapRoute({ trade }: { trade: Trade | StableTrade }) {
   const theme = useContext(ThemeContext)
   return (
     <Flex flexWrap="wrap" width="100%" justifyContent="flex-end" alignItems="center">

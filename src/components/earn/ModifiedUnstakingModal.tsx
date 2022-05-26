@@ -20,6 +20,7 @@ import { LoadingView, SubmittedView } from '../ModalViews'
 // import { ColumnCenter } from '../Column'
 import { calculateGasMargin } from '../../utils'
 import { useMasterBreederContract } from '../../hooks/useContract'
+import { DEFAULT_PROTOCOL } from '../../constants'
 // import useCalculateWithdrawalFee from '../../hooks/useCalculateWithdrawalFee'
 // import useBlockchain from '../../hooks/useBlockchain'
 
@@ -80,7 +81,11 @@ export default function ModifiedStakingModal({ isOpen, onDismiss, stakingInfo }:
   const masterBreeder = useMasterBreederContract()
 
   // pair contract for this token to be staked
-  const dummyPair = new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
+  const dummyPair = new Pair(
+    new TokenAmount(stakingInfo.tokens[0], '0'),
+    new TokenAmount(stakingInfo.tokens[1], '0'),
+    DEFAULT_PROTOCOL
+  )
 
   async function onWithdraw() {
     if (masterBreeder && stakingInfo?.stakedAmount) {

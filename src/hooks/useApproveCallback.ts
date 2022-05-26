@@ -1,17 +1,17 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Trade, TokenAmount, CurrencyAmount, DEFAULT_CURRENCIES } from '@amaterasu-fi/sdk'
+import { CurrencyAmount, DEFAULT_CURRENCIES, PROTOCOLS, TokenAmount, Trade, TradeType } from '@amaterasu-fi/sdk'
 import { useCallback, useMemo } from 'react'
 import { useTokenAllowance } from '../data/Allowances'
-import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
-import { Field } from '../state/swap/actions'
-import { useTransactionAdder, useHasPendingApproval } from '../state/transactions/hooks'
-import { computeSlippageAdjustedAmounts } from '../utils/prices'
-import { calculateGasMargin } from '../utils'
+// import { getTradeVersion, useV1TradeExchangeAddress } from '../dataata/V1'
+// import { Field } from '../state/swap/actions'
+import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
+// import { computeSlippageAdjustedAmounts } from '../utils/prices'
+// import { Version } from './VersionuseToggledVersion'
+import { calculateGasMargin, useRouterContractAddress } from '../utils'
 import { useTokenContract } from './useContract'
 import { useActiveWeb3React } from './index'
-import { Version } from './useToggledVersion'
-import { useRouterContractAddress } from '../utils'
+import { StableTrade } from '../state/swap/hooks'
 
 export enum ApprovalState {
   UNKNOWN,
@@ -99,14 +99,24 @@ export function useApproveCallback(
   return [approvalState, approve]
 }
 
+export function useRouterAddressFromTrade(trade?: Trade | StableTrade | null): string | undefined {
+  const nativeRouterAddress = useRouterContractAddress()
+  if (!trade) {
+    return undefined
+  }
+  const isNormalTrade = trade instanceof Trade
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  let routerAddress = (trade && isNormalTrade && PROTOCOLS[trade.protocol].routerAddress) ?? nativeRouterAddress
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  routerAddress = isNormalTrade ? routerAddress : trade.stablePool.minterAddress
+  return routerAddress
+}
+
 // wraps useApproveCallback in the context of a swap
-export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) {
-  const amountToApprove = useMemo(
-    () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT] : undefined),
-    [trade, allowedSlippage]
-  )
-  const tradeIsV1 = getTradeVersion(trade) === Version.v1
-  const v1ExchangeAddress = useV1TradeExchangeAddress(trade)
-  const v2RouterAddress = useRouterContractAddress()
-  return useApproveCallback(amountToApprove, tradeIsV1 ? v1ExchangeAddress : v2RouterAddress)
+export function useApproveCallbackFromTrade(trade?: Trade | StableTrade | null, allowedSlippage = 0) {
+  const routerAddress = useRouterAddressFromTrade(trade)
+  const inputAmount = trade?.tradeType === TradeType.EXACT_INPUT ? trade.inputAmount : trade?.outputAmount
+  return useApproveCallback(inputAmount, routerAddress)
 }

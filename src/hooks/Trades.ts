@@ -1,20 +1,27 @@
 import { isTradeBetter } from 'utils/trades'
-import { Currency, CurrencyAmount, Pair, Token, Trade } from '@amaterasu-fi/sdk'
+import { Currency, CurrencyAmount, Pair, Token, Trade, ProtocolName } from '@amaterasu-fi/sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
-import { BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES, BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../constants'
+import {
+  BASES_TO_CHECK_TRADES_AGAINST,
+  CUSTOM_BASES,
+  BETTER_TRADE_LESS_HOPS_THRESHOLD,
+  DEFAULT_PROTOCOL
+} from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
 import { wrappedCurrency } from '../utils/wrappedCurrency'
 
 import { useActiveWeb3React } from './index'
 import { useUnsupportedTokens } from './Tokens'
 import { useUserSingleHopOnly } from 'state/user/hooks'
+// import { StableName } from '../constants/curvePools'
 
-function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
+function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency, protocol?: ProtocolName): Pair[] {
+  const activeProtocol = protocol ?? DEFAULT_PROTOCOL
   const { chainId } = useActiveWeb3React()
 
-  const bases: Token[] = chainId ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
+  const bases: Token[] = chainId ? BASES_TO_CHECK_TRADES_AGAINST[activeProtocol] : []
 
   const [tokenA, tokenB] = chainId
     ? [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)]
@@ -27,6 +34,7 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
       ),
     [bases]
   )
+  const customBases = CUSTOM_BASES[activeProtocol] ?? []
 
   const allPairCombinations: [Token, Token][] = useMemo(
     () =>
@@ -39,29 +47,19 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
             // token B against all bases
             ...bases.map((base): [Token, Token] => [base, tokenB]),
             // each base against all bases
-            ...basePairs
+            ...basePairs,
+            // default pairs for protocol
+            ...customBases
           ]
             .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
             .filter(([t0, t1]) => t0.address !== t1.address)
             .filter(([tokenA, tokenB]) => {
-              if (!chainId) return true
-              const customBases = CUSTOM_BASES[chainId]
-              if (!customBases) return true
-
-              const customBasesA: Token[] | undefined = customBases[tokenA.address]
-              const customBasesB: Token[] | undefined = customBases[tokenB.address]
-
-              if (!customBasesA && !customBasesB) return true
-
-              if (customBasesA && !customBasesA.find(base => tokenB.equals(base))) return false
-              if (customBasesB && !customBasesB.find(base => tokenA.equals(base))) return false
-
               return true
             })
         : [],
-    [tokenA, tokenB, bases, basePairs, chainId]
+    [tokenA, tokenB, bases, basePairs, customBases]
   )
-  const allPairs = usePairs(allPairCombinations)
+  const allPairs = usePairs(allPairCombinations, activeProtocol)
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(
@@ -85,8 +83,12 @@ const MAX_HOPS = 3
 /**
  * Returns the best trade for the exact amount of tokens in to the given token out
  */
-export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+export function useTradeExactIn(
+  currencyAmountIn?: CurrencyAmount,
+  currencyOut?: Currency,
+  protocol?: ProtocolName
+): Trade | null {
+  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut, protocol)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
@@ -116,11 +118,48 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
   }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly])
 }
 
+// /**
+//  * Returns the best trade for the exact amount of tokens in to the given token out
+//  */
+// export function useStableTradesExactIn(
+//   currencyAmountIn?: CurrencyAmount,
+//   currencyOut?: Currency
+// ): (StableTrade | null)[] {
+//   return useMemo(() => {
+//     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
+//       if (singleHopOnly) {
+//         return (
+//           Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ??
+//           null
+//         )
+//       }
+//       // search through trades with varying hops, find best trade out of them
+//       let bestTradeSoFar: Trade | null = null
+//       for (let i = 1; i <= MAX_HOPS; i++) {
+//         const currentTrade: Trade | null =
+//           Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: i, maxNumResults: 1 })[0] ??
+//           null
+//         // if current trade is best yet, save it
+//         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
+//           bestTradeSoFar = currentTrade
+//         }
+//       }
+//       return bestTradeSoFar
+//     }
+//
+//     return null
+//   }, [allowedPairs, currencyAmountIn, currencyOut, singleHopOnly])
+// }
+
 /**
  * Returns the best trade for the token in to the exact amount of token out
  */
-export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+export function useTradeExactOut(
+  currencyIn?: Currency,
+  currencyAmountOut?: CurrencyAmount,
+  protocol?: ProtocolName
+): Trade | null {
+  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency, protocol)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 

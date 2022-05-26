@@ -2,18 +2,24 @@ import useENS from '../../hooks/useENS'
 // import { Version } from '../../hooks/useToggledVersion'
 import { parseUnits } from '@ethersproject/units'
 import {
+  ChainId,
   Currency,
   CurrencyAmount,
+  DEFAULT_CURRENCIES,
+  Fraction,
   JSBI,
+  Price,
+  ProtocolName,
+  SwapParameters,
   Token,
   TokenAmount,
   Trade,
-  DEFAULT_CURRENCIES,
-  ChainId
+  TradeType
 } from '@amaterasu-fi/sdk'
 import { ParsedQs } from 'qs'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import CURVE_MINTER_ABI from 'constants/abis/curveMinter.json'
 // import { useV1Trade } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
@@ -31,6 +37,170 @@ import { BASE_CURRENCY } from '../../connectors'
 import useBlockchain from '../../hooks/useBlockchain'
 import getBlockchainAdjustedCurrency from '../../utils/getBlockchainAdjustedCurrency'
 import { GOVERNANCE_TOKEN } from '../../constants'
+import { CURVE_POOLS_MAINNET, CurvePool, StableName } from '../../constants/curvePools'
+import { Interface } from '@ethersproject/abi'
+import { useMultipleContractMultipleMethods } from '../multicall/hooks'
+import { wrappedCurrency } from '../../utils/wrappedCurrency'
+import { TradeOptions, TradeOptionsDeadline } from '@amaterasu-fi/sdk/dist/router'
+
+const ZERO_HEX = '0x0'
+const CURVE_MINTER_INTERFACE = new Interface(CURVE_MINTER_ABI)
+const BIG_INT_ZERO = JSBI.BigInt('0')
+
+export type StableTrade = {
+  priceImpact: JSBI
+  currencies: { [field in Field]?: Currency }
+  currencyBalances: { [field in Field]?: CurrencyAmount }
+  parsedAmount: CurrencyAmount | undefined
+  stablePool: CurvePool
+  executionPrice: Price
+  tradeType: TradeType
+  route: { path: Token[] }
+  inputAmount: CurrencyAmount
+  outputAmount: CurrencyAmount
+  outputAmountLessSlippage: CurrencyAmount
+  protocol?: ProtocolName
+}
+
+export function getIndex(token: Token | Currency | null | undefined, tokenList: Token[]): number | undefined {
+  const idx = token ? tokenList.findIndex(t => t.symbol === token.symbol) : undefined
+  return idx !== undefined && idx >= 0 ? idx : undefined
+}
+
+function toHex(currencyAmount: CurrencyAmount) {
+  return `0x${currencyAmount.raw.toString(16)}`
+}
+
+function intToHex(num: number) {
+  return `0x000000000000000000000000000000000000000${num}`
+}
+
+export function getSwapParamsFromStableTrade(
+  trade: StableTrade,
+  options: TradeOptions | TradeOptionsDeadline
+): SwapParameters {
+  const methodName = trade.stablePool.swapFunctionName ?? 'swap'
+  let args = [] as (string | string[])[]
+
+  const idxIn = getIndex(trade.inputAmount.currency, trade.stablePool.tokens) ?? 0
+  const idxOut = getIndex(trade.outputAmount.currency, trade.stablePool.tokens) ?? 0
+  const amountIn: string = toHex(trade.inputAmount)
+  const slippageAdjustedAmountOut = new Fraction('1')
+    .add(options.allowedSlippage)
+    .invert()
+    .multiply(trade.outputAmount.raw).quotient
+  const amountOut = `0x${slippageAdjustedAmountOut.toString(16)}`
+  const deadline =
+    'ttl' in options
+      ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
+      : `0x${options.deadline.toString(16)}`
+  switch (methodName) {
+    case 'swap':
+      args = [intToHex(idxIn), intToHex(idxOut), amountIn, amountOut, deadline]
+      break
+    case 'exchange':
+      args = [intToHex(idxIn), intToHex(idxOut), amountIn, amountOut]
+      break
+    default:
+      args = [intToHex(idxIn), intToHex(idxOut), amountIn, amountOut, deadline]
+  }
+  return {
+    methodName,
+    args,
+    value: ZERO_HEX
+  }
+}
+
+export function calculatePriceImpact(
+  tokenInputAmount: JSBI, // assumed to be 18d precision
+  tokenOutputAmount: JSBI,
+  virtualPrice = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)),
+  isWithdraw = false
+): JSBI {
+  // We want to multiply the lpTokenAmount by virtual price
+  // Deposits: (VP * output) / input - 1
+  // Swaps: (1 * output) / input - 1
+  // Withdraws: output / (input * VP) - 1
+
+  /* if (tokenInputAmount.lte(0)) return Zero */
+  if (JSBI.LE(tokenInputAmount, 0)) {
+    return JSBI.BigInt(0)
+  }
+
+  return isWithdraw
+    ? /*
+          tokenOutputAmount
+            .mul(BigNumber.from(10).pow(36))
+            .div(tokenInputAmount.mul(virtualPrice))
+            .sub(BigNumber.from(10).pow(18))
+        */
+      JSBI.subtract(
+        JSBI.divide(
+          JSBI.multiply(tokenOutputAmount, JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(36))),
+          JSBI.multiply(tokenInputAmount, virtualPrice)
+        ),
+        JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
+      )
+    : /*  virtualPrice
+        .mul(tokenOutputAmount)
+        .div(tokenInputAmount)
+        .sub(BigNumber.from(10).pow(18))
+      */
+      JSBI.subtract(
+        JSBI.divide(JSBI.multiply(virtualPrice, tokenOutputAmount), tokenInputAmount),
+        JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18))
+      )
+}
+
+export function computeSlippageAdjustedMinAmount(value: JSBI, allowedSlippage: number) {
+  if (JSBI.equal(value, BIG_INT_ZERO)) {
+    return BIG_INT_ZERO
+  }
+
+  return JSBI.divide(JSBI.multiply(value, JSBI.BigInt(10000 - allowedSlippage)), JSBI.BigInt(10000))
+}
+
+/**
+ * Given an input and output amount, modifies the currency amount
+ * with fewer decimals to match the currency amount with more decimals
+ * @returns [CurrencyAmount, CurrencyAmount]
+ */
+function normalizeInputOutputAmountDecimals(
+  inputAmount: CurrencyAmount | undefined,
+  outputAmount: CurrencyAmount | undefined
+) {
+  if (inputAmount == null || outputAmount == null) {
+    return [BIG_INT_ZERO, BIG_INT_ZERO]
+  }
+
+  const [{ currency: inputCurrency, raw: inputAmountRaw }, { currency: outputCurrency, raw: outputAmountRaw }] = [
+    inputAmount,
+    outputAmount
+  ]
+
+  switch (true) {
+    case inputCurrency.decimals > outputCurrency.decimals: {
+      return [
+        inputAmountRaw,
+        JSBI.multiply(
+          outputAmountRaw,
+          JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(inputCurrency.decimals - outputCurrency.decimals))
+        )
+      ]
+    }
+    case inputCurrency.decimals < outputCurrency.decimals: {
+      return [
+        JSBI.multiply(
+          inputAmountRaw,
+          JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(outputCurrency.decimals - inputCurrency.decimals))
+        ),
+        outputAmountRaw
+      ]
+    }
+    default:
+      return [inputAmountRaw, outputAmountRaw]
+  }
+}
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -131,6 +301,7 @@ export function useDerivedSwapInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount }
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
+  allTrades?: (Trade | null)[]
   inputError?: string
 } {
   const { account } = useActiveWeb3React()
@@ -160,10 +331,26 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
-
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const bestTradesExactIn = [
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.AMATERASU),
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.TRISOLARIS),
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.WANNASWAP),
+    useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ProtocolName.NEARPAD)
+  ]
+  const bestTradesExactOut = [
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.AMATERASU),
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.TRISOLARIS),
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.WANNASWAP),
+    useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ProtocolName.NEARPAD)
+  ]
+  // Immediately sort them so the first trade is always the best
+  bestTradesExactIn?.sort((a, b) => (a?.outputAmount.greaterThan(b?.outputAmount ?? '0') ? -1 : 1))
+  bestTradesExactOut?.sort((a, b) =>
+    a?.inputAmount.lessThan(b?.inputAmount ?? '10000000000000000000000000000000') ? -1 : 1
+  )
+  // console.log('bestTradeIn', bestTradesExactIn[0])
+  // console.log('bestTradeOut', bestTradesExactOut[0])
+  const v2Trade = isExactIn ? bestTradesExactIn[0] : bestTradesExactOut[0]
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
@@ -197,8 +384,8 @@ export function useDerivedSwapInfo(): {
   } else {
     if (
       BAD_RECIPIENT_ADDRESSES.indexOf(formattedTo) !== -1 ||
-      (bestTradeExactIn && involvesAddress(bestTradeExactIn, formattedTo)) ||
-      (bestTradeExactOut && involvesAddress(bestTradeExactOut, formattedTo))
+      (bestTradesExactIn[0] && involvesAddress(bestTradesExactIn[0], formattedTo)) ||
+      (bestTradesExactOut[0] && involvesAddress(bestTradesExactOut[0], formattedTo))
     ) {
       inputError = inputError ?? 'Invalid recipient'
     }
@@ -224,6 +411,7 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
+    allTrades: isExactIn ? bestTradesExactIn : bestTradesExactOut,
     inputError
   }
 }
@@ -315,4 +503,142 @@ export function useDefaultsFromURLSearch():
   }, [dispatch, chainId])
 
   return result
+}
+
+export function isValidArgs(args: any[], parsedAmount: CurrencyAmount | undefined): boolean {
+  return parsedAmount !== undefined && parsedAmount.greaterThan('0') && !args.some(arg => arg === undefined)
+}
+
+// from the current swap inputs, compute the best trade and return it.
+export function useDerivedStableSwapInfo(): (StableTrade | null)[] {
+  const { account, chainId } = useActiveWeb3React()
+
+  const {
+    independentField,
+    typedValue,
+    [Field.INPUT]: { currencyId: inputCurrencyId },
+    [Field.OUTPUT]: { currencyId: outputCurrencyId }
+  } = useSwapState()
+
+  const inputCurrency = useCurrency(inputCurrencyId)
+  const outputCurrency = useCurrency(outputCurrencyId)
+  const inputToken = wrappedCurrency(inputCurrency ?? undefined, chainId)
+  const outputToken = wrappedCurrency(outputCurrency ?? undefined, chainId)
+
+  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
+    inputCurrency ?? undefined,
+    outputCurrency ?? undefined
+  ])
+
+  const currencyBalances = {
+    [Field.INPUT]: relevantTokenBalances[0],
+    [Field.OUTPUT]: relevantTokenBalances[1]
+  }
+
+  const currencies: { [field in Field]?: Currency } = {
+    [Field.INPUT]: inputCurrency ?? undefined,
+    [Field.OUTPUT]: outputCurrency ?? undefined
+  }
+
+  const isExactIn: boolean = independentField === Field.INPUT
+  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
+
+  const stableSwapPools: CurvePool[] = useMemo(() => Object.values(StableName).map(name => CURVE_POOLS_MAINNET[name]), [
+    CURVE_POOLS_MAINNET
+  ])
+
+  const args = useMemo(
+    () =>
+      stableSwapPools.map(({ tokens }) => [
+        getIndex(isExactIn ? inputToken : outputToken, tokens),
+        getIndex(isExactIn ? outputToken : inputToken, tokens),
+        parsedAmount?.raw.toString()
+      ]),
+    [stableSwapPools, isExactIn, inputToken, outputToken, parsedAmount]
+  )
+  const swapAddresses: (string | undefined)[] = useMemo(
+    () =>
+      stableSwapPools.map(({ minterAddress }, idx) => {
+        return isValidArgs(args[idx], parsedAmount) ? minterAddress : undefined
+      }),
+    [stableSwapPools, args]
+  )
+  const fcnNames: string[] = stableSwapPools.map(
+    ({ calculateSwapFunctionName }) => calculateSwapFunctionName ?? 'calculateSwap'
+  )
+
+  const calculateSwapResponse = useMultipleContractMultipleMethods(
+    swapAddresses,
+    CURVE_MINTER_INTERFACE,
+    fcnNames,
+    args
+  )
+
+  const [allowedSlippage] = useUserSlippageTolerance()
+  const tokenTradeIn = isExactIn ? currencies[Field.INPUT] : currencies[Field.OUTPUT]
+  const tokenTradeOut = isExactIn ? currencies[Field.OUTPUT] : currencies[Field.INPUT]
+
+  return useMemo(() => {
+    return stableSwapPools.map((stablePool, idx) => {
+      const amountToReceive = calculateSwapResponse[idx]?.result?.[0] ?? BIG_INT_ZERO
+      const amountToReceiveJSBI = JSBI.BigInt(amountToReceive)
+      const amountOutLessSlippageNew = computeSlippageAdjustedMinAmount(amountToReceiveJSBI, allowedSlippage)
+
+      const executionPrice =
+        tokenTradeIn &&
+        tokenTradeOut &&
+        (JSBI.LE(amountOutLessSlippageNew, BIG_INT_ZERO)
+          ? new Price(tokenTradeIn, tokenTradeOut, JSBI.BigInt(1), BIG_INT_ZERO)
+          : new Price(tokenTradeIn, tokenTradeOut, amountToReceiveJSBI, amountOutLessSlippageNew))
+
+      let inputAmount = isExactIn ? parsedAmount : inputToken && new TokenAmount(inputToken, amountToReceiveJSBI)
+      inputAmount = inputAmount?.equalTo('0') ? undefined : inputAmount
+      const outputAmount = isExactIn ? outputToken && new TokenAmount(outputToken, amountToReceiveJSBI) : parsedAmount
+      const outputAmountLessSlippage = isExactIn
+        ? outputToken && new TokenAmount(outputToken, amountOutLessSlippageNew)
+        : parsedAmount
+
+      const [normalizedRawInputAmount, normalizedRawOutputAmount] = normalizeInputOutputAmountDecimals(
+        inputAmount,
+        outputAmount
+      )
+      const priceImpact = JSBI.equal(normalizedRawOutputAmount, BIG_INT_ZERO)
+        ? BIG_INT_ZERO
+        : calculatePriceImpact(normalizedRawInputAmount, normalizedRawOutputAmount)
+
+      const priceImpactAbs = JSBI.greaterThan(priceImpact, BIG_INT_ZERO)
+        ? priceImpact
+        : JSBI.multiply(priceImpact, JSBI.BigInt('-1'))
+
+      if (
+        inputToken &&
+        outputToken &&
+        executionPrice &&
+        inputAmount &&
+        inputAmount.greaterThan('0') &&
+        outputAmount &&
+        outputAmount.greaterThan('0') &&
+        outputAmountLessSlippage
+      ) {
+        const route = {
+          path: [isExactIn ? inputToken : outputToken, isExactIn ? outputToken : inputToken]
+        }
+        return {
+          priceImpact: priceImpactAbs,
+          currencies,
+          currencyBalances,
+          parsedAmount,
+          stablePool,
+          executionPrice,
+          route,
+          tradeType: isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
+          inputAmount,
+          outputAmount,
+          outputAmountLessSlippage
+        }
+      } else {
+        return null
+      }
+    })
+  }, [calculateSwapResponse, tokenTradeIn, tokenTradeOut, inputToken, outputToken, parsedAmount])
 }

@@ -15,6 +15,7 @@ import { TruncatedText, SwapShowAcceptChanges } from './styleds'
 
 import useBlockchain from '../../hooks/useBlockchain'
 import getBlockchainAdjustedCurrency from '../../utils/getBlockchainAdjustedCurrency'
+import { StableTrade } from '../../state/swap/hooks'
 
 export default function SwapModalHeader({
   trade,
@@ -23,7 +24,7 @@ export default function SwapModalHeader({
   showAcceptChanges,
   onAcceptChanges
 }: {
-  trade: Trade
+  trade: Trade | StableTrade
   allowedSlippage: number
   recipient: string | null
   showAcceptChanges: boolean

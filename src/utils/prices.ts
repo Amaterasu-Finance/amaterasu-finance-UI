@@ -1,19 +1,46 @@
-import { BLOCKED_PRICE_IMPACT_NON_EXPERT } from '../constants'
-import { CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade, Currency } from '@amaterasu-fi/sdk'
-import { ALLOWED_PRICE_IMPACT_HIGH, ALLOWED_PRICE_IMPACT_LOW, ALLOWED_PRICE_IMPACT_MEDIUM } from '../constants'
+import {
+  ALLOWED_PRICE_IMPACT_HIGH,
+  ALLOWED_PRICE_IMPACT_LOW,
+  ALLOWED_PRICE_IMPACT_MEDIUM,
+  BLOCKED_PRICE_IMPACT_NON_EXPERT
+} from '../constants'
+import {
+  Currency,
+  CurrencyAmount,
+  Fraction,
+  JSBI,
+  Percent,
+  ProtocolName,
+  PROTOCOLS,
+  TokenAmount,
+  Trade
+} from '@amaterasu-fi/sdk'
 import { Field } from '../state/swap/actions'
 import { basisPointsToPercent } from './index'
+import { StableTrade } from '../state/swap/hooks'
 
-const BASE_FEE = new Percent(JSBI.BigInt(25), JSBI.BigInt(10000))
 const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
-const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
+// const BASE_FEE = new Percent(JSBI.BigInt(25), JSBI.BigInt(10000))
+// const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
 
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(
-  trade?: Trade | null
+  trade?: Trade | StableTrade | null
 ): { priceImpactWithoutFee: Percent | undefined; realizedLPFee: CurrencyAmount | undefined | null } {
   // for each hop in our trade, take away the x*y=k price impact from 0.25% fees
   // e.g. for 3 tokens/2 hops: 1 - ((1 - .025) * (1-.025))
+  if (!(trade instanceof Trade)) {
+    const imp = new Percent(trade?.priceImpact ?? '0', JSBI.exponentiate(JSBI.BigInt('10'), JSBI.BigInt('18')))
+    return {
+      priceImpactWithoutFee: imp,
+      realizedLPFee: undefined
+    }
+  }
+  const INPUT_FRACTION_AFTER_FEE = new Percent(
+    PROTOCOLS[trade?.protocol ?? ProtocolName.AMATERASU].fee,
+    JSBI.BigInt(10000)
+  )
+
   const realizedLPFee = !trade
     ? undefined
     : ONE_HUNDRED_PERCENT.subtract(
@@ -38,19 +65,25 @@ export function computeTradePriceBreakdown(
     (trade.inputAmount instanceof TokenAmount
       ? new TokenAmount(trade.inputAmount.token, realizedLPFee.multiply(trade.inputAmount.raw).quotient)
       : CurrencyAmount.ether(realizedLPFee.multiply(trade.inputAmount.raw).quotient))
-
   return { priceImpactWithoutFee: priceImpactWithoutFeePercent, realizedLPFee: realizedLPFeeAmount }
 }
 
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
 export function computeSlippageAdjustedAmounts(
-  trade: Trade | undefined,
+  trade: Trade | StableTrade | undefined,
   allowedSlippage: number
 ): { [field in Field]?: CurrencyAmount } {
   const pct = basisPointsToPercent(allowedSlippage)
-  return {
-    [Field.INPUT]: trade?.maximumAmountIn(pct),
-    [Field.OUTPUT]: trade?.minimumAmountOut(pct)
+  if (trade instanceof Trade) {
+    return {
+      [Field.INPUT]: trade?.maximumAmountIn(pct),
+      [Field.OUTPUT]: trade?.minimumAmountOut(pct)
+    }
+  } else {
+    return {
+      [Field.INPUT]: trade?.outputAmountLessSlippage,
+      [Field.OUTPUT]: trade?.outputAmountLessSlippage
+    }
   }
 }
 
@@ -76,7 +109,7 @@ export function formatExecutionPrice(trade?: Trade, inverted?: boolean): string 
 }
 
 export function formatBlockchainAdjustedExecutionPrice(
-  trade?: Trade,
+  trade?: Trade | StableTrade,
   tradeInputCurrency?: Currency | undefined,
   tradeOutputCurrency?: Currency | undefined,
   inverted?: boolean
