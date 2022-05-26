@@ -1,9 +1,9 @@
-import { Blockchain, ProtocolName, Trade, TradeType } from '@amaterasu-fi/sdk'
+import { ProtocolName, Trade, TradeType } from '@amaterasu-fi/sdk'
 import React, { useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import { ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'
 import { useUserSlippageTolerance } from '../../state/user/hooks'
-import { TYPE, ExternalLink } from '../../theme'
+import { TYPE } from '../../theme'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../../utils/prices'
 import { AutoColumn } from '../Column'
 import QuestionHelper from '../QuestionHelper'
@@ -14,16 +14,7 @@ import useBlockchain from '../../hooks/useBlockchain'
 import getBlockchainAdjustedCurrency from '../../utils/getBlockchainAdjustedCurrency'
 import { useActiveWeb3React } from '../../hooks'
 import { PIT_SETTINGS } from '../../constants'
-
-const InfoLink = styled(ExternalLink)`
-  width: 100%;
-  border: 1px solid ${({ theme }) => theme.bg3};
-  padding: 6px 6px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 14px;
-  color: ${({ theme }) => theme.text1};
-`
+import { StableTrade } from '../../state/swap/hooks'
 
 function titleCase(str: string): string {
   return str
@@ -32,7 +23,7 @@ function titleCase(str: string): string {
     .join(' ')
 }
 
-function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippage: number }) {
+function TradeSummary({ trade, allowedSlippage }: { trade: Trade | StableTrade; allowedSlippage: number }) {
   const { chainId } = useActiveWeb3React()
   const pitSettings = chainId ? PIT_SETTINGS[chainId] : undefined
   const blockchain = useBlockchain()
@@ -44,6 +35,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
 
   const tradeInputCurrency = getBlockchainAdjustedCurrency(blockchain, trade.inputAmount.currency)
   const tradeOutputCurrency = getBlockchainAdjustedCurrency(blockchain, trade.outputAmount.currency)
+  const name = trade instanceof Trade ? titleCase(ProtocolName[trade.protocol]) : trade.stablePool.stableSwapName ?? ''
 
   return (
     <>
@@ -95,7 +87,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
             <QuestionHelper text={`We check all Protocols to get users the best price on every trade!`} />
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
-            {titleCase(ProtocolName[trade.protocol])}
+            {name}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>
@@ -104,7 +96,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
 }
 
 export interface AdvancedSwapDetailsProps {
-  trade?: Trade
+  trade?: Trade | StableTrade
 }
 
 export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
@@ -113,8 +105,6 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
   const [allowedSlippage] = useUserSlippageTolerance()
 
   const showRoute = Boolean(trade && trade.route.path.length > 1)
-
-  const blockchain = useBlockchain()
 
   return (
     <AutoColumn gap="0px">
@@ -133,16 +123,6 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
                 <SwapRoute trade={trade} />
               </RowBetween>
             </>
-          )}
-          {blockchain === Blockchain.ETHEREUM && !showRoute && (
-            <AutoColumn style={{ padding: '12px 16px 0 16px' }}>
-              <InfoLink
-                href={'https://uniswap.info/pair/' + trade.route.pairs[0].liquidityToken.address}
-                target="_blank"
-              >
-                View pair analytics ↗
-              </InfoLink>
-            </AutoColumn>
           )}
         </>
       )}

@@ -21,6 +21,7 @@ import useBlockchain from '../../hooks/useBlockchain'
 import getBlockchainAdjustedCurrency from '../../utils/getBlockchainAdjustedCurrency'
 import { useActiveWeb3React } from '../../hooks'
 import { PIT_SETTINGS } from '../../constants'
+import { StableTrade } from '../../state/swap/hooks'
 
 function titleCase(str: string): string {
   return str
@@ -36,7 +37,7 @@ export default function SwapModalFooter({
   swapErrorMessage,
   disabledConfirm
 }: {
-  trade: Trade
+  trade: Trade | StableTrade
   allowedSlippage: number
   onConfirm: () => void
   swapErrorMessage: string | undefined
@@ -57,6 +58,8 @@ export default function SwapModalFooter({
 
   const tradeInputCurrency = getBlockchainAdjustedCurrency(blockchain, trade.inputAmount.currency)
   const tradeOutputCurrency = getBlockchainAdjustedCurrency(blockchain, trade.outputAmount.currency)
+
+  const name = trade instanceof Trade ? titleCase(ProtocolName[trade.protocol]) : trade.stablePool.stableSwapName ?? ''
 
   return (
     <>
@@ -132,7 +135,7 @@ export default function SwapModalFooter({
             <QuestionHelper text={`We check all Protocols to get users the best price on every trade!`} />
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
-            {titleCase(ProtocolName[trade.protocol])}
+            {name}
           </TYPE.black>
         </RowBetween>
       </AutoColumn>
