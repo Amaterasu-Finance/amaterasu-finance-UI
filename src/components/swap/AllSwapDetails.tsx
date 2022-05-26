@@ -30,12 +30,16 @@ const Break = styled.div`
 
 const CenteredCol = styled(Col)`
   display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
 `
 
 const HidingCol = styled(Col)`
   display: flex;
   text-align: center;
+  justify-content: center;
+  align-items: center;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
