@@ -406,7 +406,7 @@ export default function Swap() {
       <PageWrapper>
         <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
           <TYPE.black color={'#212429'}>...</TYPE.black>
-          <TYPE.black fontWeight={500} fontSize={'20px'}>
+          <TYPE.black fontWeight={500} fontSize={'25px'}>
             DEX Aggregator
           </TYPE.black>
           <Settings />
