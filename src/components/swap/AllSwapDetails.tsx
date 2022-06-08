@@ -40,7 +40,7 @@ const HidingCol = styled(Col)`
   text-align: center;
   justify-content: center;
   align-items: center;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
 `
